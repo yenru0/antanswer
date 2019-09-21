@@ -1,0 +1,9 @@
+﻿{
+  "version": "0.4",
+  "ANW_STANDARD": "ANW_0_5a",
+  "mode": "anwCli",
+  "detail_mode": "opt_rv",
+  "basic_wil": 10,
+  "basic_recent": 5,
+  "basic_recentValue": 0.8
+}
