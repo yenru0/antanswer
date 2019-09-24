@@ -190,6 +190,7 @@ class AnwMainCliModule(AnwBaseModule):
 
     def sampling(self):
         ### recent check
+
         recent = 0
 
         if self.anw['detailMode'] in (2, 5):
@@ -203,18 +204,14 @@ class AnwMainCliModule(AnwBaseModule):
 
         self.history = []
 
-        for i in range(recent):
+        for i in range(self.anw["detail"][0]):
             r = randrange(0, len(self.Aqs))
-            while r in self.history:
-                r = randrange(0, len(self.Aqs))
-
-            yield r
-            self.history.append(r)
-
-        for i in range(recent, self.anw["detail"][0]):
-            r = randrange(0, len(self.Aqs))
-            while r in self.history[i - recent:i]:
-                r = randrange(0, len(self.Aqs))
+            if r < recent:
+                while r in self.history:
+                    r = randrange(0, len(self.Aqs))
+            else:
+                while r in self.history[i - recent:i]:
+                    r = randrange(0, len(self.Aqs))
             yield r
             self.history.append(r)
 
