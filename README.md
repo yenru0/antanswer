@@ -24,6 +24,7 @@ lxml 라이브러리 설치는 cmd 창에다 `pip install lxml`을 입력하시�
 Antanswer Python은 높은 자유도를 가지게됩니다.
 
 근데 그냥 쓰실 분은 다운로드 받고 `main.py`그냥 실행하시면 됩니다.
+다운로드 받는 곳은 [여기](https://github.com/yenru0/antanswer/releases)입니다.
 
 `main.py`를 실행시키면 파일 선택 창이 나오게 되는게 거기서 자신이 실행시키고 싶은 anw 파일을 선택해주시면 됩니다.
 그러면 로딩과 함께 `>>> `가 나오는데 거기다가 `run`을 입력하여 실행시킬 수 있습니다. `cut`을 입력시키면 종료 시킬 수 있습니다.
