@@ -61,9 +61,11 @@ def reader(file_anwold):
 
         t = re.match("##@(.+)", line)
         if t:
-            stage = t.group(1)
+            if not t.group(1).strip():
+                raise
+            stage = t.group(1).strip()
             if stage not in stages:
-                stages[stage] = Element("stage", stage)
+                stages[stage] = Element("stage", name=stage)
             continue
 
         line = line.split("###")[0]
@@ -78,6 +80,8 @@ def reader(file_anwold):
         for i in element[0].split("|"):
             answer_node = Element("answer")
             for j in i.split(";"):
+                if not j.strip():
+                    continue
                 item_node = Element("item")
                 item_node.text = j.strip()
                 answer_node.append(item_node)
@@ -86,6 +90,8 @@ def reader(file_anwold):
         for i in element[1].split("|"):
             question_node = Element("question")
             for j in i.split(";"):
+                if not j.strip():
+                    continue
                 item_node = Element("item")
                 item_node.text = j.strip()
                 question_node.append(item_node)
@@ -107,9 +113,8 @@ def reader(file_anwold):
     for k, v in detail.items():
         if v != None:
             root.attrib[k] = str(v)
-
+    print(stages)
     return ElementTree(root)
-    return dump(root)
 
 
 if __name__ == '__main__':
