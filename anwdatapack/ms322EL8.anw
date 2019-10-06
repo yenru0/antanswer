@@ -1,0 +1,627 @@
+<anw wil="50" recentValue="0.8">
+  <description>made by anwO2N file</description>
+  <stage name="main">
+    <element>
+      <answer>
+        <item>wet</item>
+      </answer>
+      <question>
+        <item>(a)젖은, (v)적시다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>ride</item>
+      </answer>
+      <question>
+        <item>(n)탈 것, (v)타다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>thrilling</item>
+      </answer>
+      <question>
+        <item>(a)아주 신나는</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>thrill</item>
+      </answer>
+      <question>
+        <item>(v)열광시키다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>upside down</item>
+      </answer>
+      <question>
+        <item>거꾸로, 뒤집힌 채로</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>scream</item>
+      </answer>
+      <question>
+        <item>(v)비명을 지르다, (n)비명</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>round and round</item>
+      </answer>
+      <question>
+        <item>돌고 돌아, 빙글빙글</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>slow down</item>
+      </answer>
+      <question>
+        <item>(속도를)낮추다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>crash</item>
+      </answer>
+      <question>
+        <item>(v)충돌하다, (n)충돌</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>object</item>
+      </answer>
+      <question>
+        <item>(n)물체, 대상, 목표, 객체</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>potential</item>
+      </answer>
+      <question>
+        <item>(a)잠재적인, (n)잠재력</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>Antarctic</item>
+      </answer>
+      <question>
+        <item>(n)남극</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>arctic</item>
+      </answer>
+      <question>
+        <item>(n)북극</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>be held</item>
+      </answer>
+      <question>
+        <item>열리다, 개최하다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>turn</item>
+      </answer>
+      <question>
+        <item>(n)(어떤 시기가)되다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>sign up</item>
+      </answer>
+      <question>
+        <item>등록하다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>contest</item>
+      </answer>
+      <question>
+        <item>(n)대회, 시합.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>spell</item>
+      </answer>
+      <question>
+        <item>(v)철자를 말하다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>spelling</item>
+      </answer>
+      <question>
+        <item>(n)철자</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>cotton</item>
+      </answer>
+      <question>
+        <item>(n)면, 무명</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>get in line</item>
+      </answer>
+      <question>
+        <item>줄을 서다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>drop</item>
+      </answer>
+      <question>
+        <item>(v)떨어지다, (n)방울</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>washing machine</item>
+      </answer>
+      <question>
+        <item>세탁기</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>sleeping bag</item>
+      </answer>
+      <question>
+        <item>침낭</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>plastic bag</item>
+      </answer>
+      <question>
+        <item>비닐봉지.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>at the same time</item>
+      </answer>
+      <question>
+        <item>동시에</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>safe and sound</item>
+      </answer>
+      <question>
+        <item>무사히, 탈 없이</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>cross</item>
+      </answer>
+      <question>
+        <item>(v)횡단하다, (n)십자가.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>hold one's breath</item>
+      </answer>
+      <question>
+        <item>숨을 참다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>gravity</item>
+      </answer>
+      <question>
+        <item>(n)중력</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>kinetic energy</item>
+      </answer>
+      <question>
+        <item>운동 에너지</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>amusement park</item>
+      </answer>
+      <question>
+        <item>놀이동산, 놀이공원</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>be scared</item>
+      </answer>
+      <question>
+        <item>놀래다</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>scare</item>
+      </answer>
+      <question>
+        <item>(v)놀라게 하다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>automobile</item>
+      </answer>
+      <question>
+        <item>(n)자동차</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>track</item>
+      </answer>
+      <question>
+        <item>(n)선로, 길, 발자국.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>sudden</item>
+      </answer>
+      <question>
+        <item>(a)갑작스러운</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>suddenly</item>
+      </answer>
+      <question>
+        <item>(ad)갑자기</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>rise</item>
+      </answer>
+      <question>
+        <item>(n)상승, (v)상승하다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>loop</item>
+      </answer>
+      <question>
+        <item>(n)고리, 회전</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>keep ~ from -ing</item>
+        <item>keep ~from v-ing</item>
+      </answer>
+      <question>
+        <item>~가 하는 것을 막다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>free fall</item>
+      </answer>
+      <question>
+        <item>자유 낙하</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>magnet</item>
+      </answer>
+      <question>
+        <item>(n)자석</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>magnetic</item>
+      </answer>
+      <question>
+        <item>(a)자성의</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>toward</item>
+      </answer>
+      <question>
+        <item>(prep)~쪽으로, 향하여</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>float</item>
+      </answer>
+      <question>
+        <item>(v)뜨다</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>outer space</item>
+      </answer>
+      <question>
+        <item>우주 공간</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>jump out of</item>
+        <item>jump out of ~</item>
+      </answer>
+      <question>
+        <item>~에서 뛰어내리다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>thanks to</item>
+        <item>thanks to ~</item>
+      </answer>
+      <question>
+        <item>~덕분에</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>less</item>
+      </answer>
+      <question>
+        <item>(a)더 적은</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>little</item>
+      </answer>
+      <answer>
+        <item>less</item>
+      </answer>
+      <answer>
+        <item>least</item>
+      </answer>
+      <question>
+        <item>little의 원급, 비교급, 최상급</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>sink</item>
+      </answer>
+      <question>
+        <item>(v)가라앉다, (n)싱크대</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>while</item>
+      </answer>
+      <question>
+        <item>(conj)~인데 반하여</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>for a while</item>
+      </answer>
+      <question>
+        <item>잠시 동안</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>Mars</item>
+      </answer>
+      <question>
+        <item>(n)화성</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>wise</item>
+      </answer>
+      <question>
+        <item>(a)현명한</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>better</item>
+      </answer>
+      <question>
+        <item>(a)더 좋은</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>good</item>
+      </answer>
+      <answer>
+        <item>better</item>
+      </answer>
+      <answer>
+        <item>best</item>
+      </answer>
+      <question>
+        <item>good의 원급, 비교급, 최상급</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>desert</item>
+      </answer>
+      <question>
+        <item>(n)사막</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>dessert</item>
+      </answer>
+      <question>
+        <item>(n)디저트</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>be allowed to ~</item>
+        <item>be allowed to</item>
+      </answer>
+      <question>
+        <item>~하는 것이 허용 되다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>wait in line</item>
+      </answer>
+      <question>
+        <item>줄을 서서 기다리다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>shout</item>
+      </answer>
+      <question>
+        <item>(v)외치다, (n)고함</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>hang</item>
+      </answer>
+      <question>
+        <item>(v)매달리다.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>hang</item>
+      </answer>
+      <answer>
+        <item>hung</item>
+      </answer>
+      <answer>
+        <item>hung</item>
+      </answer>
+      <question>
+        <item>hang의 현재, 과거, 과거 분사</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>seesaw</item>
+      </answer>
+      <question>
+        <item>(n)시소</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>shadow</item>
+      </answer>
+      <question>
+        <item>(n)그림자</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>opposite</item>
+      </answer>
+      <question>
+        <item>(a)정반대의</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>pleasure</item>
+      </answer>
+      <question>
+        <item>(n)기쁨, 즐거운 일</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>fireworks</item>
+      </answer>
+      <question>
+        <item>(n)불꽃놀이</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>the way back home</item>
+      </answer>
+      <question>
+        <item>집으로 가는 길</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>loop</item>
+      </answer>
+      <question>
+        <item>a curved part or shape made when something long and thin bends so that it touches or crosses over itself.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>cotton</item>
+      </answer>
+      <question>
+        <item>a soft, white material that grows on the seeds of a tall plant and that is used to make cloth.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>shadow</item>
+      </answer>
+      <question>
+        <item>a dark shape that appears on a surface when someone or something moves between the surface and a source of light.</item>
+      </question>
+    </element>
+    <element>
+      <answer>
+        <item>opposite</item>
+      </answer>
+      <question>
+        <item>completely different.</item>
+      </question>
+    </element>
+  </stage>
+</anw>
