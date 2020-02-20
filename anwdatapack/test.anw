@@ -58,4 +58,9 @@
 
 
     </stage>
+    <stage name="test">
+        <element>
+
+        </element>
+    </stage>
 </anw>

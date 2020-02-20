@@ -1,4 +1,9 @@
 <anw wil="50" recentValue="0.9">
+  <cond>
+    {
+    "COND"
+    }
+  </cond>
   <description>made by anwO2N file</description>
   <stage name="main"/>
   <stage name="국사">
@@ -55,7 +60,7 @@
         <item>나인형</item>
         <item>나철</item>
       </answer>
-      <answer>
+      <answer >
         <item>오기호</item>
       </answer>
       <question>
