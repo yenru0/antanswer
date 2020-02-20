@@ -13,7 +13,7 @@ class AnwMainCliModule(AnwBaseModule):
         super().__init__(**kwargs)
 
     def init_routine(self, file_anw, file_opt):
-        with open("modules\\AnwCli\\preference.opt", 'r', encoding="utf-8-sig") as f:
+        with open("components\\AnwCli\\preference.opt", 'r', encoding="utf-8-sig") as f:
             try:
                 pref = json.load(f)
 

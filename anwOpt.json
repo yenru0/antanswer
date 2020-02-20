@@ -1,9 +1,8 @@
 ﻿{
-  "version": "0.4",
-  "ANW_STANDARD": "ANW_0_5a",
-  "mode": "anwCli",
-  "detail_mode": "opt_rv",
-  "basic_wil": 10,
-  "basic_recent": 5,
-  "basic_recentValue": 0.8
+  "version"          : "0.55",
+  "ANW_STANDARD"     : "ANW_0_5a",
+  "mode"             : "anwCli",
+  "basic_wil"        : 10,
+  "basic_recent"     : 10,
+  "basic_recentValue": 0.9
 }

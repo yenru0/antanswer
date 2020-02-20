@@ -1,5 +1,5 @@
 ### Complete In 0.4
-from anwFunctions.anwReader.reader import READ_FULL
+from anwFunctions.anwReaders.reader import READ_FULL
 
 
 class AnwBaseModule:
