@@ -1,6 +1,6 @@
 ﻿{
   "version"          : "0.55",
-  "ANW_STANDARD"     : "ANW_0_5a",
+  "ANW_STANDARD"     : "ANW0.5a",
   "mode"             : "anwCli",
   "basic_wil"        : 10,
   "basic_recent"     : 10,
