@@ -3,36 +3,35 @@ from time import sleep
 from difflib import SequenceMatcher
 from time import time
 import json
+# TODO: 어
+
+class Main():
+
+    def __init__(self, opt):
+        self.anw_standard = opt["anw_standard"]
+        self.cond = {
+            "COMP_IGNORE_SPACE": True,  # ignoring space, blank like '\t' won't be replaced
+            "COMP_IGNORE_CASE": True,  # ignoring case, replace upper to lower
+            "ANSWER_WITHOUT_ORDER": True,  # when answering quest, order don't interrupt you
+            "COMP_NOT": True,  # ignoring sequence matcher(compare) method
+            "RESULT_DISPLAY_QUEST": True,  # displaying Quest
+            "COMP_IGNORE_LAST_PERIOD": True,  # ignoring the last period
+            # support CLI, but main is GUI.
+            "RESULT_MANUAL_POST_CORRECTION": True  # post correction at result time GUI main cond
+        } #defualt preferences
 
 
-from anwBaseMoudules.AnwBaseModule import AnwBaseModule
-
-
-class AnwMainCliModule(AnwBaseModule):
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    def init_routine(self, file_anw, file_opt):
-        with open("components\\AnwCli\\preference.opt", 'r', encoding="utf-8-sig") as f:
-            try:
-                pref = json.load(f)
-
-                self.COMP_WITHOUT_SPACE = pref["COMP_WITHOUT_SPACE"]
-                self.ANS_NON_ORDER = pref["ANS_NON_ORDER"]
-                self.NOT_COMP = pref["NOT_COMP"]  # if ANS_NON_ORDER is True: setting it True is recommended
-                self.RESULT_QUEST_DISPLAY = pref["RESULT_QUEST_DISPLAY"]
-                self.COMP_IGNORE_CASE = pref["COMP_IGNORE_CASE"]
-            except (KeyError, FileNotFoundError, json.JSONDecodeError):
-                raise
-
-        self.file_anw = file_anw
-        self.file_opt = file_opt
+        # used in rootine
         self.score = 0
 
-        self.reset_init_routine(pref)
+
+        self.start_time = None
+        self.result = None
+        self.samples = None
+    def init_routine(self):
+
         print("로딩 중")
-        sleep(1)
+        sleep(0.75)
         print()
         while True:
             command = input(">>> ").strip()
@@ -185,7 +184,7 @@ class AnwMainCliModule(AnwBaseModule):
 
     def exit_process(self):
         print("AnwCli 종료중...")
-        sleep(0.1)
+        sleep(0.075)
         print("AnwCli 종료 완료.")
         return "EC00"
 
@@ -225,23 +224,38 @@ class AnwMainCliModule(AnwBaseModule):
             method = getattr(self, mname)
             return method()
         else:
-            print("[NoGotPleaseNo!] : 그딴거 없어요!")
+            print("<command>: wrong command, 'help' to help")
 
     def command_cut(self):
         return self.exit_process()
 
     def command_run(self):
-        self.starting_routine()
-        self.closing_routine()
-        self.reset_routine()
-        return "RN00"
-
-    def command_set(self):
-        self.file_opt.seek(0)
-        self.file_anw.seek(0)
-        self.reset_init_routine()
-        return "RS00"
+        try:
+            self.starting_routine()
+            self.closing_routine()
+            self.reset_routine()
+            return "RN00"
+        except:
+            return "RN-1"
+    def command_set(self, arg):
 
 
-### 필수
-MainABM = AnwMainCliModule()
+    def command_set_dialog(self):
+
+
+    def command_reset(self):
+        try:
+            self.reset_init_routine()
+            return "RS00"
+        except:
+            return "RS-1"
+
+    def command_help(self):
+        print("""<command>:
+cut: exit process
+set: set anw file
+set_dialog: set from dialog
+reset: reset to initial
+run: run 
+help: what you see now""")
+        return 0

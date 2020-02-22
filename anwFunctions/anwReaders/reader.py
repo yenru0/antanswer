@@ -23,12 +23,14 @@ def READ_OPT(file_opt):
 
     :return optret: the dictionary that contains
         -mainMode
+        -anw_standard
+        -version
         -bVariables
             -bWil
             -bRecent
             -bRecentValue
     """
-    optret = {"mainMode": 0, 'bVariables': None}
+    optret = {"mainMode": 0, "anw_standard": None, "version": None, "bVariables": None}
     optret_detail = {"bWil": 0, "bRecent": 0, "bRecentValue": 0}
 
     opt = json.load(file_opt)
@@ -39,28 +41,45 @@ def READ_OPT(file_opt):
         try:
             value = OPT_DICT_MODE_MAIN[t]
         except KeyError:
-            return Exception("'mode' value of 'anwOpt.json' has incorrect integer")
+            return Exception("'mode' value of 'anwOpt.json' has incorrect integer\n")
     elif isinstance(t, str):
         value = t
     else:
-        raise Exception("'mode' value of 'anwOpt.json' has incorrect value\n"
-                        "why don't you match the exact type?"
-                        "it is recommended to be str, but, restrictively, it can be int.")
+        raise Exception("'mode' value of 'anwOpt.json' is incorrect type\n")
 
     optret['mainMode'] = value
 
-    ### basic_value
+    ### anw_standard
+    t = opt["ANW_STANDARD"]
+    if isinstance(t, str):
+        value = t.replace(" ", "").upper()
+        if value not in ["ANW0.5A", "ANW05A", "ANW.5A", "ANW_0_5A", #0.5a
+                         "ANW0.66A", "ANW066A", "ANW.66A", "ANW_0_66A", #0.66a
+                         "ANW0.77.20.0301", "ANW.77.20.0301", "ANW_77EXP0301" #0.77: 20200301 EXP
+                         ]:
+            raise Exception("'ANW_STANDARD' value of 'anwOpt.json' has incorrect string\n")
+        optret["anw_standard"] = value
+    else:
+        raise Exception("'ANW_STANDARD' value of 'anwOpt.json' is incorrect type\n")
+
+    ### version
+    t = opt["version"]
+    if isinstance(t, str):
+        value = t.replace(" ", "").upper()
+        # TODO: will be added version check system
+        optret["version"] = value
+    else:
+        raise Exception("'version' value of 'anwOpt.json' is incorrect type\n")
+    ### basic_values
     t = opt['basic_wil']
     if isinstance(t, int):
         if 0 <= t:
             optret_detail['bWil'] = t
         else:
             raise Exception("'basic_wil' value of 'anwOpt.json' has incorrect integer\n",
-                            "why don't you match greater than or equal to 0")
+                            "why don't you match greater than or equal to 0\n")
     else:
-        raise Exception("'basic_wil' value of 'anwOpt.json' has incorrect value\n"
-                        "why don't you match the exact type?"
-                        "it must be int")
+        raise Exception("'basic_wil' value of 'anwOpt.json' is incorrect type\n")
 
     t = opt['basic_recent']
     if isinstance(t, int):
@@ -68,11 +87,9 @@ def READ_OPT(file_opt):
             optret_detail['bRecent'] = t
         else:
             raise Exception("'basic_recent' value of 'anwOpt.json' has incorrect integer\n",
-                            "Why don't you match greater than or equal to 0")
+                            "Why don't you match greater than or equal to 0\n")
     else:
-        raise Exception("'basic_recent' value of 'anwOpt.json' has incorrect value\n"
-                        "why don't you match the exact type?"
-                        "it must be int")
+        raise Exception("'basic_recent' value of 'anwOpt.json' is incorrect type\n")
 
     t = opt['basic_recentValue']
     if isinstance(t, (int, float)):
@@ -80,11 +97,9 @@ def READ_OPT(file_opt):
             optret_detail['bRecentValue'] = t
         else:
             raise Exception("'basic_recentValue' value of 'anwOpt.json' has incorrect integer or incorrect float\n",
-                            "it must be 0 <= 'basic_recentValue' <= 1")
+                            "it must be 0 <= 'basic_recentValue' <= 1\n")
     else:
-        raise Exception("'basic_recentValue' value of 'anwOpt.json' has incorrect value\n"
-                        "why don't you match the exact type?'"
-                        "it must be (int, float)")
+        raise Exception("'basic_recentValue' value of 'anwOpt.json' is incorrect type\n")
 
     optret['bVariables'] = optret_detail
 
@@ -108,8 +123,6 @@ def sort_element(element_aqlist: list):
         else:
             ordered.append(k)
 
-
-
     def aqfilter(k):
         try:
             v = int(k.attrib["order"])
@@ -131,14 +144,14 @@ def sort_element(element_aqlist: list):
         temp = []
         if items_aq:
             for item in items_aq:
-                aq_lines = item.findall("l") # 겹침(1) -> 함수화 예정
+                aq_lines = item.findall("l")  # 겹침(1) -> 함수화 예정
                 if aq_lines:
                     temp.append("\n".join(line.text for line in aq_lines))
                 else:
                     temp.append(item.text.strip())
         else:
             aq_lines = aq.findall("l")
-            if aq_lines: # 겹침(1)
+            if aq_lines:  # 겹침(1)
                 temp.append("\n".join(line.text for line in aq_lines))
             else:
                 temp.append(aq.text.strip())
@@ -167,14 +180,14 @@ def READ_ANW(file_anw):
     WBR_D = {"wil": None, "recent": None, "recentValue": None}
     COND = {
         # Anw ReaderMain
-        "COMP_IGNORE_SPACE": None, # ignoring space, blank like '\t' won't be replaced
-        "COMP_IGNORE_CASE": None,   # ignoring case, replace upper to lower
-        "ANSWER_WITHOUT_ORDER": None, # when answering quest, order don't interrupt you
-        "COMP_NOT": None,             # ignoring sequence matcher(compare) method
-        "RESULT_DISPLAY_QUEST": None, # not displaying Quest
-        "COMP_IGNORE_LAST_PERIOD": None, # ignoring the last period
+        "COMP_IGNORE_SPACE": None,  # ignoring space, blank like '\t' won't be replaced
+        "COMP_IGNORE_CASE": None,  # ignoring case, replace upper to lower
+        "ANSWER_WITHOUT_ORDER": None,  # when answering quest, order don't interrupt you
+        "COMP_NOT": None,  # ignoring sequence matcher(compare) method
+        "RESULT_DISPLAY_QUEST": None,  # not displaying Quest
+        "COMP_IGNORE_LAST_PERIOD": None,  # ignoring the last period
         # support CLI, but main is GUI.
-        "RESULT_MANUAL_POST_CORRECTION": None # post correction at result time GUI main cond
+        "RESULT_MANUAL_POST_CORRECTION": None  # post correction at result time GUI main cond
     }
     ### define variables
     PARSER_DICT_E_MODE = {"default": 1, "choice": 2}  # 2 is not used now
@@ -206,7 +219,6 @@ def READ_ANW(file_anw):
         try:
             cond_json: dict = json.loads(cond_string)
             for k, v in cond_json.items():
-
                 COND[k] = v
 
         except ValueError as e:
@@ -220,8 +232,6 @@ def READ_ANW(file_anw):
 
     else:
         pass
-
-
 
     ### detail attrib
     for k in ["wil", "recent", "recentValue"]:
@@ -292,7 +302,6 @@ def READ_ANW(file_anw):
         except Exception as e:
             raise e
 
-
     ### stage node
     nodes_stage = root.findall("stage")
     for stage in nodes_stage:
@@ -318,8 +327,6 @@ def READ_ANW(file_anw):
 
             if len(answers) < len(questions):
                 questions = questions[0:len(answers)]
-
-
 
             temp_ans = []
             for i in answers:
@@ -350,9 +357,9 @@ def READ_ANW(file_anw):
 
         WBR["stages"][stage_name] = tuple(elements)
 
-
     WBR["cond"] = COND
     return WBR
+
 
 ### deprecated
 def READ_FULL(file_anw, file_opt, cond):
