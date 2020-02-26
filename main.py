@@ -1,7 +1,7 @@
-from tkinter import filedialog, Tk
 import importlib as ilib
-from time import sleep
 from anwFunctions.anwReaders.reader import READ_OPT
+
+# TODO: Exception 만들기
 
 try:
     fo = open(r'anwOpt.json', 'r', encoding='utf-8-sig')
@@ -44,7 +44,9 @@ else :
         raise e
 
 
-runner = oabm.Main()
+runner = oabm.Main(opt)
+runner.init_routine()
+input("type any")
 
 
 

@@ -53,9 +53,9 @@ def READ_OPT(file_opt):
     t = opt["ANW_STANDARD"]
     if isinstance(t, str):
         value = t.replace(" ", "").upper()
-        if value not in ["ANW0.5A", "ANW05A", "ANW.5A", "ANW_0_5A", #0.5a
-                         "ANW0.66A", "ANW066A", "ANW.66A", "ANW_0_66A", #0.66a
-                         "ANW0.77.20.0301", "ANW.77.20.0301", "ANW_77EXP0301" #0.77: 20200301 EXP
+        if value not in ["ANW0.5A", "ANW05A", "ANW.5A", "ANW_0_5A",  # 0.5a
+                         "ANW0.66A", "ANW066A", "ANW.66A", "ANW_0_66A",  # 0.66a
+                         "ANW0.77.20.0301", "ANW.77.20.0301", "ANW_77EXP0301"  # 0.77: 20200301 EXP
                          ]:
             raise Exception("'ANW_STANDARD' value of 'anwOpt.json' has incorrect string\n")
         optret["anw_standard"] = value
@@ -162,7 +162,7 @@ def sort_element(element_aqlist: list):
 def READ_ANW(file_anw):
     """
     :param file_anw: anw file
-    :return: WBR that contains
+    :return WBR that contains
         -name
         -detail_infile
         -description
@@ -172,8 +172,6 @@ def READ_ANW(file_anw):
             -
             ...
     """
-
-    ### COMP_
 
     ### set WBR(Will Be Returned)
     WBR = {"name": None, "detail_infile": None, "cond": None, "description": None, "stages": {}}  # WillBeReturned
@@ -267,12 +265,7 @@ def READ_ANW(file_anw):
         else:
             raise ValueError("'wil' value of '{}' has incorrect value".format(WBR["name"]))
 
-    # Will be Deprecated Just WBR[D-if] = WBR_D
-    # Because for looping after this process
-    if all(map(lambda k: True if k is None else False, WBR_D.values())):
-        WBR["detail_infile"] = None
-    else:
-        WBR["detail_infile"] = WBR_D
+    WBR["detail_infile"] = WBR_D
 
     ### description node
     node_desc = root.find("description")
