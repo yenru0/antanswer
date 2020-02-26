@@ -1,7 +1,7 @@
 ﻿{
   "version"          : "0.55",
   "ANW_STANDARD"     : "ANW0.5a",
-  "mode"             : "anwCli",
+  "mode"             : "cli",
   "basic_wil"        : 10,
   "basic_recent"     : 10,
   "basic_recentValue": 0.9

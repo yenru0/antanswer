@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding= "UTF-8" ?>
 <anw wil="30" recentValue="0.8">
+    <cond>
+    {
+        "COMP_NOT": true
+
+    }
+    </cond>
     <description>
         <l>The World Wonderful Antanswer File Test File</l>
         <l>It is the nice great.</l>
@@ -18,7 +24,8 @@
 
             </answer>
             <question order="1">
-                antanswer 제작자의 본명은?
+                <item>antanswer 제작자의 본명은?</item>
+                <item>antanswer 제작자는?</item>
             </question>
             <question order="2">
                 <item>
@@ -60,7 +67,16 @@
     </stage>
     <stage name="test">
         <element>
-
+            <answer>
+                주하진
+            </answer>
+            <question>
+                <item>
+                이 것은 주하진인 것은?</item>
+                <item>
+                주하진!
+                </item>
+            </question>
         </element>
     </stage>
 </anw>
