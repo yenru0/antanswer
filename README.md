@@ -42,3 +42,18 @@ Antanswer Python은 높은 자유도를 가지게됩니다.
 
 ## anw 파일 구조
 사실상 xml 파일인 anw 파일 구조는 간단합니다.-->
+
+## 기본 condition
+
+```python
+cond_default = {
+            "COMP_IGNORE_SPACE": True,  # ignoring space, blank like '\t' won't be replaced
+            "COMP_IGNORE_CASE": True,  # ignoring case, replace upper to lower
+            "ANSWER_WITHOUT_ORDER": True,  # when answering quest, order don't interrupt you
+            "COMP_NOT": True,  # ignoring sequence matcher(compare) method # in now deprecated sorry
+            "RESULT_DISPLAY_QUEST": True,  # displaying Quest
+            "COMP_IGNORE_LAST_PERIOD": True,  # ignoring the last period
+            # support CLI, but main is GUI.
+            "RESULT_MANUAL_POST_CORRECTION": True  # post correction at result time GUI main cond
+        }  # default preferences
+# ```
