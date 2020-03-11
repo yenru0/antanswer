@@ -3,19 +3,77 @@ import json
 from anwFunctions.anwExceptions import *
 from lxml import etree
 from os.path import basename
-from logging import debug, warning, error, log, info
 
 """
 INFORMATION OF VERSION
 """
-AFD_VERSION = "AFD_1h"  # Antanswer Format Document
-ANW_VERSION = "AMW_0_9a"  # Antanswer
+
+ANW_VERSION = "AMW0.9"  # Antanswer
 
 """
 CONSTANT-STRING MAPS/DICTS
 """
 OPT_DICT_MODE_MAIN = {1: "AnwCli", 2: "AnwGui", -1: "debug"}
 
+PARSER_DICT_E_MODE = {"default": 1, "choice": 2}
+PARSER_LIST_COND_BOOL_STRING_TRUE = ["true", "yes"]
+PARSER_LIST_COND_BOOL_STRING_FALSE = ["false", "no"]
+
+"""
+PATTERNS
+"""
+
+pattern_ignore_sharp = re.compile(r"\\#")
+SSHARP = "%§%SHP%§%"
+
+line_comment = r"###.*"
+block_comment = "/##/(.|[\n])*/##/"
+
+
+pattern_line_comment = re.compile(line_comment)
+pattern_block_comment = re.compile(block_comment)
+
+
+def_dvar = r"(?:\n|^)##\$([ \t]*\{[^{}]*\}|[ \t]*[^{}\n]*)"
+pattern_def_dvar = re.compile(def_dvar)
+sep_def_dvar = ";"
+
+def_stage = r"(?:\n|^)##\@[ \t]*(.*)"
+def_stage_without_group = r"(?:\n|^)##\@[ \t]*.*"
+pattern_def_stage = re.compile(def_stage)
+pattern_def_stage_without_group = re.compile(def_stage_without_group)
+
+pattern_ignore_L1 = re.compile(r"\\:")
+pattern_ignore_L2 = re.compile(r"\\\|")
+pattern_ignore_L3 = re.compile(r"\\;")
+
+pattern_ignore_bracket_left = re.compile(r"\\\{")
+pattern_ignore_bracket_right = re.compile(r"\\\}")
+
+SL3 = "%§%SL3%§%"
+SL2 = "%§%SL2%§%"
+SL1 = "%§%SL1%§%"
+
+LBR = "%§%LBR%§%"
+RBR = "%§%LBR%§%"
+
+# ind type = "&§%ind%§&"
+
+seps_L3 = r":|;" + "{}"
+seps_L2 = r":|" + "{}"
+seps_L1 = r":" + "{}"
+
+iobject_L3 = r"[ \t]*\{[^%s]*\}[ \t]*|[^%s\n]+" % (seps_L3, seps_L3)
+iobject_L2 = r"[ \t]*\{[^%s]*\}[ \t]*|[^%s\n]+" % (seps_L2, seps_L2)
+iobject_L1 = r"[ \t]*\{[^%s]*\}[ \t]*|[^%s\n]+" % (seps_L1, seps_L1)
+
+pattern_iobject_L3 = re.compile(iobject_L3)
+pattern_iobject_L2 = re.compile(iobject_L2)
+pattern_iobject_L1 = re.compile(iobject_L1)
+
+token_index = []
+
+ind = -1
 
 def READ_OPT(file_opt):
     """
@@ -50,13 +108,10 @@ def READ_OPT(file_opt):
     optret['mainMode'] = value
 
     ### anw_standard
-    t = opt["ANW_STANDARD"]
+    t = opt["anw_standard"]
     if isinstance(t, str):
         value = t.replace(" ", "").upper()
-        if value not in ["ANW0.5A", "ANW05A", "ANW.5A", "ANW_0_5A",  # 0.5a
-                         "ANW0.66A", "ANW066A", "ANW.66A", "ANW_0_66A",  # 0.66a
-                         "ANW0.77.20.0301", "ANW.77.20.0301", "ANW_77EXP0301"  # 0.77: 20200301 EXP
-                         ]:
+        if value not in ["ANW0.9"]:
             raise Exception("'ANW_STANDARD' value of 'anwOpt.json' has incorrect string\n")
         optret["anw_standard"] = value
     else:
@@ -106,77 +161,158 @@ def READ_OPT(file_opt):
     ### return
     return optret
 
+def except_comment(string):
+    string = pattern_ignore_sharp.sub(SSHARP, string)
 
-def sort_element(element_aqlist: list):
-    """
-    :param
-    """
-    ordered = list()
-    non_ordered = list()
-    for k in element_aqlist:
-        try:
-            k.attrib["order"]
-        except KeyError:
-            non_ordered.append(k)
-        except Exception:
-            raise Exception("why?")
+    string = pattern_block_comment.sub("", string)
+    string = pattern_line_comment.sub("", string)
+
+    string = string.replace(SSHARP, "#")
+    return string
+
+
+def define_default_variable(string):  # cond & detail & etc..
+    t = pattern_def_dvar.search(string)
+    temp1 = {}
+    while t:
+        string = string[:t.start()] + string[t.end():]
+        temp_matched = t.group(1)
+        temp_matched = re.sub(r"{((?:.|[\n])*)}", lambda m: m.group(1), temp_matched)
+        temp_seped = temp_matched.split(";")
+        for i in temp_seped:
+            if not i.strip():
+                continue
+            temp_seped_kv = i.split("=")
+            if len(temp_seped_kv) != 2:
+                raise Exception
+            temp1[temp_seped_kv[0].strip()] = temp_seped_kv[1].strip()
+        t = pattern_def_dvar.search(string)
+    return string, temp1
+
+
+def define_variable(string):
+    return string, {}
+
+
+def define_stage(string):
+    seped_by_stage = pattern_def_stage_without_group.split(string)
+    t = pattern_def_stage.findall(string)
+    temp1 = {}
+
+    temp1["main"] = seped_by_stage[0].strip()
+
+    if len(seped_by_stage) == 1:
+        return temp1
+
+    for i, st in enumerate(seped_by_stage[1:]):
+        if not st.strip():
+            continue
         else:
-            ordered.append(k)
-
-    def aqfilter(k):
-        try:
-            v = int(k.attrib["order"])
-            if -2147483648 <= v <= 2147483647:
-                return v
+            if t[i].strip() in temp1:
+                temp1[t[i].strip()] += st.strip()
             else:
-                raise ValueError("order value can't greater than 2147483647")
+                temp1[t[i].strip()] = st.strip()
+    return temp1
 
-        except ValueError as e:
-            raise e
-        except Exception as e:
-            raise e
 
-    prc_element_aqlist = sorted(ordered, key=aqfilter) + non_ordered
-    ret_aqlist = []
-    for aq in prc_element_aqlist:
+def repl(m):
+    global ind
+    ind += 1
+    token_index.append(m.group())
+    return f"&§%{ind}%§&"
 
-        items_aq = aq.findall("item")
-        temp = []
-        if items_aq:
-            for item in items_aq:
-                aq_lines = item.findall("l")  # 겹침(1) -> 함수화 예정
-                if aq_lines:
-                    temp.append("\n".join(line.text for line in aq_lines))
-                else:
-                    temp.append(item.text.strip())
-        else:
-            aq_lines = aq.findall("l")
-            if aq_lines:  # 겹침(1)
-                temp.append("\n".join(line.text for line in aq_lines))
+
+def derepl(m):
+    return token_index[int(m.group(1))]
+
+
+def sep_element(string):
+    global token_index
+    global ind
+    token_index = []
+    ind = -1
+    string = pattern_ignore_L1.sub(SL1, string)
+    string = pattern_ignore_L2.sub(SL2, string)
+    string = pattern_ignore_L3.sub(SL3, string)
+
+    string = pattern_ignore_bracket_left.sub(LBR, string)
+    string = pattern_ignore_bracket_right.sub(RBR, string)
+
+    string = pattern_iobject_L3.sub(repl, string)
+
+    string = pattern_iobject_L2.sub(repl, string)
+
+    string = pattern_iobject_L1.sub(repl, string)
+
+    seped = string.split("\n")
+
+    temp_seped_E = []
+
+    temp_seped_L1 = []
+    for i in seped:
+
+        temp_seped_L1 = i.split(":")
+        if len(temp_seped_L1) < 2:
+            temp_seped_L1 = temp_seped_L1[0]
+            for i in range(3):
+                temp_seped_L1 = re.sub("&§%([0-9]+)%§&", derepl, temp_seped_L1)
+
+            if temp_seped_L1.strip():
+
+                raise Exception("unrecognized element")
             else:
-                temp.append(aq.text.strip())
-        ret_aqlist.append(temp)
-    return tuple(ret_aqlist)
+                continue
+        temp1 = []
+        for j in temp_seped_L1:
+            if not re.fullmatch("&§%([0-9]+)%§&", j):
+                raise Exception("ParsingError L1", j)
+            j = re.sub("&§%([0-9]+)%§&", derepl, j)
+
+            j = re.sub(r"\{(.*)\}", lambda m: m.group(1), j)
+
+            temp_seped_L2 = j.split("|")
+
+            temp2 = []
+            for k in temp_seped_L2:
+                if not re.fullmatch("&§%([0-9]+)%§&", k):
+                    raise Exception("ParsingError L2")
+                k = re.sub("&§%([0-9]+)%§&", derepl, k)
+                k = re.sub(r"{(.*)}", lambda m: m.group(1), k)
+                temp_seped_L3 = k.split(";")
+
+                temp3 = []
+                for l in temp_seped_L3:
+                    l = re.sub("&§%([0-9]+)%§&", derepl, l)
+                    l = l.strip()
+                    l = re.sub(r"{((?:.|[\n])*)}", lambda m: m.group(1), l)
+
+                    l = l.replace(SL1, ":")
+                    l = l.replace(SL2, "|")
+                    l = l.replace(SL3, ";")
+
+                    l = l.replace(LBR, "{")
+                    l = l.replace(RBR, "}")
+
+                    temp3.append(l)
+                temp2.append(temp3)
+            temp1.append(temp2)
+        temp1.insert(0, 1)
+        temp_seped_E.append(temp1)
+
+    return temp_seped_E
 
 
 def READ_ANW(file_anw):
     """
-    :param file_anw: anw file
-    :return WBR that contains
-        -name
-        -detail_infile
-        -description
-        -stages
-            -main
-            -
-            -
-            ...
-    """
 
-    ### set WBR(Will Be Returned)
-    WBR = {"name": None, "detail_infile": None, "cond": None, "description": None, "stages": {}}  # WillBeReturned
+    :param f: anw file
+    :return: WBR that
+    """
+    WBR = {"name": None, "detail_infile": None, "cond": None, "description": None, "stages": {}}
     WBR_D = {"wil": None, "recent": None, "recentValue": None}
-    COND = {
+
+
+    COND = { # string: bool
         # Anw ReaderMain
         "COMP_IGNORE_SPACE": None,  # ignoring space, blank like '\t' won't be replaced
         "COMP_IGNORE_CASE": None,  # ignoring case, replace upper to lower
@@ -187,59 +323,38 @@ def READ_ANW(file_anw):
         # support CLI, but main is GUI.
         "RESULT_MANUAL_POST_CORRECTION": None  # post correction at result time GUI main cond
     }
-    ### define variables
-    PARSER_DICT_E_MODE = {"default": 1, "choice": 2}  # 2 is not used now
 
-    tree = etree.parse(file_anw)
-    root = tree.getroot()
+    VARS = {}
 
-    ### name
-    try:
-        if "name" in root.attrib:
-            WBR["name"] = root.attrib["name"]
-        else:
-            WBR["name"] = basename(file_anw.name)
-    except AttributeError as e:
-        print("it has something wrong name. are you test-ing?\n"
-              "i assign 'test.test.test' to your file.\n")
-        WBR["name"] = "test.test.test"
-    except Exception as e:
-        raise e
 
-    ### tag
-    if root.tag != "anw":
-        raise Exception("root is not found in anw file\n"
-                        "root tag must be 'anw'!\n")
+    string = file_anw.read()
+    string = except_comment(string)
+    string, default_variables = define_default_variable(string)
 
-    ### cond attrib
-    if "cond" in root.attrib:  # not require
-        cond_string: str = root.attrib["cond"]
-        try:
-            cond_json: dict = json.loads(cond_string)
-            for k, v in cond_json.items():
-                COND[k] = v
+    for k, v in default_variables.items():
+        if k in WBR_D:
+            try:
+                WBR_D[k] = float(v)
+            except ValueError as e:
+                raise ValueError("ValueError while define default variables:", k, v)
+        elif k in COND:
+            if k.isdigit():
+                WBR_D[k] = bool(v)
+            else:
+                if v.lower() in PARSER_LIST_COND_BOOL_STRING_TRUE:
+                    COND[k] = True
+                elif v.lower() in PARSER_LIST_COND_BOOL_STRING_FALSE:
+                    COND[k] = False
+                else :
+                    raise ValueError("ValueError while define default variables:", k, v)
+        elif k == "name":
+            WBR["name"] = v
 
-        except ValueError as e:
-            # wrong cond_string
-            raise e
-        except KeyError as e:
-            # wrong key
-            raise e
-        except Exception as e:
-            raise e
+        else :
+            # warn: unrecognized key
+            pass
 
-    else:
-        pass
 
-    ### detail attrib
-    for k in ["wil", "recent", "recentValue"]:
-        try:
-            v = float(root.attrib[k])
-            WBR_D[k] = v
-        except KeyError as e:
-            continue
-        except ValueError as e:
-            raise e
 
     if WBR_D["recentValue"] is None:
         pass
@@ -266,113 +381,63 @@ def READ_ANW(file_anw):
             raise ValueError("'wil' value of '{}' has incorrect value".format(WBR["name"]))
 
     WBR["detail_infile"] = WBR_D
+    WBR["cond"] = COND
+    # not completed
+    string, VARS = define_variable(string)
 
-    ### description node
-    node_desc = root.find("description")
+    stages = define_stage(string)
+    temp = {}
+    for st_n, st_s in stages.items():
+        temp[st_n] = sep_element(st_s)
 
-    if node_desc is None:
-        print("description is not found in '{}'".format(WBR["name"]))
-        desc_text = ""
-    else:
-        desc = node_desc.findall("l")
-        desc_text = '\n'.join(i.text.strip() for i in desc) if desc else node_desc.text.strip()
+    WBR["stages"] = temp
 
-    WBR['description'] = desc_text
-
-    ### cond node
-    node_cond = root.find("cond")
-    if node_cond is None:
-        pass
-    else:
+    if WBR["name"] is None:
         try:
-            cond_json_noded = json.loads(node_cond.text)
-            for k, v in cond_json_noded.items():
-                COND[k] = v
-        except ValueError as e:
-            raise e
-        except KeyError as e:
-            raise e
+            WBR["name"] = basename(file_anw.name)
+        except AttributeError as e:
+            WBR["name"] = "test.test.test"
         except Exception as e:
             raise e
-
-    ### stage node
-    nodes_stage = root.findall("stage")
-    for stage in nodes_stage:
-        try:
-            stage_name = stage.attrib["name"]
-        except KeyError:
-            stage_name = "main"
-
-        if stage_name in WBR["stages"]:
-            raise Exception("multi core stages defined in '{}'".format(WBR["name"]))
-
-        elements = []
-        nodes_element = stage.findall("element")
-        for element in nodes_element:
-            nodes_answer = element.findall("answer")  ### answer_list
-            nodes_question = element.findall("question")  ### question list
-            answers = sort_element(nodes_answer)
-            questions = sort_element(nodes_question)
-            if not (questions and answers):
-                raise Exception("answer, question nodes are not found in element in '{0}' of '{1}'".format(
-                    stage_name, WBR["name"])
-                )
-
-            if len(answers) < len(questions):
-                questions = questions[0:len(answers)]
-
-            temp_ans = []
-            for i in answers:
-                temp = []
-                for ii in i:
-                    ii = ii.strip().replace("\n", " ")
-                    temp.append(ii)
-                temp_ans.append(tuple(temp))
-            answers = tuple(temp_ans)
-
-            try:
-                imsi_element_pref = element.attrib["mode"]
-
-                value = int(imsi_element_pref)
-
-            except KeyError as e:
-                value = 1
-            except ValueError as e1:
-                try:
-                    value = PARSER_DICT_E_MODE[imsi_element_pref.lower()]
-                except KeyError as e2:
-                    raise Exception("element mode is invalid in stage '{0}' of '{1}'".format(
-                        stage_name, WBR["name"])
-                    )
-            finally:
-                element_pref = value
-            elements.append((element_pref, answers, questions))
-
-        WBR["stages"][stage_name] = tuple(elements)
-
-    WBR["cond"] = COND
     return WBR
 
 
-### deprecated
-def READ_FULL(file_anw, file_opt, cond):
-    temp_opt = READ_OPT(file_opt)
-    temp_anw = READ_ANW(file_anw, cond)
-    temp = {"name": None, "description": None, "mainMode": None, "detailMode": None, "detail": None, "stages": None}
-    temp["description"] = temp_anw["description"]
-    temp["name"] = temp_anw["name"]
-    temp["mainMode"] = temp_opt["mainMode"]
-    temp["detailMode"] = temp_opt["detailMode"]
-    temp["stages"] = temp_anw["stages"]
-    optc = temp_opt['detailMode']
-    if optc in (1, 2, 3):
-        temp['detail'] = tuple(temp_opt['bVariables'].values())
-    elif optc in (4, 5, 6):
-        temp['detail'] = tuple(temp_anw['detail'].values())
-    elif optc in (7):
-        temp = tuple((10, 5, 0.8))
-    return temp
 
 
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
+    ### -> variable -> stage -> element 순으로 작업
     import io
+
+    t = READ_ANW(io.StringIO("""
+##$ name = 그레고리우스
+##$ wil = 94; recentValue = 0.94; recent = 95; recentValue = 0.95
+##$ recentValue = 0.4
+##$ {
+COMP_IGNORE_CASE=true;
+COMP_IGNORE_LAST_PERIOD=true;
+COMP_NOT=true;
+RESULT_MANUAL_POST_CORRECTION=true;
+}
+
+### 다섯개
+
+3:4
+
+
+"""))
+
+    t = READ_ANW(io.StringIO("""
+###\## 다섯개의 시작\#
+다섯개의 시작의 준비: 모든것은 준비되었나요? /##/
+시작되었다.
+/##/
+##@ stagne1
+은 : 사
+
+"""))
+
+    import pprint
+
+    pprint.pprint(t)

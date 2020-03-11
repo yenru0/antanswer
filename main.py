@@ -9,9 +9,9 @@ except FileNotFoundError:
     fo = open(r'anwOpt.json', 'w', encoding='utf-8-sig')
     fo.write(
             """{
-  "version"          : "0.55",
-  "ANW_STANDARD"     : "ANW_0_5a",
-  "mode"             : "anwCli",
+  "version"          : "0.77",
+  "anw_standard"     : "ANW0.9",
+  "mode"             : "gui",
   "basic_wil"        : 10,
   "basic_recent"     : 10,
   "basic_recentValue": 0.9
@@ -33,7 +33,7 @@ if opt["mainMode"].lower() == "cli":
 
 elif opt["mainMode"].lower() == "gui":
     try:
-        import components.cli.main as oabm
+        import components.gui.main as oabm
     except Exception as e:
         raise e
 
@@ -45,7 +45,8 @@ else :
 
 
 runner = oabm.Main(opt)
-runner.init_routine()
+runner.show()
+#runner.init_routine()
 input("type any")
 
 
