@@ -347,18 +347,60 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="inputLayout" stretch="4,1">
+         <layout class="QHBoxLayout" name="inputLayout" stretch="3,1">
           <item>
-           <widget class="QLineEdit" name="input">
+           <widget class="QListWidget" name="input">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text">
-             <string>TestInput Is test dragon. Imagine the Text Dragon. This is Very Terrific Land Dragon</string>
+            <property name="autoScroll">
+             <bool>false</bool>
             </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::AllEditTriggers</set>
+            </property>
+            <property name="tabKeyNavigation">
+             <bool>true</bool>
+            </property>
+            <property name="dragEnabled">
+             <bool>true</bool>
+            </property>
+            <property name="dragDropOverwriteMode">
+             <bool>false</bool>
+            </property>
+            <property name="dragDropMode">
+             <enum>QAbstractItemView::DragDrop</enum>
+            </property>
+            <property name="defaultDropAction">
+             <enum>Qt::MoveAction</enum>
+            </property>
+            <item>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="flags">
+              <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="flags">
+              <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="flags">
+              <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+             </property>
+            </item>
            </widget>
           </item>
           <item>
@@ -371,6 +413,12 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="text">
              <string>PushButton</string>
+            </property>
+            <property name="autoDefault">
+             <bool>true</bool>
+            </property>
+            <property name="default">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -486,8 +534,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>30</height>
+             <width>495</width>
+             <height>559</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">

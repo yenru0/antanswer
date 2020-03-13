@@ -1,6 +1,7 @@
 import importlib as ilib
 from anwFunctions.anwReaders.reader import READ_OPT
-
+from PySide2.QtWidgets import QApplication
+import sys
 # TODO: Exception 만들기
 
 try:
@@ -43,10 +44,10 @@ else :
     except Exception as e:
         raise e
 
-
+app = QApplication(sys.argv)
 runner = oabm.Main(opt)
 runner.show()
-#runner.init_routine()
+app.exec_()
 input("type any")
 
 
