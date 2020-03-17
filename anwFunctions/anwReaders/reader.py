@@ -121,7 +121,6 @@ def READ_OPT(file_opt):
     t = opt["version"]
     if isinstance(t, str):
         value = t.replace(" ", "").upper()
-        # TODO: will be added version check system
         optret["version"] = value
     else:
         raise Exception("'version' value of 'anwOpt.json' is incorrect type\n")
@@ -226,7 +225,7 @@ def derepl(m):
     return token_index[int(m.group(1))]
 
 
-def sep_element(string):
+def sep_element(string, stage_name, file_name):
     global token_index
     global ind
     token_index = []
@@ -249,6 +248,7 @@ def sep_element(string):
     temp_seped_E = []
 
     temp_seped_L1 = []
+    ci = 0
     for i in seped:
 
         temp_seped_L1 = i.split(":")
@@ -262,6 +262,7 @@ def sep_element(string):
                 raise Exception("unrecognized element")
             else:
                 continue
+
         temp1 = []
         for j in temp_seped_L1:
             if not re.fullmatch("&§%([0-9]+)%§&", j):
@@ -297,7 +298,9 @@ def sep_element(string):
                 temp2.append(temp3)
             temp1.append(temp2)
         temp1.insert(0, 1)
+        temp1.insert(3, ci)
         temp_seped_E.append(temp1)
+        ci += 1
 
     return temp_seped_E
 
@@ -385,13 +388,6 @@ def READ_ANW(file_anw):
     # not completed
     string, VARS = define_variable(string)
 
-    stages = define_stage(string)
-    temp = {}
-    for st_n, st_s in stages.items():
-        temp[st_n] = sep_element(st_s)
-
-    WBR["stages"] = temp
-
     if WBR["name"] is None:
         try:
             WBR["name"] = basename(file_anw.name)
@@ -399,9 +395,15 @@ def READ_ANW(file_anw):
             WBR["name"] = "test.test.test"
         except Exception as e:
             raise e
+
+    stages = define_stage(string)
+    temp = {}
+    for st_n, st_s in stages.items():
+        temp[st_n] = sep_element(st_s, st_n, WBR["name"])
+
+    WBR["stages"] = temp
+
     return WBR
-
-
 
 
 

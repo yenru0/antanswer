@@ -4,6 +4,9 @@ from PySide2.QtWidgets import QApplication
 import sys
 # TODO: Exception 만들기
 
+__version__ = "0.77"
+
+
 try:
     fo = open(r'anwOpt.json', 'r', encoding='utf-8-sig')
 except FileNotFoundError:
@@ -26,23 +29,14 @@ finally:
     except Exception as e:
         raise e
 
-if opt["mainMode"].lower() == "cli":
-    try:
-        import components.cli.main as oabm
-    except Exception as e:
-        raise e
+if __version__ != opt["version"]:
+    raise Exception("version incorrect")
 
-elif opt["mainMode"].lower() == "gui":
-    try:
-        import components.gui.main as oabm
-    except Exception as e:
-        raise e
 
-else :
-    try:
-        oabm = ilib.import_module("components.{0}.main".format(opt["mainMode"].lower()))
-    except Exception as e:
-        raise e
+try:
+    import components.gui.main as oabm
+except Exception as e:
+    raise e
 
 app = QApplication(sys.argv)
 runner = oabm.Main(opt)

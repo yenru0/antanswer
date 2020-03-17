@@ -17,9 +17,8 @@ from anwFunctions.anwReaders.reader import READ_ANW
 
 
 class Main(QMainWindow):
-    ok = Signal()
 
-    def __init__(self, opt, debug=0, parent=None):
+    def __init__(self, opt, parent=None):
         QMainWindow.__init__(self, parent)
 
         ### opt
@@ -40,6 +39,7 @@ class Main(QMainWindow):
         self.cond_used = {}
 
         self.result = []
+        self.correct = {}
         self.samples = None
         self.count = 0
         self.score = 0
@@ -47,7 +47,8 @@ class Main(QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ui.pages.setCurrentIndex(debug)
+        self.ui.pages.setCurrentIndex(0)
+
         ### menubar: action
         self.ui.actionexit.triggered.connect(self.go_exit)
         self.ui.actionreturn_to_manimenu.triggered.connect(self.go_enter)
@@ -56,16 +57,15 @@ class Main(QMainWindow):
         self.ui.titleBtn_run.clicked.connect(self.go_setting)
         self.ui.titleBtn_option.clicked.connect(self.go_option)
         self.ui.titleBtn_exit.clicked.connect(self.go_exit)
-
+        self.ui.down_version.setText("version: {}".format( opt["version"]))
         ### setting
 
         ### setting:list_file & btn_addfile
         self.ui.setting_btn_addfile.clicked.connect(self.add_filetemp)
 
-        self.temp_setting_list_file_btns_delete = list()
-        self.temp_setting_list_file_checkboxes_select = list()
 
-        self.temp_selected_files = list()
+
+        self.temp_selected_files = dict()
 
         self.model_file = QStandardItemModel(None)
         self.model_file.setColumnCount(4)
@@ -79,6 +79,7 @@ class Main(QMainWindow):
         self.model_stage.setColumnCount(3)
         self.model_stage.setHorizontalHeaderLabels(("name", "stage", "check"))
         self.ui.setting_stage_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
         ### setting:btn_real_run & btn_real_gomenu
         self.ui.setting_btn_real_run.clicked.connect(self.go_run)
         self.ui.setting_btn_real_gomenu.clicked.connect(self.go_enter)
@@ -103,6 +104,8 @@ class Main(QMainWindow):
         # self.ui.resultant_btn_again.clicked.connect()
         self.ui.resultant_btn_setting.clicked.connect(self.go_setting)
         self.ui.resultant_btn_menu.clicked.connect(self.go_enter)
+        self.ui.resultant_btn_again.clicked.connect(self.go_run)
+
 
     def go_setting(self):
         self.ui.pages.setCurrentIndex(1)
@@ -178,11 +181,16 @@ class Main(QMainWindow):
                     tepp.exec_()
                     break
             else:
-                self.temp_selected_files.append([i, wbr["name"], False, wbr])
+                self.temp_selected_files[wbr["name"]] = ([i, False, wbr])
 
         self.list_file_update()
 
     def list_file_update(self):
+        """
+        list file update with
+        :return:
+        """
+
         self.model_file = QStandardItemModel(None)
         self.model_file.setColumnCount(3)
         self.model_file.setHorizontalHeaderLabels(("name", "use", "delete"))
@@ -190,65 +198,60 @@ class Main(QMainWindow):
         self.temp_setting_list_file_btns_delete = []
         self.temp_setting_list_file_checkboxes_select = []
 
-        for i, sf in enumerate(self.temp_selected_files):
+        for i, (k, sf) in enumerate(self.temp_selected_files.items()):
             temp_item_name = QStandardItem()
-            temp_item_name.setData(sf[1], Qt.DisplayRole)
+            temp_item_name.setData(k, Qt.DisplayRole)
             self.model_file.appendRow(temp_item_name)
             self.ui.setting_list_file.setModel(self.model_file)
 
-            self.temp_setting_list_file_btns_delete.append(QPushButton(str(i), self.ui.setting_list_file))
-            self.temp_setting_list_file_btns_delete[i].setObjectName(
-                "temp_setting_list_file_btn_delete_{}".format(str(i))
-            )
-            self.temp_setting_list_file_btns_delete[i].clicked.connect(lambda ch=False, row=i: self.list_file_delete_element(row))
+            temp_setting_list_file_btn = QPushButton(k, self.ui.setting_list_file)
+            temp_setting_list_file_btn.clicked.connect(lambda ch=False, name=k: self.list_file_delete_element(name))
 
-            self.temp_setting_list_file_checkboxes_select.append(QCheckBox("select" + str(i), self.ui.setting_list_file))
-            self.temp_setting_list_file_checkboxes_select[i].setObjectName(
-                "temp_setting_list_file_checkbox_select_{}".format(str(i))
-            )
-            self.temp_setting_list_file_checkboxes_select[i].setChecked(sf[2])
-            self.temp_setting_list_file_checkboxes_select[i].clicked[bool].connect(partial(self.list_file_update_select, row=i))
-            self.ui.setting_list_file.setIndexWidget(self.model_file.index(i, 2), self.temp_setting_list_file_btns_delete[i])
-            self.ui.setting_list_file.setIndexWidget(self.model_file.index(i, 1), self.temp_setting_list_file_checkboxes_select[i])
+            temp_setting_list_file_checkbox = QCheckBox("select" + k, self.ui.setting_list_file)
+
+            temp_setting_list_file_checkbox.setChecked(sf[1])
+            temp_setting_list_file_checkbox.clicked[bool].connect(partial(self.list_file_update_select, name=k))
+            self.ui.setting_list_file.setIndexWidget(self.model_file.index(i, 2), temp_setting_list_file_btn)
+            self.ui.setting_list_file.setIndexWidget(self.model_file.index(i, 1), temp_setting_list_file_checkbox)
 
         self.ui.setting_list_file.setModel(self.model_file)
 
-    def list_file_delete_element(self, row):
-        t_name = self.temp_selected_files[row][1]
-        del self.temp_selected_files[row]
+    def list_file_delete_element(self, name):
+        del self.temp_selected_files[name]
 
-        if t_name in self.temp_selected_stage:
-            del self.temp_selected_stage[t_name]
+        if name in self.temp_selected_stage:
+            del self.temp_selected_stage[name]
 
         self.stage_table_update()
         self.list_file_update()
 
-    def list_file_update_select(self, enable, row=0):
+    def list_file_update_select(self, enable, name):
         """
         update list_file when checking checkbox
         :param enable: is checkbox enable?
-        :param row: row index
+        :param name: name of anw
         :return: void
         """
         if enable:
-            for i in range(len(self.temp_selected_files)):
-                self.temp_selected_files[i][2] = False
-                if self.temp_selected_files[i][1] in self.temp_selected_stage:
-                    del self.temp_selected_stage[self.temp_selected_files[i][1]]
+            ### 임시용 // 추후 다중 merge 시 갈아 엎어야됨
+            for k in self.temp_selected_files:
+                self.temp_selected_files[k][1] = False
+                if k in self.temp_selected_stage:
+                    del self.temp_selected_stage[k]
 
-            self.temp_selected_stage[self.temp_selected_files[row][1]] = {}
+            self.temp_selected_stage[name] = {}
 
-            for st in self.temp_selected_files[row][3]["stages"]:
-                self.temp_selected_stage[self.temp_selected_files[row][1]][st] = True
+            for st in self.temp_selected_files[name][2]["stages"]:
+                self.temp_selected_stage[name][st] = True
 
             self.stage_table_update()
 
-            self.temp_selected_files[row][2] = enable
+            self.temp_selected_files[name][1] = enable
         else:
-            del self.temp_selected_stage[self.temp_selected_files[row][1]]
+            del self.temp_selected_stage[name]
             self.stage_table_update()
 
-            self.temp_selected_files[row][2] = enable
+            self.temp_selected_files[name][1] = enable
         self.list_file_update()
 
     def stage_table_update(self):
@@ -281,23 +284,13 @@ class Main(QMainWindow):
             self.temp_selected_stage[name][stage] = enable
 
     ### routine: do
-    def make_aqs(self):
-        self.aqs = []
 
-        for n, stdict in self.temp_selected_stage.items():
-
-            for st, v in stdict.items():
-                if v:
-                    for aq in self.tanw["stages"][st]:
-                        self.aqs.append((aq, st, n))
 
     def init_routine(self):
         # temp
         for n, stdict in self.temp_selected_stage.items():
-            for dv in self.temp_selected_files:
-                if dv[1] == n:
-                    self.tanw = dv[3]
-                    break
+            self.tanw = self.temp_selected_files[n][2]
+
 
         self.make_aqs()
         self.cond_used = {}
@@ -310,6 +303,7 @@ class Main(QMainWindow):
 
         self.samples = self.sampling()
         self.result = []
+        self.correct = {}
         self.score = 0
         self.count = 0
 
@@ -318,64 +312,25 @@ class Main(QMainWindow):
 
         self.next_routine(False, True)
 
-    def sampling(self):
-        """
-        get correct wil & recent with checking recent & recentValue
-        then, sample answer-question with recent & recentValue
-        :return:
-        """
-        history = []
-        # get correct wil & recent
-        for k, v in self.tanw["detail_infile"].items():  # priority: recentValue > recent
-            if v is None:
-                if k == "recentValue":
-                    self.detail[1] = int(self.bVariables["bRecentValue"] * len(self.aqs))
-                elif k == "wil":
-                    self.detail[0] = self.bVariables["bWil"]
-                elif k == "recent":
-                    if self.detail[1] is not None:
-                        pass
-                    else:  # recent Check
-                        if self.bVariables["bRecent"] > len(self.aqs):
-                            self.detail[1] = len(self.aqs)
-                        else:
-                            self.detail[1] = self.bVariables["bRecent"]
-                else:
-                    raise Exception("?sampling0r")
-            else:
-                if k == "recentValue":
-                    self.detail[1] = int(v * len(self.aqs))
-                elif k == "wil":
-                    self.detail[0] = v
-                elif k == "recent":
-                    if self.detail[1] is not None:
-                        pass
-                    else:
-                        if v > len(self.aqs):
-                            self.detail[1] = len(self.aqs)
-                        else:
-                            self.detail[1] = v
-                else:
-                    raise Exception("?sampling1r")
 
-        for i in range(self.detail[0]):
-            r = randrange(0, len(self.aqs))
-            while r in history[-self.detail[1]:]:
-                r = randrange(0, len(self.aqs))
-            history.append(r)
-            yield r
 
     def next_routine(self, enable=False, isFirst=False):
+        # process before head
         if not isFirst:
             emode = self.aqs[self.aqi][0][0]
             answers = self.aqs[self.aqi][0][1]
             questions = tuple(choice(i) for i in self.aqs[self.aqi][0][2])
+            elem_ci = self.aqs[self.aqi][0][3]
             scope_stage, scope_name = self.aqs[self.aqi][1], self.aqs[self.aqi][2]
             inputs = [self.ui.input.item(i).text() for i in range(self.ui.input.count())]
-            mrs = self.reward_quest(answers, inputs)
+            mrs, isCorrect = self.reward_quest(answers, inputs)
             self.result.append([(i, mrs[i], inputs[i]) for i in range(len(inputs))])
-            self.result[-1].insert(0, questions)
-            self.result[-1].insert(1, answers)
+            self.result[-1].insert(0, questions) # 그리 좋지 않은 모습이다.
+            self.result[-1].insert(1, answers)   # 그리 좋지 않은 모습이다.
+            self.result[-1].insert(2, elem_ci)
+            self.correct[self.count] = (isCorrect, mrs, scope_stage, scope_name, elem_ci)
+            if isCorrect:
+                self.score += 1
             self.count += 1
 
         # init
@@ -424,7 +379,7 @@ class Main(QMainWindow):
         :return mrs: 0..1 value list about each
         """
         ans = list(ans)
-        # TODO: more simply
+        # TODO: more simply someday
         if self.cond_used["COMP_IGNORE_SPACE"] is True:
 
             for i in range(len(ans)):
@@ -474,15 +429,14 @@ class Main(QMainWindow):
 
         if self.cond_used["COMP_NOT"] is False:
             if min(mrs) > 0.92:
-                self.score += 1
+                return mrs, True
             else:
-                pass
+                return mrs, False
         else:
             if all(mrs):
-                self.score += 1
+                return mrs, True
             else:
-                pass
-        return mrs
+                return mrs, False
 
     def lcptd_set_file(self, names):
         self.ui.lcptd_file.setText(";".join(names))
@@ -521,9 +475,11 @@ class Main(QMainWindow):
         self.ui.di_lcd_rate.display(0)
 
 
-    def resultant_set(self):
 
-        if self.cond_used["RESULT_MANUAL_POST_CORRECTION"]:
+
+    def resultant_set(self):
+        colcount = 3
+        if self.cond_used["RESULT_DISPLAY_QUEST"]:
             self.model_resultant.setColumnCount(4)
         else:
             self.model_resultant.setColumnCount(3)
@@ -539,8 +495,8 @@ class Main(QMainWindow):
             temp_list2.setMinimumWidth(400)
             temp_list3.setMinimumHeight(100)
             temp_list3.setMinimumWidth(400)
-            for rsts in self.result[i][2:]:
-                temp_list1.addItem(str(rsts[1]) + "|" + rsts[2])
+            for rsts in self.result[i][3:]:
+                temp_list1.addItem(rsts[2])
 
 
             for qsts in self.result[i][0]:
@@ -549,20 +505,96 @@ class Main(QMainWindow):
             for asts in self.result[i][1]:
                 temp_list2.addItem(str(asts))
 
-
+            temp_manual_checkbox = QCheckBox()
+            temp_manual_checkbox.setChecked(self.correct[i][0])
+            temp_manual_checkbox.clicked[bool].connect(partial(self.resultant_manual_crr,
+                                                               stage_name=self.correct[i][2],
+                                                               file_name= self.correct[i][3],
+                                                               ci=self.correct[i][4]
+                                                               ))
+            if self.cond_used["RESULT_MANUAL_POST_CORRECTION"]:
+                temp_manual_checkbox.setCheckable(True)
+            else:
+                temp_manual_checkbox.setCheckable(False)
 
 
             self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 0), temp_list1)
             self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 1), temp_list2)
-            self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 2), temp_list3)
+            if self.cond_used["RESULT_DISPLAY_QUEST"]:
+                self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 2), temp_list3)
+                self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 3), temp_manual_checkbox)
+            else:
+                self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 2), temp_manual_checkbox)
             #self.ui.resultant_view.setSizeAdjustPolicy(QTableView.AdjustToContents)
 
+    def resultant_manual_crr(self, enable, stage_name, file_name, ci):
+        if enable:
+            self.score += 1
+        else:
+            self.score -= 1
+        self.lcptd_set_property()
     def keyPressEvent(self, e: QKeyEvent):
         if e.key() == Qt.Key_Return:
             print(e.key())
             if self.ui.pages.currentIndex() == 2:
                 self.ui.enter.click()
 
+    def make_aqs(self):
+        self.aqs = []
+
+        for n, stdict in self.temp_selected_stage.items():
+
+            for st, v in stdict.items():
+                if v:
+                    for aq in self.tanw["stages"][st]:
+                        self.aqs.append((aq, st, n))
+
+    def sampling(self):
+        """
+        get correct wil & recent with checking recent & recentValue
+        then, sample answer-question with recent & recentValue
+        :return:
+        """
+        history = []
+        # get correct wil & recent
+        for k, v in self.tanw["detail_infile"].items():  # priority: recentValue > recent
+            if v is None:
+                if k == "recentValue":
+                    self.detail[1] = int(self.bVariables["bRecentValue"] * len(self.aqs))
+                elif k == "wil":
+                    self.detail[0] = self.bVariables["bWil"]
+                elif k == "recent":
+                    if self.detail[1] is not None:
+                        pass
+                    else:  # recent Check
+                        if self.bVariables["bRecent"] > len(self.aqs):
+                            self.detail[1] = len(self.aqs)
+                        else:
+                            self.detail[1] = self.bVariables["bRecent"]
+                else:
+                    raise Exception("?sampling0r")
+            else:
+                if k == "recentValue":
+                    self.detail[1] = int(v * len(self.aqs))
+                elif k == "wil":
+                    self.detail[0] = v
+                elif k == "recent":
+                    if self.detail[1] is not None:
+                        pass
+                    else:
+                        if v > len(self.aqs):
+                            self.detail[1] = len(self.aqs)
+                        else:
+                            self.detail[1] = v
+                else:
+                    raise Exception("?sampling1r")
+
+        for i in range(self.detail[0]):
+            r = randrange(0, len(self.aqs))
+            while r in history[-self.detail[1]:]:
+                r = randrange(0, len(self.aqs))
+            history.append(r)
+            yield r
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
