@@ -182,8 +182,11 @@ def define_stage(string):
     t = pattern_def_stage.findall(string)
     temp1 = {}
 
-    temp1["main"] = seped_by_stage[0].strip()
-
+    ft = seped_by_stage[0].strip()
+    if ft:
+        temp1["main"] = seped_by_stage[0].strip()
+    else:
+        pass
     if len(seped_by_stage) == 1:
         return temp1
 
@@ -410,6 +413,7 @@ RESULT_MANUAL_POST_CORRECTION=true;
 
     t = READ_ANW(io.StringIO("""
 ###\## 다섯개의 시작\#
+##@ 나밍
 다섯개의 시작의 준비: 모든것은 준비되었나요? /##/
 시작되었다.
 /##/
