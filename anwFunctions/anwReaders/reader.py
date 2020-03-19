@@ -1,7 +1,5 @@
-import re
 import json
-from anwFunctions.anwExceptions import *
-from lxml import etree
+import re
 from os.path import basename
 
 """
@@ -29,10 +27,8 @@ SSHARP = "%§%SHP%§%"
 line_comment = r"###.*"
 block_comment = "/##/(.|[\n])*/##/"
 
-
 pattern_line_comment = re.compile(line_comment)
 pattern_block_comment = re.compile(block_comment)
-
 
 def_dvar = r"(?:\n|^)##\$([ \t]*\{[^{}]*\}|[ \t]*[^{}\n]*)"
 pattern_def_dvar = re.compile(def_dvar)
@@ -75,6 +71,7 @@ token_index = []
 
 ind = -1
 
+
 def READ_OPT(file_opt):
     """
     :param file_opt: anwOpt.json stream
@@ -92,7 +89,6 @@ def READ_OPT(file_opt):
     optret_detail = {"bWil": 0, "bRecent": 0, "bRecentValue": 0}
 
     opt = json.load(file_opt)
-
 
     ### anw_standard
     t = opt["anw_standard"]
@@ -146,6 +142,7 @@ def READ_OPT(file_opt):
 
     ### return
     return optret
+
 
 def except_comment(string):
     string = pattern_ignore_sharp.sub(SSHARP, string)
@@ -301,8 +298,7 @@ def READ_ANW(file_anw):
     WBR = {"name": None, "detail_infile": None, "cond": None, "description": None, "stages": {}}
     WBR_D = {"wil": None, "recent": None, "recentValue": None}
 
-
-    COND = { # string: bool
+    COND = {  # string: bool
         # Anw ReaderMain
         "COMP_IGNORE_SPACE": None,  # ignoring space, blank like '\t' won't be replaced
         "COMP_IGNORE_CASE": None,  # ignoring case, replace upper to lower
@@ -315,7 +311,6 @@ def READ_ANW(file_anw):
     }
 
     VARS = {}
-
 
     string = file_anw.read()
     string = except_comment(string)
@@ -335,16 +330,14 @@ def READ_ANW(file_anw):
                     COND[k] = True
                 elif v.lower() in PARSER_LIST_COND_BOOL_STRING_FALSE:
                     COND[k] = False
-                else :
+                else:
                     raise ValueError("ValueError while define default variables:", k, v)
         elif k == "name":
             WBR["name"] = v
 
-        else :
+        else:
             # warn: unrecognized key
             pass
-
-
 
     if WBR_D["recentValue"] is None:
         pass
@@ -391,8 +384,6 @@ def READ_ANW(file_anw):
     WBR["stages"] = temp
 
     return WBR
-
-
 
 
 if __name__ == "__main__":

@@ -1,4 +1,3 @@
-import importlib as ilib
 from anwFunctions.anwReaders.reader import READ_OPT
 from PySide2.QtWidgets import QApplication
 import sys
