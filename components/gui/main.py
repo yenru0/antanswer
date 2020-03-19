@@ -1,19 +1,14 @@
 import sys
-from PySide2.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit, QGridLayout,
-                               QPushButton, QHBoxLayout, QVBoxLayout, QMessageBox, QMainWindow, QFileDialog, QCheckBox,
-                               QAbstractItemView, QErrorMessage, QListWidgetItem, QListWidget, QTableView)
-from PySide2.QtCore import Qt, Signal, QModelIndex, QAbstractItemModel, QAbstractListModel, QSignalMapper, QObject, SIGNAL, SLOT
-
-from PySide2.QtGui import QStandardItem, QStandardItemModel, QKeyEvent
-
 from functools import partial
+from random import randrange
 
-from random import randrange, randint, choice
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QStandardItem, QStandardItemModel, QKeyEvent
+from PySide2.QtWidgets import (QApplication, QPushButton, QMessageBox, QMainWindow, QFileDialog, QCheckBox,
+                               QAbstractItemView, QErrorMessage, QListWidgetItem, QListWidget)
 
-import hashlib
-
-from components.gui.main_ui import Ui_MainWindow
 from anwFunctions.anwReaders.reader import READ_ANW
+from components.gui.main_ui import Ui_MainWindow
 
 
 class Main(QMainWindow):
@@ -23,7 +18,7 @@ class Main(QMainWindow):
 
         ### opt
         self.anw_standard = opt["anw_standard"]
-        self.cond_default = { # string: bool
+        self.cond_default = {  # string: bool
             # Anw ReaderMain
             "COMP_IGNORE_SPACE": True,  # ignoring space, blank like '\t' won't be replaced
             "COMP_IGNORE_CASE": True,  # ignoring case, replace upper to lower
@@ -39,7 +34,7 @@ class Main(QMainWindow):
         self.aqs = None
         self.cond_used = {}
 
-        #self.result = []
+        # self.result = []
         self.correct = {}
         self.samples = None
         self.count = 0
@@ -60,13 +55,11 @@ class Main(QMainWindow):
         self.ui.titleBtn_run.clicked.connect(self.go_setting)
         self.ui.titleBtn_option.clicked.connect(self.go_option)
         self.ui.titleBtn_exit.clicked.connect(self.go_exit)
-        self.ui.down_version.setText("version: {}".format( opt["version"]))
+        self.ui.down_version.setText("version: {}".format(opt["version"]))
         ### setting
 
         ### setting:list_file & btn_addfile
         self.ui.setting_btn_addfile.clicked.connect(self.add_filetemp)
-
-
 
         self.temp_selected_files = dict()
 
@@ -103,12 +96,10 @@ class Main(QMainWindow):
         ### resultant
         self.model_resultant = QStandardItemModel()
 
-
         # self.ui.resultant_btn_again.clicked.connect()
         self.ui.resultant_btn_setting.clicked.connect(self.go_setting)
         self.ui.resultant_btn_menu.clicked.connect(self.go_enter)
         self.ui.resultant_btn_again.clicked.connect(self.go_run)
-
 
     def go_setting(self):
         self.ui.pages.setCurrentIndex(1)
@@ -288,12 +279,10 @@ class Main(QMainWindow):
 
     ### routine: do
 
-
     def init_routine(self):
         # temp
         for n, stdict in self.temp_selected_stage.items():
             self.tanw = self.temp_selected_files[n][2]
-
 
         self.make_aqs()
         self.cond_used = {}
@@ -305,7 +294,7 @@ class Main(QMainWindow):
                 self.cond_used[ck] = v
 
         self.samples = self.sampling()
-        #self.result = []
+        # self.result = []
         self.correct = {}
         self.score = 0
         self.count = 0
@@ -314,8 +303,6 @@ class Main(QMainWindow):
         self.lcptd_set_file(self.temp_selected_stage.keys())
 
         self.next_routine(False, True)
-
-
 
     def next_routine(self, enable=False, isFirst=False):
         # process before head
@@ -329,10 +316,10 @@ class Main(QMainWindow):
             scope_stage, scope_name = self.aqs[self.aqi][1], self.aqs[self.aqi][2]
             inputs = [self.ui.input.item(i).text() for i in range(self.ui.input.count())]
             mrs, isCorrect = self.reward_quest(answers, inputs)
-            #self.result.append([(i, mrs[i], inputs[i]) for i in range(len(inputs))])
-            #self.result[-1].insert(0, questions)
-            #self.result[-1].insert(1, answers)
-            #self.result[-1].insert(2, elem_ci)
+            # self.result.append([(i, mrs[i], inputs[i]) for i in range(len(inputs))])
+            # self.result[-1].insert(0, questions)
+            # self.result[-1].insert(1, answers)
+            # self.result[-1].insert(2, elem_ci)
 
             self.correct[self.count] = (isCorrect, mrs, scope_stage, scope_name, elem_ci, inputs, self.q_si_beforhead)
             if isCorrect:
@@ -488,9 +475,6 @@ class Main(QMainWindow):
         self.ui.di_lcd_wrong.display(0)
         self.ui.di_lcd_rate.display(0)
 
-
-
-
     def resultant_set(self):
         if self.cond_used["RESULT_DISPLAY_QUEST"]:
             self.model_resultant.setColumnCount(4)
@@ -508,7 +492,7 @@ class Main(QMainWindow):
             temp_list2.setMinimumWidth(400)
             temp_list3.setMinimumHeight(100)
             temp_list3.setMinimumWidth(400)
-            #correct (isCorrect, mrs, scope_stage, scope_name, elem_ci, inputs, q_si)
+            # correct (isCorrect, mrs, scope_stage, scope_name, elem_ci, inputs, q_si)
             if self.cond_used["REVERSE_AQ"]:
                 qcol, acol = 1, 2
             else:
@@ -521,21 +505,17 @@ class Main(QMainWindow):
             for j, q_si in enumerate(sts[6]):
                 temp_list3.addItem(self.temp_selected_files[sts[3]][2]["stages"][sts[2]][sts[4]][qcol][j][q_si])
 
-
-
-
             temp_manual_checkbox = QCheckBox()
             temp_manual_checkbox.setChecked(self.correct[i][0])
             temp_manual_checkbox.clicked[bool].connect(partial(self.resultant_manual_crr,
                                                                stage_name=self.correct[i][2],
-                                                               file_name= self.correct[i][3],
+                                                               file_name=self.correct[i][3],
                                                                ci=self.correct[i][4]
                                                                ))
             if self.cond_used["RESULT_MANUAL_POST_CORRECTION"]:
                 temp_manual_checkbox.setCheckable(True)
             else:
                 temp_manual_checkbox.setCheckable(False)
-
 
             self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 0), temp_list1)
             self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 1), temp_list2)
@@ -544,7 +524,7 @@ class Main(QMainWindow):
                 self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 3), temp_manual_checkbox)
             else:
                 self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 2), temp_manual_checkbox)
-            #self.ui.resultant_view.setSizeAdjustPolicy(QTableView.AdjustToContents)
+            # self.ui.resultant_view.setSizeAdjustPolicy(QTableView.AdjustToContents)
 
     def resultant_manual_crr(self, enable, stage_name, file_name, ci):
         if enable:
@@ -552,6 +532,7 @@ class Main(QMainWindow):
         else:
             self.score -= 1
         self.lcptd_set_property()
+
     def keyPressEvent(self, e: QKeyEvent):
         if e.key() == Qt.Key_Return:
             print(e.key())
@@ -614,6 +595,7 @@ class Main(QMainWindow):
                 r = randrange(0, len(self.aqs))
             history.append(r)
             yield r
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
