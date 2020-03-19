@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'main.ui',
 # licensing of 'main.ui' applies.
 #
-# Created: Thu Mar 12 10:43:18 2020
+# Created: Thu Mar 19 15:32:57 2020
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -317,7 +317,7 @@ class Ui_MainWindow(object):
         self.option_scrollarea.setWidgetResizable(True)
         self.option_scrollarea.setObjectName("option_scrollarea")
         self.option_scrollarea_contents = QtWidgets.QWidget()
-        self.option_scrollarea_contents.setGeometry(QtCore.QRect(0, 0, 495, 559))
+        self.option_scrollarea_contents.setGeometry(QtCore.QRect(0, 0, 98, 30))
         self.option_scrollarea_contents.setObjectName("option_scrollarea_contents")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.option_scrollarea_contents)
         self.gridLayout_3.setObjectName("gridLayout_3")
@@ -367,6 +367,10 @@ class Ui_MainWindow(object):
 "\n"
 "#correct_layout {\n"
 "    background-color: rgba(255, 255, 255, 0)\n"
+"}\n"
+"\n"
+"#lcptd_progress{\n"
+"    \n"
 "}")
         self.lcptd.setObjectName("lcptd")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.lcptd)
@@ -530,10 +534,14 @@ class Ui_MainWindow(object):
         self.lcptd_progress.setPalette(palette)
         self.lcptd_progress.setStyleSheet("#lcptd_progress{\n"
 "    \n"
-"    font: 25 bold 11pt \"Malgun Gothic\";\n"
-"}")
-        self.lcptd_progress.setMaximum(1000)
-        self.lcptd_progress.setProperty("value", 111)
+"    font: 25 11pt \"Malgun Gothic\";\n"
+"    border: 1.2px solid black;\n"
+"    border-radius: 4px;\n"
+"    text-align: center;\n"
+"}\n"
+"#lcptd_progress::chunk{background-color: rgb(0, 170, 255)}")
+        self.lcptd_progress.setMaximum(100)
+        self.lcptd_progress.setProperty("value", 10)
         self.lcptd_progress.setTextVisible(True)
         self.lcptd_progress.setObjectName("lcptd_progress")
         self.verticalLayout_2.addWidget(self.lcptd_progress)

@@ -1,7 +1,6 @@
 ﻿{
-  "version"          : "0.77",
-  "anw_standard"     : "ANW0.9",
-  "mode"             : "gui",
+  "version"          : "0.78",
+  "anw_standard"     : "ANW0.91",
   "basic_wil"        : 10,
   "basic_recent"     : 10,
   "basic_recentValue": 0.9

@@ -4,7 +4,7 @@ from PySide2.QtWidgets import QApplication
 import sys
 # TODO: Exception 만들기
 
-__version__ = "0.77"
+__version__ = "0.78"
 
 
 try:
@@ -13,13 +13,13 @@ except FileNotFoundError:
     fo = open(r'anwOpt.json', 'w', encoding='utf-8-sig')
     fo.write(
             """{
-  "version"          : "0.77",
-  "anw_standard"     : "ANW0.9",
-  "mode"             : "gui",
+  "version"          : "0.78",
+  "anw_standard"     : "ANW0.91",
   "basic_wil"        : 10,
   "basic_recent"     : 10,
   "basic_recentValue": 0.9
 }""")
+
 except Exception as e:
     raise e
 finally:
@@ -42,7 +42,6 @@ app = QApplication(sys.argv)
 runner = oabm.Main(opt)
 runner.show()
 app.exec_()
-input("type any")
 
 
 

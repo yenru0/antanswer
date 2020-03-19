@@ -23,27 +23,30 @@ class Main(QMainWindow):
 
         ### opt
         self.anw_standard = opt["anw_standard"]
-        self.cond_default = {
+        self.cond_default = { # string: bool
+            # Anw ReaderMain
             "COMP_IGNORE_SPACE": True,  # ignoring space, blank like '\t' won't be replaced
             "COMP_IGNORE_CASE": True,  # ignoring case, replace upper to lower
             "ANSWER_WITHOUT_ORDER": True,  # when answering quest, order don't interrupt you
-            "COMP_NOT": True,  # ignoring sequence matcher(compare) method # in now deprecated sorry
-            "RESULT_DISPLAY_QUEST": True,  # displaying Quest
+            "COMP_NOT": True,  # ignoring sequence matcher(compare) method
+            "RESULT_DISPLAY_QUEST": True,  # not displaying Quest
             "COMP_IGNORE_LAST_PERIOD": True,  # ignoring the last period
-            # support CLI, but main is GUI.
-            "RESULT_MANUAL_POST_CORRECTION": True  # post correction at result time GUI main cond
-        }  # default preferences
+            "RESULT_MANUAL_POST_CORRECTION": True,  # post correction at result time GUI main cond
+            "REVERSE_AQ": False  # reverse AQ in element
+        }
         self.bVariables = opt["bVariables"]
 
         self.aqs = None
         self.cond_used = {}
 
-        self.result = []
+        #self.result = []
         self.correct = {}
         self.samples = None
         self.count = 0
         self.score = 0
         self.detail = [None, None]
+
+        self.q_si_beforhead = list()
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -302,7 +305,7 @@ class Main(QMainWindow):
                 self.cond_used[ck] = v
 
         self.samples = self.sampling()
-        self.result = []
+        #self.result = []
         self.correct = {}
         self.score = 0
         self.count = 0
@@ -318,17 +321,20 @@ class Main(QMainWindow):
         # process before head
         if not isFirst:
             emode = self.aqs[self.aqi][0][0]
-            answers = self.aqs[self.aqi][0][1]
-            questions = tuple(choice(i) for i in self.aqs[self.aqi][0][2])
+            if self.cond_used["REVERSE_AQ"]:
+                answers = self.aqs[self.aqi][0][2]
+            else:
+                answers = self.aqs[self.aqi][0][1]
             elem_ci = self.aqs[self.aqi][0][3]
             scope_stage, scope_name = self.aqs[self.aqi][1], self.aqs[self.aqi][2]
             inputs = [self.ui.input.item(i).text() for i in range(self.ui.input.count())]
             mrs, isCorrect = self.reward_quest(answers, inputs)
-            self.result.append([(i, mrs[i], inputs[i]) for i in range(len(inputs))])
-            self.result[-1].insert(0, questions) # 그리 좋지 않은 모습이다.
-            self.result[-1].insert(1, answers)   # 그리 좋지 않은 모습이다.
-            self.result[-1].insert(2, elem_ci)
-            self.correct[self.count] = (isCorrect, mrs, scope_stage, scope_name, elem_ci)
+            #self.result.append([(i, mrs[i], inputs[i]) for i in range(len(inputs))])
+            #self.result[-1].insert(0, questions)
+            #self.result[-1].insert(1, answers)
+            #self.result[-1].insert(2, elem_ci)
+
+            self.correct[self.count] = (isCorrect, mrs, scope_stage, scope_name, elem_ci, inputs, self.q_si_beforhead)
             if isCorrect:
                 self.score += 1
             self.count += 1
@@ -342,12 +348,20 @@ class Main(QMainWindow):
         self.lcptd_set_property()
 
         emode = self.aqs[self.aqi][0][0]
-        answers = self.aqs[self.aqi][0][1]
-        questions = tuple(choice(i) for i in self.aqs[self.aqi][0][2])
+        if self.cond_used["REVERSE_AQ"]:
+            answers = self.aqs[self.aqi][0][2]
+            self.q_si_beforhead = [randrange(len(i)) for i in self.aqs[self.aqi][0][1]]
+        else:
+            answers = self.aqs[self.aqi][0][1]
+            self.q_si_beforhead = [randrange(len(i)) for i in self.aqs[self.aqi][0][2]]
         scope_stage, scope_name = self.aqs[self.aqi][1], self.aqs[self.aqi][2]
         t_s = ""
-        for i, s in enumerate(questions):
-            t_s += "(" + str(i) + ")" + s + "\n"
+        if self.cond_used["REVERSE_AQ"]:
+            for i, q in enumerate(self.aqs[self.aqi][0][1]):
+                t_s += "(" + str(i) + ")" + q[self.q_si_beforhead[i]] + "\n"
+        else:
+            for i, q in enumerate(self.aqs[self.aqi][0][2]):
+                t_s += "(" + str(i) + ")" + q[self.q_si_beforhead[i]] + "\n"
         self.queston_update(t_s)
         self.input_reset(len(answers))
 
@@ -478,14 +492,13 @@ class Main(QMainWindow):
 
 
     def resultant_set(self):
-        colcount = 3
         if self.cond_used["RESULT_DISPLAY_QUEST"]:
             self.model_resultant.setColumnCount(4)
         else:
             self.model_resultant.setColumnCount(3)
         self.model_resultant.setRowCount(self.detail[0])
         self.ui.resultant_view.setModel(self.model_resultant)
-        for i in range(self.detail[0]):
+        for i, sts in self.correct.items():
             temp_list1 = QListWidget()
             temp_list2 = QListWidget()
             temp_list3 = QListWidget()
@@ -495,15 +508,21 @@ class Main(QMainWindow):
             temp_list2.setMinimumWidth(400)
             temp_list3.setMinimumHeight(100)
             temp_list3.setMinimumWidth(400)
-            for rsts in self.result[i][3:]:
-                temp_list1.addItem(rsts[2])
+            #correct (isCorrect, mrs, scope_stage, scope_name, elem_ci, inputs, q_si)
+            if self.cond_used["REVERSE_AQ"]:
+                qcol, acol = 1, 2
+            else:
+                qcol, acol = 2, 1
+            # asts and rtst
+            for j, rsts in enumerate(sts[5]):
+                temp_list1.addItem(rsts)
+                temp_list2.addItem(str(self.temp_selected_files[sts[3]][2]["stages"][sts[2]][sts[4]][acol][j]))
+
+            for j, q_si in enumerate(sts[6]):
+                temp_list3.addItem(self.temp_selected_files[sts[3]][2]["stages"][sts[2]][sts[4]][qcol][j][q_si])
 
 
-            for qsts in self.result[i][0]:
-                temp_list3.addItem(qsts)
 
-            for asts in self.result[i][1]:
-                temp_list2.addItem(str(asts))
 
             temp_manual_checkbox = QCheckBox()
             temp_manual_checkbox.setChecked(self.correct[i][0])

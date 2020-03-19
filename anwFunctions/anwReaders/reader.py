@@ -8,7 +8,7 @@ from os.path import basename
 INFORMATION OF VERSION
 """
 
-ANW_VERSION = "AMW0.9"  # Antanswer
+ANW_VERSION = "ANW0.91"  # Antanswer
 
 """
 CONSTANT-STRING MAPS/DICTS
@@ -88,30 +88,17 @@ def READ_OPT(file_opt):
             -bRecent
             -bRecentValue
     """
-    optret = {"mainMode": 0, "anw_standard": None, "version": None, "bVariables": None}
+    optret = {"anw_standard": None, "version": None, "bVariables": None}
     optret_detail = {"bWil": 0, "bRecent": 0, "bRecentValue": 0}
 
     opt = json.load(file_opt)
 
-    ### mode
-    t = opt['mode']
-    if isinstance(t, int):
-        try:
-            value = OPT_DICT_MODE_MAIN[t]
-        except KeyError:
-            return Exception("'mode' value of 'anwOpt.json' has incorrect integer\n")
-    elif isinstance(t, str):
-        value = t
-    else:
-        raise Exception("'mode' value of 'anwOpt.json' is incorrect type\n")
-
-    optret['mainMode'] = value
 
     ### anw_standard
     t = opt["anw_standard"]
     if isinstance(t, str):
         value = t.replace(" ", "").upper()
-        if value not in ["ANW0.9"]:
+        if value not in [ANW_VERSION, "ANW0.9"]:
             raise Exception("'ANW_STANDARD' value of 'anwOpt.json' has incorrect string\n")
         optret["anw_standard"] = value
     else:
@@ -323,8 +310,8 @@ def READ_ANW(file_anw):
         "COMP_NOT": None,  # ignoring sequence matcher(compare) method
         "RESULT_DISPLAY_QUEST": None,  # not displaying Quest
         "COMP_IGNORE_LAST_PERIOD": None,  # ignoring the last period
-        # support CLI, but main is GUI.
-        "RESULT_MANUAL_POST_CORRECTION": None  # post correction at result time GUI main cond
+        "RESULT_MANUAL_POST_CORRECTION": None,  # post correction at result time GUI main cond
+        "REVERSE_AQ": None  # reverse AQ in element
     }
 
     VARS = {}

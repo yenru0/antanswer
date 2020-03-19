@@ -534,8 +534,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>495</width>
-             <height>559</height>
+             <width>98</width>
+             <height>30</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
@@ -616,6 +616,10 @@ p, li { white-space: pre-wrap; }
 
 #correct_layout {
 	background-color: rgba(255, 255, 255, 0)
+}
+
+#lcptd_progress{
+	
 }</string>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1085,14 +1089,18 @@ p, li { white-space: pre-wrap; }
        <property name="styleSheet">
         <string notr="true">#lcptd_progress{
 	
-	font: 25 bold 11pt &quot;Malgun Gothic&quot;;
-}</string>
+	font: 25 11pt &quot;Malgun Gothic&quot;;
+	border: 1.2px solid black;
+	border-radius: 4px;
+	text-align: center;
+}
+#lcptd_progress::chunk{background-color: rgb(0, 170, 255)}</string>
        </property>
        <property name="maximum">
-        <number>1000</number>
+        <number>100</number>
        </property>
        <property name="value">
-        <number>111</number>
+        <number>10</number>
        </property>
        <property name="textVisible">
         <bool>true</bool>
