@@ -78,7 +78,6 @@ def READ_OPT(file_opt):
 
     :return optret: the dictionary that contains
         -mainMode
-        -anw_standard
         -version
         -bVariables
             -bWil
