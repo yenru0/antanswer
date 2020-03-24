@@ -3,7 +3,7 @@ from PySide2.QtWidgets import QApplication
 import sys
 # TODO: Exception 만들기
 
-__version__ = "0.78"
+__version__ = "0.8"
 
 
 try:
@@ -12,7 +12,7 @@ except FileNotFoundError:
     fo = open(r'anwOpt.json', 'w', encoding='utf-8-sig')
     fo.write(
             """{
-  "version"          : "0.78",
+  "version"          : "0.8",
   "anw_standard"     : "ANW0.91",
   "basic_wil"        : 10,
   "basic_recent"     : 10,

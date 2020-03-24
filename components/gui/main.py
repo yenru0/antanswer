@@ -2,13 +2,92 @@ import sys
 from functools import partial
 from random import randrange
 
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QStandardItem, QStandardItemModel, QKeyEvent
-from PySide2.QtWidgets import (QApplication, QPushButton, QMessageBox, QMainWindow, QFileDialog, QCheckBox,
-                               QAbstractItemView, QErrorMessage, QListWidgetItem, QListWidget)
+from PySide2.QtCore import Qt, QObject, QEvent
+from PySide2.QtGui import (QStandardItem, QStandardItemModel, QKeyEvent,
+                           QScrollEvent)
+from PySide2.QtWidgets import (QApplication, QPushButton, QMessageBox,
+                               QMainWindow, QFileDialog, QCheckBox,
+                               QAbstractItemView, QErrorMessage,
+                               QListWidgetItem, QListWidget,
+                               QAbstractScrollArea, QScrollBar, QScrollArea,
+                               QStyle)
 
 from anwFunctions.anwReaders.reader import READ_ANW
 from components.gui.main_ui import Ui_MainWindow
+
+class RHScrollBar(QScrollBar):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setProperty("rsign", "false")
+
+        self.setStyleSheet("""
+QScrollBar[rsign=\"false\"] {
+  background: #f1f1f1;
+	height: 5px;
+}
+QScrollBar[rsign=\"true\"] {
+  background: #f1f1f1;
+	height: 10px;
+}
+
+
+QScrollBar::handle {
+  background: #888;
+}
+
+
+
+QScrollBar::handle:hover {
+	background: #555;
+}
+
+
+        """)
+
+
+    def enterEvent(self, event:QEvent):
+        self.setProperty("rsign", "true")
+        self.setStyleSheet(self.styleSheet())
+    def leaveEvent(self, event:QEvent):
+        self.setProperty("rsign", "false")
+        self.setStyleSheet(self.styleSheet())
+
+class RVScrollBar(QScrollBar):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setProperty("rsign", "false")
+
+        self.setStyleSheet("""
+QScrollBar[rsign=\"false\"] {
+  background: #f1f1f1;
+	width: 5px;
+}
+QScrollBar[rsign=\"true\"] {
+  background: #f1f1f1;
+	width: 10px;
+}
+
+
+QScrollBar::handle {
+  background: #888;
+}
+
+
+QScrollBar::handle:hover {
+	background: #555;
+}
+
+
+        """)
+
+
+    def enterEvent(self, event:QEvent):
+        self.setProperty("rsign", "true")
+        self.setStyleSheet(self.styleSheet())
+    def leaveEvent(self, event:QEvent):
+        self.setProperty("rsign", "false")
+        self.setStyleSheet(self.styleSheet())
+
 
 
 class Main(QMainWindow):
@@ -67,7 +146,8 @@ class Main(QMainWindow):
         self.model_file.setColumnCount(4)
         self.model_file.setHorizontalHeaderLabels(("name", "dir", "use", "delete"))
         self.ui.setting_list_file.setEditTriggers(QAbstractItemView.NoEditTriggers)
-
+        self.ui.setting_list_file.setHorizontalScrollBar(RHScrollBar())
+        self.ui.setting_list_file.setVerticalScrollBar(RVScrollBar())
         ### setting:stage_table
         self.temp_selected_stage = dict()
 
@@ -75,7 +155,8 @@ class Main(QMainWindow):
         self.model_stage.setColumnCount(3)
         self.model_stage.setHorizontalHeaderLabels(("name", "stage", "check"))
         self.ui.setting_stage_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
-
+        self.ui.setting_stage_table.setHorizontalScrollBar(RHScrollBar())
+        self.ui.setting_stage_table.setVerticalScrollBar(RVScrollBar())
         ### setting:btn_real_run & btn_real_gomenu
         self.ui.setting_btn_real_run.clicked.connect(self.go_run)
         self.ui.setting_btn_real_gomenu.clicked.connect(self.go_enter)
@@ -88,6 +169,11 @@ class Main(QMainWindow):
         self.queston_reset()
         self.log_reset()
 
+        self.ui.input.setHorizontalScrollBar(RHScrollBar())
+        self.ui.log.setHorizontalScrollBar(RHScrollBar())
+        self.ui.input.setVerticalScrollBar(RVScrollBar())
+        self.ui.log.setVerticalScrollBar(RVScrollBar())
+
         self.ui.enter.clicked.connect(partial(self.next_routine, isFirst=False))
 
         ### dock
@@ -95,11 +181,13 @@ class Main(QMainWindow):
 
         ### resultant
         self.model_resultant = QStandardItemModel()
-
+        self.ui.resultant_view.setHorizontalScrollBar(RHScrollBar())
+        self.ui.resultant_view.setVerticalScrollBar(RVScrollBar())
         # self.ui.resultant_btn_again.clicked.connect()
         self.ui.resultant_btn_setting.clicked.connect(self.go_setting)
         self.ui.resultant_btn_menu.clicked.connect(self.go_enter)
         self.ui.resultant_btn_again.clicked.connect(self.go_run)
+
 
     def go_setting(self):
         self.ui.pages.setCurrentIndex(1)
@@ -445,35 +533,21 @@ class Main(QMainWindow):
     def lcptd_set_property(self):
         self.ui.lcptd_progress.setValue(self.count)
         self.ui.lcptd_progress.setMaximum(self.detail[0])
-
-        # self.score = exact
-        if len(str(self.count)) + 1 != self.ui.di_lcd_count.digitCount():
-            self.ui.di_lcd_count.setDigitCount(len(str(self.count)) + 1)
-        self.ui.di_lcd_count.display(self.count)
-
-        if len(str(self.score)) + 1 != self.ui.di_lcd_count.digitCount():
-            self.ui.di_lcd_count.setDigitCount(len(str(self.score)) + 1)
-        self.ui.di_lcd_exact.display(self.score)
-
-        if len(str(self.count - self.score)) + 1 != self.ui.di_lcd_count.digitCount():
-            self.ui.di_lcd_wrong.setDigitCount(len(str(self.count - self.score)) + 1)
-        self.ui.di_lcd_wrong.display(self.count - self.score)
-
         if self.count == 0:
-            self.ui.di_lcd_rate.display(0)
+            self.ui.lcptd_rategress.setMaximum(1)
+            self.ui.lcptd_cwgress.setMaximum(1)
         else:
-            self.ui.di_lcd_rate.display(self.score / self.count * 100)
+            self.ui.lcptd_rategress.setMaximum(self.count)
+            self.ui.lcptd_cwgress.setMaximum(self.count)
+        self.ui.lcptd_rategress.setValue(self.score)
+        self.ui.lcptd_cwgress.setValue(self.score)
+        self.ui.lcptd_cwgress.setFormat("%s:%s"%(self.score, self.count - self.score))
 
     def lcptd_reset(self):
-        self.ui.lcptd_progress.setValue(0)
         self.ui.lcptd_file.setText("")
-        self.ui.di_lcd_count.setDigitCount(2)
-        self.ui.di_lcd_exact.setDigitCount(2)
-        self.ui.di_lcd_wrong.setDigitCount(2)
-        self.ui.di_lcd_count.display(0)
-        self.ui.di_lcd_exact.display(0)
-        self.ui.di_lcd_wrong.display(0)
-        self.ui.di_lcd_rate.display(0)
+        self.ui.lcptd_progress.setMaximum(0)
+        self.ui.lcptd_rategress.setMaximum(0)
+        self.ui.lcptd_cwgress.setMaximum(0)
 
     def resultant_set(self):
         if self.cond_used["RESULT_DISPLAY_QUEST"]:
@@ -492,6 +566,15 @@ class Main(QMainWindow):
             temp_list2.setMinimumWidth(400)
             temp_list3.setMinimumHeight(100)
             temp_list3.setMinimumWidth(400)
+            temp_list1.setHorizontalScrollBar(RHScrollBar())
+            temp_list1.setVerticalScrollBar(RVScrollBar())
+            temp_list2.setHorizontalScrollBar(RHScrollBar())
+            temp_list2.setVerticalScrollBar(RVScrollBar())
+            temp_list3.setHorizontalScrollBar(RHScrollBar())
+            temp_list3.setVerticalScrollBar(RVScrollBar())
+            temp_list1.setEditTriggers(QAbstractItemView.NoEditTriggers)
+            temp_list2.setEditTriggers(QAbstractItemView.NoEditTriggers)
+            temp_list3.setEditTriggers(QAbstractItemView.NoEditTriggers)
             # correct (isCorrect, mrs, scope_stage, scope_name, elem_ci, inputs, q_si)
             if self.cond_used["REVERSE_AQ"]:
                 qcol, acol = 1, 2

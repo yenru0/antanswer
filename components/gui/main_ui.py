@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'main.ui',
 # licensing of 'main.ui' applies.
 #
-# Created: Thu Mar 19 15:32:57 2020
+# Created: Tue Mar 24 18:56:03 2020
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(680, 620)
+        MainWindow.resize(648, 641)
         MainWindow.setStyleSheet("#MainWindow{\n"
 "    background-color: rgb(247, 247, 247)\n"
 "}")
@@ -32,7 +32,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "#log {\n"
-"    font: 25 11pt \"Malgun Gothic\";\n"
+"    font: 25 9pt \"Malgun Gothic\";\n"
 "background-color: white;\n"
 "}\n"
 "\n"
@@ -65,12 +65,12 @@ class Ui_MainWindow(object):
 "    font: 100 11pt \"Malgun Gothic\";\n"
 "}\n"
 "\n"
-"#resultant_btn_again, #resultant_btn_setting, #resultant_btn_menu{\n"
-"    font: 100 14pt \"Malgun Gothic\";\n"
+"#resultant_btn_again, #resultant_btn_setting, #resultant_btn_menu, #resultant_btn_save, #resultant_btn_preference, #resultant_btn_openthis{\n"
+"    font: 25 12pt \"Malgun Gothic\";\n"
 "}\n"
 "\n"
 "#label_resultant{\n"
-"    font: 100 bold 24pt \"Malgun Gothic\";\n"
+"    font: 100 bold 25pt \"Malgun Gothic\";\n"
 "}")
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -138,6 +138,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.setting_stage_table.sizePolicy().hasHeightForWidth())
         self.setting_stage_table.setSizePolicy(sizePolicy)
+        self.setting_stage_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.setting_stage_table.setObjectName("setting_stage_table")
         self.gridLayout_2.addWidget(self.setting_stage_table, 2, 0, 1, 1)
         self.setitem_file = QtWidgets.QHBoxLayout()
@@ -164,6 +165,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.setting_list_file.sizePolicy().hasHeightForWidth())
         self.setting_list_file.setSizePolicy(sizePolicy)
+        self.setting_list_file.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.setting_list_file.setObjectName("setting_list_file")
         self.setitem_file.addWidget(self.setting_list_file)
         self.gridLayout_2.addLayout(self.setitem_file, 1, 0, 1, 1)
@@ -203,6 +205,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addLayout(self.setitem_extend, 0, 0, 1, 1)
         self.pages.addWidget(self.page_setting)
         self.page_do = QtWidgets.QWidget()
+        self.page_do.setStyleSheet("")
         self.page_do.setObjectName("page_do")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.page_do)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
@@ -212,7 +215,9 @@ class Ui_MainWindow(object):
         font.setPointSize(12)
         font.setItalic(False)
         self.queston.setFont(font)
+        self.queston.setFocusPolicy(QtCore.Qt.NoFocus)
         self.queston.setAcceptRichText(False)
+        self.queston.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.queston.setOpenLinks(False)
         self.queston.setObjectName("queston")
         self.verticalLayout_3.addWidget(self.queston)
@@ -258,6 +263,8 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.log.sizePolicy().hasHeightForWidth())
         self.log.setSizePolicy(sizePolicy)
+        self.log.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.log.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.log.setObjectName("log")
         QtWidgets.QListWidgetItem(self.log)
         QtWidgets.QListWidgetItem(self.log)
@@ -266,10 +273,13 @@ class Ui_MainWindow(object):
         QtWidgets.QListWidgetItem(self.log)
         self.verticalLayout_3.addWidget(self.log)
         self.verticalLayout_3.setStretch(0, 23)
-        self.verticalLayout_3.setStretch(1, 2)
-        self.verticalLayout_3.setStretch(2, 5)
+        self.verticalLayout_3.setStretch(1, 3)
+        self.verticalLayout_3.setStretch(2, 3)
         self.pages.addWidget(self.page_do)
         self.page_resultant = QtWidgets.QWidget()
+        self.page_resultant.setStyleSheet("QPushButton{\n"
+"\n"
+"}")
         self.page_resultant.setObjectName("page_resultant")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.page_resultant)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
@@ -279,6 +289,13 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_resultant.sizePolicy().hasHeightForWidth())
         self.label_resultant.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Malgun Gothic")
+        font.setPointSize(25)
+        font.setWeight(75)
+        font.setItalic(False)
+        font.setBold(True)
+        self.label_resultant.setFont(font)
         self.label_resultant.setObjectName("label_resultant")
         self.verticalLayout_5.addWidget(self.label_resultant)
         self.resultant_view = QtWidgets.QTableView(self.page_resultant)
@@ -287,27 +304,38 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.resultant_view.sizePolicy().hasHeightForWidth())
         self.resultant_view.setSizePolicy(sizePolicy)
+        self.resultant_view.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.resultant_view.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.resultant_view.setObjectName("resultant_view")
         self.verticalLayout_5.addWidget(self.resultant_view)
-        self.resultant_gobtns = QtWidgets.QHBoxLayout()
-        self.resultant_gobtns.setObjectName("resultant_gobtns")
+        self.resultant_btns = QtWidgets.QGridLayout()
+        self.resultant_btns.setObjectName("resultant_btns")
+        self.resultant_btn_menu = QtWidgets.QPushButton(self.page_resultant)
+        self.resultant_btn_menu.setObjectName("resultant_btn_menu")
+        self.resultant_btns.addWidget(self.resultant_btn_menu, 0, 2, 1, 1)
         self.resultant_btn_again = QtWidgets.QPushButton(self.page_resultant)
         self.resultant_btn_again.setObjectName("resultant_btn_again")
-        self.resultant_gobtns.addWidget(self.resultant_btn_again)
+        self.resultant_btns.addWidget(self.resultant_btn_again, 0, 0, 1, 1)
         self.resultant_btn_setting = QtWidgets.QPushButton(self.page_resultant)
         font = QtGui.QFont()
         font.setFamily("Malgun Gothic")
-        font.setPointSize(14)
-        font.setWeight(12)
+        font.setPointSize(12)
+        font.setWeight(3)
         font.setItalic(False)
         font.setBold(False)
         self.resultant_btn_setting.setFont(font)
         self.resultant_btn_setting.setObjectName("resultant_btn_setting")
-        self.resultant_gobtns.addWidget(self.resultant_btn_setting)
-        self.resultant_btn_menu = QtWidgets.QPushButton(self.page_resultant)
-        self.resultant_btn_menu.setObjectName("resultant_btn_menu")
-        self.resultant_gobtns.addWidget(self.resultant_btn_menu)
-        self.verticalLayout_5.addLayout(self.resultant_gobtns)
+        self.resultant_btns.addWidget(self.resultant_btn_setting, 0, 1, 1, 1)
+        self.resultant_btn_save = QtWidgets.QPushButton(self.page_resultant)
+        self.resultant_btn_save.setObjectName("resultant_btn_save")
+        self.resultant_btns.addWidget(self.resultant_btn_save, 1, 0, 1, 1)
+        self.resultant_btn_preference = QtWidgets.QPushButton(self.page_resultant)
+        self.resultant_btn_preference.setObjectName("resultant_btn_preference")
+        self.resultant_btns.addWidget(self.resultant_btn_preference, 1, 1, 1, 1)
+        self.resultant_btn_openthis = QtWidgets.QPushButton(self.page_resultant)
+        self.resultant_btn_openthis.setObjectName("resultant_btn_openthis")
+        self.resultant_btns.addWidget(self.resultant_btn_openthis, 1, 2, 1, 1)
+        self.verticalLayout_5.addLayout(self.resultant_btns)
         self.pages.addWidget(self.page_resultant)
         self.page_option = QtWidgets.QWidget()
         self.page_option.setObjectName("page_option")
@@ -317,7 +345,7 @@ class Ui_MainWindow(object):
         self.option_scrollarea.setWidgetResizable(True)
         self.option_scrollarea.setObjectName("option_scrollarea")
         self.option_scrollarea_contents = QtWidgets.QWidget()
-        self.option_scrollarea_contents.setGeometry(QtCore.QRect(0, 0, 98, 30))
+        self.option_scrollarea_contents.setGeometry(QtCore.QRect(0, 0, 476, 580))
         self.option_scrollarea_contents.setObjectName("option_scrollarea_contents")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.option_scrollarea_contents)
         self.gridLayout_3.setObjectName("gridLayout_3")
@@ -333,7 +361,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.pages, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 680, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 648, 21))
         self.menubar.setObjectName("menubar")
         self.menu = QtWidgets.QMenu(self.menubar)
         self.menu.setObjectName("menu")
@@ -369,13 +397,38 @@ class Ui_MainWindow(object):
 "    background-color: rgba(255, 255, 255, 0)\n"
 "}\n"
 "\n"
+"\n"
 "#lcptd_progress{\n"
 "    \n"
-"}")
+"    font: 25 15pt \"Malgun Gothic\";\n"
+"    border: 1.2px solid black;\n"
+"    border-radius: 4px;\n"
+"    text-align: center;\n"
+"}\n"
+"#lcptd_progress::chunk{background-color: rgb(0, 170, 255)}\n"
+"#lcptd_rategress{\n"
+"    \n"
+"    font: 25 15pt \"Malgun Gothic\";\n"
+"    border: 1.2px solid black;\n"
+"    border-radius: 4px;\n"
+"    text-align: center;\n"
+"}\n"
+"#lcptd_rategress::chunk{background-color: rgb(120, 230, 20)}\n"
+"\n"
+"#lcptd_cwgress{\n"
+"    \n"
+"    font: 25 15pt \"Malgun Gothic\";\n"
+"    border: 1.2px solid black;\n"
+"    border-radius: 4px;\n"
+"    text-align: center;\n"
+"    background-color: rgb(255, 0, 0)\n"
+"}\n"
+"#lcptd_cwgress::chunk{background-color: rgb(255, 200, 20);}")
         self.lcptd.setObjectName("lcptd")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.lcptd)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.lcptd_file = QtWidgets.QLineEdit(self.lcptd)
+        self.lcptd_file.setFocusPolicy(QtCore.Qt.NoFocus)
         self.lcptd_file.setEchoMode(QtWidgets.QLineEdit.Normal)
         self.lcptd_file.setReadOnly(True)
         self.lcptd_file.setObjectName("lcptd_file")
@@ -532,133 +585,24 @@ class Ui_MainWindow(object):
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.PlaceholderText, brush)
         self.lcptd_progress.setPalette(palette)
-        self.lcptd_progress.setStyleSheet("#lcptd_progress{\n"
-"    \n"
-"    font: 25 11pt \"Malgun Gothic\";\n"
-"    border: 1.2px solid black;\n"
-"    border-radius: 4px;\n"
-"    text-align: center;\n"
-"}\n"
-"#lcptd_progress::chunk{background-color: rgb(0, 170, 255)}")
+        self.lcptd_progress.setStyleSheet("")
         self.lcptd_progress.setMaximum(100)
         self.lcptd_progress.setProperty("value", 10)
         self.lcptd_progress.setTextVisible(True)
         self.lcptd_progress.setObjectName("lcptd_progress")
         self.verticalLayout_2.addWidget(self.lcptd_progress)
-        self.lcptd_count = QtWidgets.QHBoxLayout()
-        self.lcptd_count.setObjectName("lcptd_count")
-        self.di_label_count = QtWidgets.QLabel(self.lcptd)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.di_label_count.sizePolicy().hasHeightForWidth())
-        self.di_label_count.setSizePolicy(sizePolicy)
-        self.di_label_count.setObjectName("di_label_count")
-        self.lcptd_count.addWidget(self.di_label_count)
-        self.di_lcd_count = QtWidgets.QLCDNumber(self.lcptd)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Ignored)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.di_lcd_count.sizePolicy().hasHeightForWidth())
-        self.di_lcd_count.setSizePolicy(sizePolicy)
-        self.di_lcd_count.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.di_lcd_count.setSmallDecimalPoint(True)
-        self.di_lcd_count.setDigitCount(2)
-        self.di_lcd_count.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
-        self.di_lcd_count.setObjectName("di_lcd_count")
-        self.lcptd_count.addWidget(self.di_lcd_count)
-        self.lcptd_count.setStretch(0, 1)
-        self.lcptd_count.setStretch(1, 2)
-        self.verticalLayout_2.addLayout(self.lcptd_count)
-        self.lcptd_exact = QtWidgets.QHBoxLayout()
-        self.lcptd_exact.setObjectName("lcptd_exact")
-        self.di_label_exact = QtWidgets.QLabel(self.lcptd)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.di_label_exact.sizePolicy().hasHeightForWidth())
-        self.di_label_exact.setSizePolicy(sizePolicy)
-        self.di_label_exact.setObjectName("di_label_exact")
-        self.lcptd_exact.addWidget(self.di_label_exact)
-        self.di_lcd_exact = QtWidgets.QLCDNumber(self.lcptd)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Ignored)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.di_lcd_exact.sizePolicy().hasHeightForWidth())
-        self.di_lcd_exact.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setPointSize(20)
-        self.di_lcd_exact.setFont(font)
-        self.di_lcd_exact.setStyleSheet("font-size: 12")
-        self.di_lcd_exact.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.di_lcd_exact.setSmallDecimalPoint(True)
-        self.di_lcd_exact.setDigitCount(2)
-        self.di_lcd_exact.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
-        self.di_lcd_exact.setObjectName("di_lcd_exact")
-        self.lcptd_exact.addWidget(self.di_lcd_exact)
-        self.lcptd_exact.setStretch(0, 1)
-        self.lcptd_exact.setStretch(1, 2)
-        self.verticalLayout_2.addLayout(self.lcptd_exact)
-        self.lcptd_wrong = QtWidgets.QHBoxLayout()
-        self.lcptd_wrong.setObjectName("lcptd_wrong")
-        self.di_label_wrong = QtWidgets.QLabel(self.lcptd)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.di_label_wrong.sizePolicy().hasHeightForWidth())
-        self.di_label_wrong.setSizePolicy(sizePolicy)
-        self.di_label_wrong.setObjectName("di_label_wrong")
-        self.lcptd_wrong.addWidget(self.di_label_wrong)
-        self.di_lcd_wrong = QtWidgets.QLCDNumber(self.lcptd)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Ignored)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.di_lcd_wrong.sizePolicy().hasHeightForWidth())
-        self.di_lcd_wrong.setSizePolicy(sizePolicy)
-        self.di_lcd_wrong.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.di_lcd_wrong.setSmallDecimalPoint(True)
-        self.di_lcd_wrong.setDigitCount(2)
-        self.di_lcd_wrong.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
-        self.di_lcd_wrong.setObjectName("di_lcd_wrong")
-        self.lcptd_wrong.addWidget(self.di_lcd_wrong)
-        self.lcptd_wrong.setStretch(0, 1)
-        self.lcptd_wrong.setStretch(1, 2)
-        self.verticalLayout_2.addLayout(self.lcptd_wrong)
-        self.lcptd_rate = QtWidgets.QHBoxLayout()
-        self.lcptd_rate.setObjectName("lcptd_rate")
-        self.di_label_rate = QtWidgets.QLabel(self.lcptd)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.di_label_rate.sizePolicy().hasHeightForWidth())
-        self.di_label_rate.setSizePolicy(sizePolicy)
-        self.di_label_rate.setObjectName("di_label_rate")
-        self.lcptd_rate.addWidget(self.di_label_rate)
-        self.di_lcd_rate = QtWidgets.QLCDNumber(self.lcptd)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Ignored)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.di_lcd_rate.sizePolicy().hasHeightForWidth())
-        self.di_lcd_rate.setSizePolicy(sizePolicy)
-        self.di_lcd_rate.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.di_lcd_rate.setSmallDecimalPoint(True)
-        self.di_lcd_rate.setDigitCount(4)
-        self.di_lcd_rate.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
-        self.di_lcd_rate.setProperty("value", 83.58)
-        self.di_lcd_rate.setObjectName("di_lcd_rate")
-        self.lcptd_rate.addWidget(self.di_lcd_rate)
-        self.percent = QtWidgets.QLabel(self.lcptd)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.percent.sizePolicy().hasHeightForWidth())
-        self.percent.setSizePolicy(sizePolicy)
-        self.percent.setObjectName("percent")
-        self.lcptd_rate.addWidget(self.percent)
-        self.lcptd_rate.setStretch(0, 2)
-        self.lcptd_rate.setStretch(1, 3)
-        self.lcptd_rate.setStretch(2, 1)
-        self.verticalLayout_2.addLayout(self.lcptd_rate)
+        self.lcptd_rategress = QtWidgets.QProgressBar(self.lcptd)
+        self.lcptd_rategress.setStyleSheet("")
+        self.lcptd_rategress.setProperty("value", 25)
+        self.lcptd_rategress.setObjectName("lcptd_rategress")
+        self.verticalLayout_2.addWidget(self.lcptd_rategress)
+        self.lcptd_cwgress = QtWidgets.QProgressBar(self.lcptd)
+        self.lcptd_cwgress.setMaximum(2)
+        self.lcptd_cwgress.setProperty("value", 1)
+        self.lcptd_cwgress.setObjectName("lcptd_cwgress")
+        self.verticalLayout_2.addWidget(self.lcptd_cwgress)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem2)
         self.sideStatus.setWidget(self.lcptd)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.sideStatus)
         self.actionexit = QtWidgets.QAction(MainWindow)
@@ -671,7 +615,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.pages.setCurrentIndex(0)
-        self.extend_setting.setCurrentIndex(0)
+        self.extend_setting.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -685,6 +629,7 @@ class Ui_MainWindow(object):
         self.setting_btn_real_run.setText(QtWidgets.QApplication.translate("MainWindow", "run", None, -1))
         self.setting_btn_real_gomenu.setText(QtWidgets.QApplication.translate("MainWindow", "return to mainmenu", None, -1))
         self.setting_label_extend.setText(QtWidgets.QApplication.translate("MainWindow", "extend setting", None, -1))
+
         self.queston.setHtml(QtWidgets.QApplication.translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -703,19 +648,19 @@ class Ui_MainWindow(object):
         self.log.item(4).setText(QtWidgets.QApplication.translate("MainWindow", "Laufghart", None, -1))
         self.log.setSortingEnabled(__sortingEnabled)
         self.label_resultant.setText(QtWidgets.QApplication.translate("MainWindow", "Result:", None, -1))
+        self.resultant_btn_menu.setText(QtWidgets.QApplication.translate("MainWindow", "return to menu", None, -1))
         self.resultant_btn_again.setText(QtWidgets.QApplication.translate("MainWindow", "try again", None, -1))
         self.resultant_btn_setting.setText(QtWidgets.QApplication.translate("MainWindow", "back to setting", None, -1))
-        self.resultant_btn_menu.setText(QtWidgets.QApplication.translate("MainWindow", "return to menu", None, -1))
+        self.resultant_btn_save.setText(QtWidgets.QApplication.translate("MainWindow", "save this result", None, -1))
+        self.resultant_btn_preference.setText(QtWidgets.QApplication.translate("MainWindow", "write preference", None, -1))
+        self.resultant_btn_openthis.setText(QtWidgets.QApplication.translate("MainWindow", "go to this file/files", None, -1))
         self.templeft.setText(QtWidgets.QApplication.translate("MainWindow", "Author", None, -1))
         self.tempright.setText(QtWidgets.QApplication.translate("MainWindow", "yenru0", None, -1))
         self.menu.setTitle(QtWidgets.QApplication.translate("MainWindow", "actions", None, -1))
         self.sideStatus.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "status", None, -1))
         self.lcptd_file.setText(QtWidgets.QApplication.translate("MainWindow", "test.dnwouvndowdnbovwdbovwdbowdvnovwdn.zip", None, -1))
-        self.di_label_count.setText(QtWidgets.QApplication.translate("MainWindow", "Count", None, -1))
-        self.di_label_exact.setText(QtWidgets.QApplication.translate("MainWindow", "Exact", None, -1))
-        self.di_label_wrong.setText(QtWidgets.QApplication.translate("MainWindow", "Wrong", None, -1))
-        self.di_label_rate.setText(QtWidgets.QApplication.translate("MainWindow", "Rate", None, -1))
-        self.percent.setText(QtWidgets.QApplication.translate("MainWindow", "%", None, -1))
+        self.lcptd_progress.setFormat(QtWidgets.QApplication.translate("MainWindow", "%p%:%v", None, -1))
+        self.lcptd_cwgress.setFormat(QtWidgets.QApplication.translate("MainWindow", "%v:", None, -1))
         self.actionexit.setText(QtWidgets.QApplication.translate("MainWindow", "exit", None, -1))
         self.actionreturn_to_manimenu.setText(QtWidgets.QApplication.translate("MainWindow", "return to mainmenu", None, -1))
 
