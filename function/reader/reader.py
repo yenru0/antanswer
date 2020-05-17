@@ -2,6 +2,9 @@ import json
 import re
 from os.path import basename
 
+# TODO: 진짜 antanswer.function.reader.reader.py 는 전설이다.
+# 어떻게 얘들 어떻게 처리하냐
+
 """
 INFORMATION OF VERSION
 """
@@ -291,7 +294,7 @@ def sep_element(string, stage_name, file_name):
     return temp_seped_E
 
 
-def READ_ANW(file_anw):
+def READ_ANW(string, file_name):
     """
 
     :param f: anw file
@@ -314,7 +317,6 @@ def READ_ANW(file_anw):
 
     VARS = {}
 
-    string = file_anw.read()
     string = except_comment(string)
     string, default_variables = define_default_variable(string)
 
@@ -372,7 +374,7 @@ def READ_ANW(file_anw):
 
     if WBR["name"] is None:
         try:
-            WBR["name"] = basename(file_anw.name)
+            WBR["name"] = basename(file_name)
         except AttributeError as e:
             WBR["name"] = "test.test.test"
         except Exception as e:

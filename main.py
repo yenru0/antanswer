@@ -1,4 +1,4 @@
-from anwFunctions.anwReaders.reader import READ_OPT
+from function.reader.reader import READ_OPT
 from PySide2.QtWidgets import QApplication
 import sys
 # TODO: Exception 만들기
