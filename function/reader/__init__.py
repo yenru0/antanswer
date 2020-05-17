@@ -1,5 +1,5 @@
 """
-"anwReaders" is READER and TRANSLATOR python function set of 'Antanswer'
+"reader" is READER and TRANSLATOR python function set of 'Antanswer'
 
 SUPPORT Formats VERSION:
     AFD: AFD 1half
@@ -7,7 +7,7 @@ SUPPORT Formats VERSION:
 
 
 ROLE:
-    anwReaders has 4 main function
+    reader has 4 main function
 
     - 'AFD Translator' translate AFD to ANW.
         * FileObject -> Anw_String

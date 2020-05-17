@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>648</width>
+    <width>600</width>
     <height>641</height>
    </rect>
   </property>
@@ -15,60 +15,26 @@
   </property>
   <property name="styleSheet">
    <string notr="true">#MainWindow{
-	background-color: rgb(247, 247, 247)
-}</string>
+	background-color: rgb(255, 255, 255)
+}
+
+#centralwidget{
+	background-color: rgb(255,255, 255);
+}
+
+#sideStatus{
+	background-color: rgb(255,255, 255);
+}
+</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
-    <string notr="true">#centralwidget{
-	background-color: rgb(247,247, 247);
-}
-
-#page_do{
-	background-color: rgb(247,247, 247);
-}
-
-#queston{
-	background-color: white;
-	border: 1px solid black;
-}
-
-#log {
-	font: 25 9pt &quot;Malgun Gothic&quot;;
-background-color: white;
-}
-
-#input{
-	font: 25 11pt &quot;Malgun Gothic&quot;;
-	background-color: white;
-}
-
-#enter{
-	font: 25 bold 12pt &quot;Malgun Gothic&quot;;
-	background-color: white;
-}
-
-#titleBtn_exit, #titleBtn_option, #titleBtn_run{
-	font: 25 bold 18pt &quot;Malgun Gothic&quot;;
-	background-color: white;
-	
-}
-
-.QLabel#title{
+    <string notr="true">.QLabel#title{
 	font: 25 14pt &quot;Malgun Gothic&quot;;
 }
 
 .QLabel#down_version{
 	font: 100 10pt &quot;Malgun Gothic&quot;;
-}
-
-#setting_btn_real_run, #setting_btn_addfile, #setting_label_extend
-, #setting_label_run, #setting_runbox, #setting_btn_real_gomenu{
-	font: 100 11pt &quot;Malgun Gothic&quot;;
-}
-
-#resultant_btn_again, #resultant_btn_setting, #resultant_btn_menu, #resultant_btn_save, #resultant_btn_preference, #resultant_btn_openthis{
-	font: 25 12pt &quot;Malgun Gothic&quot;;
 }
 
 #label_resultant{
@@ -90,15 +56,53 @@ background-color: white;
     </property>
     <item row="0" column="0">
      <widget class="QStackedWidget" name="pages">
+      <property name="styleSheet">
+       <string notr="true">QPushButton{
+	font: 25 bold 12pt &quot;Malgun Gothic&quot;;
+	background-color: white;
+	border: 1px solid black;
+	frameShape: panel;
+	
+}
+QPushButton:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #dadbde, stop: 1 #f6f7fa);
+}
+QPushButton:flat {
+    border: none; /* no border for a flat push button */
+}
+QPushButton:default {
+    border-color: navy; /* make the default button prominent */
+}</string>
+      </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page_enter">
+       <property name="styleSheet">
+        <string notr="true">QPushButton{
+	font: 25 bold 18pt &quot;Malgun Gothic&quot;;
+	background-color: white;
+	border: 1px solid black;
+	frameShape: panel;
+	
+}
+QPushButton:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #dadbde, stop: 1 #f6f7fa);
+}
+QPushButton:flat {
+    border: none; /* no border for a flat push button */
+}
+QPushButton:default {
+    border-color: navy; /* make the default button prominent */
+}</string>
+       </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" stretch="2,1,0">
         <item>
          <widget class="QLabel" name="title">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:36pt; font-weight:600;&quot;&gt;Antanswer Python&lt;/span&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; vertical-align:sub;&quot;&gt;(pyside2)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:36pt; font-weight:600;&quot;&gt;Antanswer&lt;/span&gt;&lt;span style=&quot; font-weight:600; vertical-align:sub;&quot;&gt;(pyside2)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="textFormat">
            <enum>Qt::RichText</enum>
@@ -125,16 +129,28 @@ background-color: white;
           <property name="spacing">
            <number>10</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QPushButton" name="titleBtn_run">
+          <item row="0" column="2">
+           <widget class="QPushButton" name="titleBtn_exit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="font">
+             <font>
+              <family>Malgun Gothic</family>
+              <pointsize>18</pointsize>
+              <weight>75</weight>
+              <italic>false</italic>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
             <property name="text">
-             <string>Run</string>
+             <string>나가기</string>
             </property>
            </widget>
           </item>
@@ -147,12 +163,12 @@ background-color: white;
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Option</string>
+             <string>설정</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="titleBtn_exit">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="titleBtn_run">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
               <horstretch>0</horstretch>
@@ -160,7 +176,7 @@ background-color: white;
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Exit</string>
+             <string>실행</string>
             </property>
            </widget>
           </item>
@@ -185,6 +201,40 @@ background-color: white;
        </layout>
       </widget>
       <widget class="QWidget" name="page_setting">
+       <property name="styleSheet">
+        <string notr="true">QLabel{
+	font: 11pt &quot;맑은 고딕&quot;;
+	border: 1px solid black;
+}
+
+QPushButton{
+	font: 25 11pt &quot;Malgun Gothic&quot;;
+	background-color: white;
+	border: 1px solid black;
+	frameShape: panel;
+	
+}
+QPushButton:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #dadbde, stop: 1 #f6f7fa);
+}
+QPushButton:flat {
+    border: none; /* no border for a flat push button */
+}
+QPushButton:default {
+    border-color: navy; /* make the default button prominent */
+}
+
+QPushButton#setting_btn_addfile{
+	background-color:rgb(85, 170, 255);
+	border: 1px solid black;
+}
+QPushButton#setting_btn_addfile:pressed{
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 1 rgb(85, 170, 255), stop: 0 rgb(46, 93, 140));
+
+}</string>
+       </property>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="2" column="0">
          <widget class="QTableView" name="setting_stage_table">
@@ -231,7 +281,7 @@ background-color: white;
                </sizepolicy>
               </property>
               <property name="text">
-               <string>add file</string>
+               <string> 파일 추가 </string>
               </property>
              </widget>
             </item>
@@ -273,14 +323,14 @@ background-color: white;
           <item>
            <widget class="QPushButton" name="setting_btn_real_run">
             <property name="text">
-             <string>run</string>
+             <string>시작</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="setting_btn_real_gomenu">
             <property name="text">
-             <string>return to mainmenu</string>
+             <string>돌아가기</string>
             </property>
            </widget>
           </item>
@@ -297,7 +347,7 @@ background-color: white;
              </sizepolicy>
             </property>
             <property name="text">
-             <string>extend setting</string>
+             <string> 확장 설정 </string>
             </property>
            </widget>
           </item>
@@ -322,7 +372,19 @@ background-color: white;
       </widget>
       <widget class="QWidget" name="page_do">
        <property name="styleSheet">
-        <string notr="true"/>
+        <string notr="true">#input{
+	font: 25 11pt &quot;Malgun Gothic&quot;;
+	background-color: white;
+	border: 1px solid black;
+}
+#log {
+	font: 25 9pt &quot;Malgun Gothic&quot;;
+background-color: white;
+}
+#queston{
+	background-color: white;
+	border: 1px solid black;
+}</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3" stretch="23,3,3">
         <item>
@@ -427,7 +489,7 @@ p, li { white-space: pre-wrap; }
              </sizepolicy>
             </property>
             <property name="text">
-             <string>PushButton</string>
+             <string>입력</string>
             </property>
             <property name="autoDefault">
              <bool>true</bool>
@@ -484,8 +546,8 @@ p, li { white-space: pre-wrap; }
       </widget>
       <widget class="QWidget" name="page_resultant">
        <property name="styleSheet">
-        <string notr="true">QPushButton{
-
+        <string notr="true">QLabel#label_resultant{
+	font: 100 bold 25pt &quot;Malgun Gothic&quot;;
 }</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -507,7 +569,7 @@ p, li { white-space: pre-wrap; }
            </font>
           </property>
           <property name="text">
-           <string>Result:</string>
+           <string>결과:</string>
           </property>
          </widget>
         </item>
@@ -532,14 +594,14 @@ p, li { white-space: pre-wrap; }
           <item row="0" column="2">
            <widget class="QPushButton" name="resultant_btn_menu">
             <property name="text">
-             <string>return to menu</string>
+             <string>메뉴로 돌아가기</string>
             </property>
            </widget>
           </item>
           <item row="0" column="0">
            <widget class="QPushButton" name="resultant_btn_again">
             <property name="text">
-             <string>try again</string>
+             <string>다시 시도</string>
             </property>
            </widget>
           </item>
@@ -549,34 +611,34 @@ p, li { white-space: pre-wrap; }
              <font>
               <family>Malgun Gothic</family>
               <pointsize>12</pointsize>
-              <weight>3</weight>
+              <weight>75</weight>
               <italic>false</italic>
-              <bold>false</bold>
+              <bold>true</bold>
              </font>
             </property>
             <property name="text">
-             <string>back to setting</string>
+             <string>실행 설정으로</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
            <widget class="QPushButton" name="resultant_btn_save">
             <property name="text">
-             <string>save this result</string>
+             <string>이 결과 저장</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
            <widget class="QPushButton" name="resultant_btn_preference">
             <property name="text">
-             <string>write preference</string>
+             <string>선호 파일 열기</string>
             </property>
            </widget>
           </item>
           <item row="1" column="2">
            <widget class="QPushButton" name="resultant_btn_openthis">
             <property name="text">
-             <string>go to this file/files</string>
+             <string>이 anw 파일 열기</string>
             </property>
            </widget>
           </item>
@@ -585,9 +647,20 @@ p, li { white-space: pre-wrap; }
        </layout>
       </widget>
       <widget class="QWidget" name="page_option">
+       <property name="styleSheet">
+        <string notr="true">QScrollArea{
+	background-color:rgb(255, 255, 255);
+
+}</string>
+       </property>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
          <widget class="QScrollArea" name="option_scrollarea">
+          <property name="styleSheet">
+           <string notr="true">
+background-color:rgb(255, 255, 255);
+</string>
+          </property>
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
@@ -596,13 +669,19 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>476</width>
+             <width>428</width>
              <height>580</height>
             </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
             <item row="0" column="0">
              <widget class="QLabel" name="templeft">
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
               <property name="text">
                <string>Author</string>
               </property>
@@ -630,7 +709,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>648</width>
+     <width>600</width>
      <height>21</height>
     </rect>
    </property>
@@ -645,6 +724,18 @@ p, li { white-space: pre-wrap; }
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="sideStatus">
+   <property name="styleSheet">
+    <string notr="true">#sideStatus::title{
+	
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(240, 240, 240, 255), stop:1 rgba(255, 255, 255, 255));
+	border: 1px solid black;
+	
+}
+
+#sideStatus{
+	font: 11pt &quot;맑은 고딕&quot;;
+}</string>
+   </property>
    <property name="floating">
     <bool>false</bool>
    </property>
@@ -657,8 +748,9 @@ p, li { white-space: pre-wrap; }
    <widget class="QWidget" name="lcptd">
     <property name="styleSheet">
      <string notr="true">#lcptd {
-	background-color: rgb(247, 247, 247);
+	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(240, 240, 240, 255), stop:1 rgba(255, 255, 255, 255));
 	border: 1px solid black;
+	border-top: none;
 }
 
 .QLabel {
