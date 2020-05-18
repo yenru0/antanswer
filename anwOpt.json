@@ -1,7 +1,0 @@
-﻿{
-  "version"          : "0.8",
-  "anw_standard"     : "ANW0.91",
-  "basic_wil"        : 10,
-  "basic_recent"     : 10,
-  "basic_recentValue": 0.9
-}

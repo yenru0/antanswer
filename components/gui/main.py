@@ -16,10 +16,10 @@ from PySide2.QtWidgets import (QApplication, QPushButton, QMessageBox, QWidget,
 from typing import Dict, List, Any
 
 
-from function.reader.reader import READ_ANW
+from function.reader import __anw_std__, __anw_compatibles__, __anw_supports__
 from function.structure import *
 from components.gui.main_ui import Ui_MainWindow
-
+from main import __version__
 
 @dataclass
 class LoadFileData():
@@ -532,11 +532,9 @@ class AnwResultantDataDeligate(QItemDelegate):
 
 class Main(QMainWindow):
 
-    def __init__(self, opt, parent=None):
+    def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
 
-        ### opt
-        self.anw_standard = opt["anw_standard"]
         self.cond_default = {  # string: bool
             # Anw ReaderMain
             "COMP_IGNORE_SPACE": True,  # ignoring space, blank like '\t' won't be replaced
@@ -569,7 +567,7 @@ class Main(QMainWindow):
         self.ui.titleBtn_run.clicked.connect(self.go_setting)
         self.ui.titleBtn_option.clicked.connect(self.go_option)
         self.ui.titleBtn_exit.clicked.connect(self.go_exit)
-        self.ui.down_version.setText("version: {}".format(opt["version"]))
+        self.ui.down_version.setText("version: {}".format(__version__))
         ### setting
 
         ### setting:파일 추가 및 add 파일 버튼
@@ -633,6 +631,18 @@ class Main(QMainWindow):
         self.ui.resultant_btn_setting.clicked.connect(self.go_setting)
         self.ui.resultant_btn_menu.clicked.connect(self.go_enter)
         self.ui.resultant_btn_again.clicked.connect(self.go_run)
+
+
+        ### option
+        self.ui.option_scrollarea.setVerticalScrollBar(RVScrollBar(self.ui.option_scrollarea))
+        self.ui.option_font_queston.setText("문제 출력 글꼴")
+        self.ui.option_font_input.setText("정답 입력 글꼴")
+        self.ui.option_font_lcptd_file.setText("상태창 파일 이름 글꼴")
+        self.ui.option_color_lcptd_progress.setText("상태창 진행도 색 설정")
+        self.ui.option_color_lcptd_rategress.setText("상태창 정답률 색 설정")
+        self.ui.option_color_lcptd_cwgress_c.setText("상태창 맞은 개수 색 설정")
+        self.ui.option_color_lcptd_cwgress_w.setText("상태창 틀린 개수 색 설정")
+
 
     def go_setting(self):
         self.ui.pages.setCurrentIndex(1)
@@ -724,7 +734,6 @@ class Main(QMainWindow):
                 self.samples = lfd.ads.sampling()
                 self.selected = lfd.ads
                 self.selected.clearResult()
-                print(lfd.name)
                 break
 
         self.cond_used = {}
@@ -773,7 +782,6 @@ class Main(QMainWindow):
 
     def input_reset(self, l=0):
         self.ui.input.clear()
-
         for i in range(l):
             temp_item = QListWidgetItem("")
             temp_item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEditable | Qt.ItemIsDragEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
@@ -785,13 +793,12 @@ class Main(QMainWindow):
     def log_update(self, log):
         pass
 
-
     def lcptd_set_file(self, name: str):
         self.ui.lcptd_file.setText(name)
 
     def lcptd_set_property(self):
         self.ui.lcptd_progress.setValue(self.selected.result.count)
-        self.ui.lcptd_progress.setMaximum(self.selected.detail.wil)
+        self.ui.lcptd_progress.setMaximum(self.selected.detail_used.wil)
         if self.selected.result.count == 0:
             self.ui.lcptd_rategress.setMaximum(1)
             self.ui.lcptd_cwgress.setMaximum(1)
@@ -805,8 +812,6 @@ class Main(QMainWindow):
             self.selected.result.count - self.selected.result.score
             )
         )
-
-
 
     def lcptd_reset(self):
         self.ui.lcptd_file.setText("")
@@ -833,13 +838,3 @@ class Main(QMainWindow):
             print(e.key())
             if self.ui.pages.currentIndex() == 2:
                 self.ui.enter.click()
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-
-    debug = 0
-    main = Main({}, debug=debug)
-
-    main.show()
-    app.exec_()

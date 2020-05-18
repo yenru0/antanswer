@@ -5,11 +5,7 @@ from os.path import basename
 # TODO: 진짜 antanswer.function.reader.reader.py 는 전설이다.
 # 어떻게 얘들 어떻게 처리하냐
 
-"""
-INFORMATION OF VERSION
-"""
 
-ANW_VERSION = "ANW0.91"  # Antanswer
 
 """
 CONSTANT-STRING MAPS/DICTS
@@ -75,75 +71,6 @@ token_index = []
 ind = -1
 
 
-def READ_OPT(file_opt):
-    """
-    :param file_opt: anwOpt.json stream
-
-    :return optret: the dictionary that contains
-        -mainMode
-        -version
-        -bVariables
-            -bWil
-            -bRecent
-            -bRecentValue
-    """
-    optret = {"anw_standard": None, "version": None, "bVariables": None}
-    optret_detail = {"bWil": 0, "bRecent": 0, "bRecentValue": 0}
-
-    opt = json.load(file_opt)
-
-    ### anw_standard
-    t = opt["anw_standard"]
-    if isinstance(t, str):
-        value = t.replace(" ", "").upper()
-        if value not in [ANW_VERSION, "ANW0.9"]:
-            raise Exception("'ANW_STANDARD' value of 'anwOpt.json' has incorrect string\n")
-        optret["anw_standard"] = value
-    else:
-        raise Exception("'ANW_STANDARD' value of 'anwOpt.json' is incorrect type\n")
-
-    ### version
-    t = opt["version"]
-    if isinstance(t, str):
-        value = t.replace(" ", "").upper()
-        optret["version"] = value
-    else:
-        raise Exception("'version' value of 'anwOpt.json' is incorrect type\n")
-    ### basic_values
-    t = opt['basic_wil']
-    if isinstance(t, int):
-        if 0 <= t:
-            optret_detail['bWil'] = t
-        else:
-            raise Exception("'basic_wil' value of 'anwOpt.json' has incorrect integer\n",
-                            "why don't you match greater than or equal to 0\n")
-    else:
-        raise Exception("'basic_wil' value of 'anwOpt.json' is incorrect type\n")
-
-    t = opt['basic_recent']
-    if isinstance(t, int):
-        if 0 <= t:
-            optret_detail['bRecent'] = t
-        else:
-            raise Exception("'basic_recent' value of 'anwOpt.json' has incorrect integer\n",
-                            "Why don't you match greater than or equal to 0\n")
-    else:
-        raise Exception("'basic_recent' value of 'anwOpt.json' is incorrect type\n")
-
-    t = opt['basic_recentValue']
-    if isinstance(t, (int, float)):
-        if 0 <= t <= 1:
-            optret_detail['bRecentValue'] = t
-        else:
-            raise Exception("'basic_recentValue' value of 'anwOpt.json' has incorrect integer or incorrect float\n",
-                            "it must be 0 <= 'basic_recentValue' <= 1\n")
-    else:
-        raise Exception("'basic_recentValue' value of 'anwOpt.json' is incorrect type\n")
-
-    optret['bVariables'] = optret_detail
-
-    ### return
-    return optret
 
 
 def except_comment(string):

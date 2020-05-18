@@ -160,6 +160,7 @@ class AntanswerDataStruct:
         self.stages: Dict[str, AntanswerStage] = {}
         self.use: Dict[str, bool] = {}
 
+        self.detail_used = AntanswerDetail()
         self.result = AntanswerResult() # need initializing
 
         self.isloaded: bool = False
@@ -202,11 +203,16 @@ class AntanswerDataStruct:
         self.isfin = False
         self.isloaded = True
 
-    def sampling(self):
+    def sampling(self, detail: AntanswerDetail):
         """
-
         :return:
         """
+        self.detail_used.set(
+            wil=detail.wil if detail.wil else self.detail.wil,
+            recent=detail.recent if detail.recent else self.detail.recent,
+            recentValue=detail.recentValue if detail.recentValue else self.detail.recentValue
+        )
+
         aqs = []
         rct = 0
         for v in self.stages:
@@ -214,16 +220,16 @@ class AntanswerDataStruct:
                 for e in self.stages[v]:
                     aqs.append(e)
 
-        if self.detail.recentValue:
-            rct = int(self.detail.recentValue * len(aqs))
+        if self.detail_used.recentValue:
+            rct = int(self.detail_used.recentValue * len(aqs))
         else:
-            rct = self.detail.recent
+            rct = self.detail_used.recent
 
         history = []
-        for i in range(self.detail.wil):
+        for i in range(self.detail_used.wil):
             r = np.random.choice(aqs)
             print(type(r), r, aqs)
-            while r in history[-self.detail.wil:]:
+            while r in history[-rct:]:
                 r = np.random.choice(aqs)
             history.append(r)
             self.result.append(r)
