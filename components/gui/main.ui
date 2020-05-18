@@ -76,7 +76,7 @@ QPushButton:default {
 }</string>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="page_enter">
        <property name="styleSheet">
@@ -247,6 +247,12 @@ QPushButton#setting_btn_addfile:pressed{
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
+          <property name="verticalScrollMode">
+           <enum>QAbstractItemView::ScrollPerPixel</enum>
+          </property>
+          <property name="horizontalScrollMode">
+           <enum>QAbstractItemView::ScrollPerPixel</enum>
+          </property>
          </widget>
         </item>
         <item row="1" column="0">
@@ -313,6 +319,12 @@ QPushButton#setting_btn_addfile:pressed{
             </property>
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="verticalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
             </property>
            </widget>
           </item>
@@ -399,19 +411,6 @@ background-color: white;
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
           </property>
-          <property name="markdown">
-           <string>**Test Grap is the tools that I test this antanswer gui, Test Grab consists of
-HTML text, but it is UNSTABLE**
-
-</string>
-          </property>
-          <property name="html">
-           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'13 Malgun Gothic'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Malgun Gothic'; font-size:14pt; font-weight:600;&quot;&gt;Test Grap is the tools that I test this antanswer gui, Test Grab consists of HTML text, but it is UNSTABLE&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
           <property name="acceptRichText">
            <bool>false</bool>
           </property>
@@ -453,6 +452,12 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="defaultDropAction">
              <enum>Qt::MoveAction</enum>
+            </property>
+            <property name="verticalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
             </property>
             <item>
              <property name="text">
@@ -584,6 +589,9 @@ p, li { white-space: pre-wrap; }
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
+          <property name="verticalScrollMode">
+           <enum>QAbstractItemView::ScrollPerPixel</enum>
+          </property>
           <property name="horizontalScrollMode">
            <enum>QAbstractItemView::ScrollPerPixel</enum>
           </property>
@@ -669,8 +677,8 @@ background-color:rgb(255, 255, 255);
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>428</width>
-             <height>580</height>
+             <width>98</width>
+             <height>30</height>
             </rect>
            </property>
            <property name="styleSheet">
