@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
+    <width>545</width>
     <height>641</height>
    </rect>
   </property>
@@ -41,20 +41,8 @@
 	font: 100 bold 25pt &quot;Malgun Gothic&quot;;
 }</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
-     <number>0</number>
-    </property>
-    <item row="0" column="0">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
      <widget class="QStackedWidget" name="pages">
       <property name="styleSheet">
        <string notr="true">QPushButton{
@@ -76,7 +64,7 @@ QPushButton:default {
 }</string>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="page_enter">
        <property name="styleSheet">
@@ -659,15 +647,35 @@ background-color: white;
         <string notr="true">QScrollArea{
 	background-color:rgb(255, 255, 255);
 
+}
+
+.QLabel{
+	font: 25 10pt &quot;Malgun Gothic&quot;;
+}
+
+.QFontComboBox{
+	font: 25 9pt &quot;Malgun Gothic&quot;;
+	border: 1px solid black;
+}
+
+.QSpinBox{
+	font: 25 9pt &quot;Malgun Gothic&quot;;
 }</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
          <widget class="QScrollArea" name="option_scrollarea">
           <property name="styleSheet">
-           <string notr="true">
-background-color:rgb(255, 255, 255);
-</string>
+           <string notr="true">#option_scrollarea_contents{
+	background-color:white;
+}
+
+.QWidget{
+	border: 1px solid black;
+}</string>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
           <property name="widgetResizable">
            <bool>true</bool>
@@ -677,30 +685,76 @@ background-color:rgb(255, 255, 255);
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>30</height>
+             <width>355</width>
+             <height>562</height>
             </rect>
            </property>
            <property name="styleSheet">
             <string notr="true"/>
            </property>
-           <layout class="QGridLayout" name="gridLayout_3">
-            <item row="0" column="0">
-             <widget class="QLabel" name="templeft">
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-              <property name="text">
-               <string>Author</string>
-              </property>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <property name="spacing">
+             <number>10</number>
+            </property>
+            <property name="leftMargin">
+             <number>4</number>
+            </property>
+            <property name="topMargin">
+             <number>4</number>
+            </property>
+            <property name="rightMargin">
+             <number>4</number>
+            </property>
+            <property name="bottomMargin">
+             <number>4</number>
+            </property>
+            <item>
+             <widget class="Widget_Option_Font" name="option_font_queston" native="true">
+              <layout class="QGridLayout" name="_3"/>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="tempright">
-              <property name="text">
-               <string>yenru0</string>
-              </property>
+            <item>
+             <widget class="Widget_Option_Font" name="option_font_input" native="true">
+              <layout class="QGridLayout" name="_4"/>
              </widget>
+            </item>
+            <item>
+             <widget class="Widget_Option_Font" name="option_font_lcptd_file" native="true">
+              <layout class="QGridLayout" name="_2"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="Widget_Option_Color" name="option_color_lcptd_progress" native="true">
+              <layout class="QGridLayout" name="_5"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="Widget_Option_Color" name="option_color_lcptd_rategress" native="true">
+              <layout class="QGridLayout" name="_6"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="Widget_Option_Color" name="option_color_lcptd_cwgress_c" native="true">
+              <layout class="QGridLayout" name="_7"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="Widget_Option_Color" name="option_color_lcptd_cwgress_w" native="true">
+              <layout class="QGridLayout" name="_8"/>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -717,13 +771,13 @@ background-color:rgb(255, 255, 255);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>600</width>
+     <width>545</width>
      <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>actions</string>
+     <string>기능</string>
     </property>
     <addaction name="actionexit"/>
     <addaction name="actionreturn_to_manimenu"/>
@@ -748,7 +802,7 @@ background-color:rgb(255, 255, 255);
     <bool>false</bool>
    </property>
    <property name="windowTitle">
-    <string>status</string>
+    <string>상태창(lcptd)</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -1333,15 +1387,29 @@ background-color:rgb(255, 255, 255);
   </widget>
   <action name="actionexit">
    <property name="text">
-    <string>exit</string>
+    <string>나가기</string>
    </property>
   </action>
   <action name="actionreturn_to_manimenu">
    <property name="text">
-    <string>return to mainmenu</string>
+    <string>메인메뉴로 돌아가기</string>
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Widget_Option_Color</class>
+   <extends>QWidget</extends>
+   <header>components.gui.option_ui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Widget_Option_Font</class>
+   <extends>QWidget</extends>
+   <header>components.gui.option_ui</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -23,3 +23,9 @@ ROLE:
 
 - Made by 'Yenru0'
 """
+# Anw Reader for Python Bind
+__version__ = "0.91"
+__anw_std__ = "0.91"
+__anw_compatibles__ = ["0.9"]
+
+__anw_supports__ = {}
