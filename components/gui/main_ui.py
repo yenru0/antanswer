@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'main.ui',
 # licensing of 'main.ui' applies.
 #
-# Created: Tue Mar 24 18:56:03 2020
+# Created: Mon May 18 16:55:54 2020
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,60 +13,26 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(648, 641)
+        MainWindow.resize(600, 641)
         MainWindow.setStyleSheet("#MainWindow{\n"
-"    background-color: rgb(247, 247, 247)\n"
-"}")
+"    background-color: rgb(255, 255, 255)\n"
+"}\n"
+"\n"
+"#centralwidget{\n"
+"    background-color: rgb(255,255, 255);\n"
+"}\n"
+"\n"
+"#sideStatus{\n"
+"    background-color: rgb(255,255, 255);\n"
+"}\n"
+"")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setStyleSheet("#centralwidget{\n"
-"    background-color: rgb(247,247, 247);\n"
-"}\n"
-"\n"
-"#page_do{\n"
-"    background-color: rgb(247,247, 247);\n"
-"}\n"
-"\n"
-"#queston{\n"
-"    background-color: white;\n"
-"    border: 1px solid black;\n"
-"}\n"
-"\n"
-"#log {\n"
-"    font: 25 9pt \"Malgun Gothic\";\n"
-"background-color: white;\n"
-"}\n"
-"\n"
-"#input{\n"
-"    font: 25 11pt \"Malgun Gothic\";\n"
-"    background-color: white;\n"
-"}\n"
-"\n"
-"#enter{\n"
-"    font: 25 bold 12pt \"Malgun Gothic\";\n"
-"    background-color: white;\n"
-"}\n"
-"\n"
-"#titleBtn_exit, #titleBtn_option, #titleBtn_run{\n"
-"    font: 25 bold 18pt \"Malgun Gothic\";\n"
-"    background-color: white;\n"
-"    \n"
-"}\n"
-"\n"
-".QLabel#title{\n"
+        self.centralwidget.setStyleSheet(".QLabel#title{\n"
 "    font: 25 14pt \"Malgun Gothic\";\n"
 "}\n"
 "\n"
 ".QLabel#down_version{\n"
 "    font: 100 10pt \"Malgun Gothic\";\n"
-"}\n"
-"\n"
-"#setting_btn_real_run, #setting_btn_addfile, #setting_label_extend\n"
-", #setting_label_run, #setting_runbox, #setting_btn_real_gomenu{\n"
-"    font: 100 11pt \"Malgun Gothic\";\n"
-"}\n"
-"\n"
-"#resultant_btn_again, #resultant_btn_setting, #resultant_btn_menu, #resultant_btn_save, #resultant_btn_preference, #resultant_btn_openthis{\n"
-"    font: 25 12pt \"Malgun Gothic\";\n"
 "}\n"
 "\n"
 "#label_resultant{\n"
@@ -77,8 +43,42 @@ class Ui_MainWindow(object):
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.pages = QtWidgets.QStackedWidget(self.centralwidget)
+        self.pages.setStyleSheet("QPushButton{\n"
+"    font: 25 bold 12pt \"Malgun Gothic\";\n"
+"    background-color: white;\n"
+"    border: 1px solid black;\n"
+"    frameShape: panel;\n"
+"    \n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                      stop: 0 #dadbde, stop: 1 #f6f7fa);\n"
+"}\n"
+"QPushButton:flat {\n"
+"    border: none; /* no border for a flat push button */\n"
+"}\n"
+"QPushButton:default {\n"
+"    border-color: navy; /* make the default button prominent */\n"
+"}")
         self.pages.setObjectName("pages")
         self.page_enter = QtWidgets.QWidget()
+        self.page_enter.setStyleSheet("QPushButton{\n"
+"    font: 25 bold 18pt \"Malgun Gothic\";\n"
+"    background-color: white;\n"
+"    border: 1px solid black;\n"
+"    frameShape: panel;\n"
+"    \n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                      stop: 0 #dadbde, stop: 1 #f6f7fa);\n"
+"}\n"
+"QPushButton:flat {\n"
+"    border: none; /* no border for a flat push button */\n"
+"}\n"
+"QPushButton:default {\n"
+"    border-color: navy; /* make the default button prominent */\n"
+"}")
         self.page_enter.setObjectName("page_enter")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.page_enter)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -91,14 +91,22 @@ class Ui_MainWindow(object):
         self.titleBtns.setSpacing(10)
         self.titleBtns.setContentsMargins(10, 10, 10, 10)
         self.titleBtns.setObjectName("titleBtns")
-        self.titleBtn_run = QtWidgets.QPushButton(self.page_enter)
+        self.titleBtn_exit = QtWidgets.QPushButton(self.page_enter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.titleBtn_run.sizePolicy().hasHeightForWidth())
-        self.titleBtn_run.setSizePolicy(sizePolicy)
-        self.titleBtn_run.setObjectName("titleBtn_run")
-        self.titleBtns.addWidget(self.titleBtn_run, 0, 0, 1, 1)
+        sizePolicy.setHeightForWidth(self.titleBtn_exit.sizePolicy().hasHeightForWidth())
+        self.titleBtn_exit.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Malgun Gothic")
+        font.setPointSize(18)
+        font.setWeight(75)
+        font.setItalic(False)
+        font.setBold(True)
+        self.titleBtn_exit.setFont(font)
+        self.titleBtn_exit.setStyleSheet("")
+        self.titleBtn_exit.setObjectName("titleBtn_exit")
+        self.titleBtns.addWidget(self.titleBtn_exit, 0, 2, 1, 1)
         self.titleBtn_option = QtWidgets.QPushButton(self.page_enter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -107,14 +115,14 @@ class Ui_MainWindow(object):
         self.titleBtn_option.setSizePolicy(sizePolicy)
         self.titleBtn_option.setObjectName("titleBtn_option")
         self.titleBtns.addWidget(self.titleBtn_option, 0, 1, 1, 1)
-        self.titleBtn_exit = QtWidgets.QPushButton(self.page_enter)
+        self.titleBtn_run = QtWidgets.QPushButton(self.page_enter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.titleBtn_exit.sizePolicy().hasHeightForWidth())
-        self.titleBtn_exit.setSizePolicy(sizePolicy)
-        self.titleBtn_exit.setObjectName("titleBtn_exit")
-        self.titleBtns.addWidget(self.titleBtn_exit, 0, 2, 1, 1)
+        sizePolicy.setHeightForWidth(self.titleBtn_run.sizePolicy().hasHeightForWidth())
+        self.titleBtn_run.setSizePolicy(sizePolicy)
+        self.titleBtn_run.setObjectName("titleBtn_run")
+        self.titleBtns.addWidget(self.titleBtn_run, 0, 0, 1, 1)
         self.verticalLayout_4.addLayout(self.titleBtns)
         self.down_version = QtWidgets.QLabel(self.page_enter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
@@ -129,6 +137,38 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.setStretch(1, 1)
         self.pages.addWidget(self.page_enter)
         self.page_setting = QtWidgets.QWidget()
+        self.page_setting.setStyleSheet("QLabel{\n"
+"    font: 11pt \"맑은 고딕\";\n"
+"    border: 1px solid black;\n"
+"}\n"
+"\n"
+"QPushButton{\n"
+"    font: 25 11pt \"Malgun Gothic\";\n"
+"    background-color: white;\n"
+"    border: 1px solid black;\n"
+"    frameShape: panel;\n"
+"    \n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                      stop: 0 #dadbde, stop: 1 #f6f7fa);\n"
+"}\n"
+"QPushButton:flat {\n"
+"    border: none; /* no border for a flat push button */\n"
+"}\n"
+"QPushButton:default {\n"
+"    border-color: navy; /* make the default button prominent */\n"
+"}\n"
+"\n"
+"QPushButton#setting_btn_addfile{\n"
+"    background-color:rgb(85, 170, 255);\n"
+"    border: 1px solid black;\n"
+"}\n"
+"QPushButton#setting_btn_addfile:pressed{\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                      stop: 1 rgb(85, 170, 255), stop: 0 rgb(46, 93, 140));\n"
+"\n"
+"}")
         self.page_setting.setObjectName("page_setting")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page_setting)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -139,6 +179,8 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.setting_stage_table.sizePolicy().hasHeightForWidth())
         self.setting_stage_table.setSizePolicy(sizePolicy)
         self.setting_stage_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.setting_stage_table.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.setting_stage_table.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.setting_stage_table.setObjectName("setting_stage_table")
         self.gridLayout_2.addWidget(self.setting_stage_table, 2, 0, 1, 1)
         self.setitem_file = QtWidgets.QHBoxLayout()
@@ -166,6 +208,8 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.setting_list_file.sizePolicy().hasHeightForWidth())
         self.setting_list_file.setSizePolicy(sizePolicy)
         self.setting_list_file.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.setting_list_file.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.setting_list_file.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.setting_list_file.setObjectName("setting_list_file")
         self.setitem_file.addWidget(self.setting_list_file)
         self.gridLayout_2.addLayout(self.setitem_file, 1, 0, 1, 1)
@@ -205,7 +249,19 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addLayout(self.setitem_extend, 0, 0, 1, 1)
         self.pages.addWidget(self.page_setting)
         self.page_do = QtWidgets.QWidget()
-        self.page_do.setStyleSheet("")
+        self.page_do.setStyleSheet("#input{\n"
+"    font: 25 11pt \"Malgun Gothic\";\n"
+"    background-color: white;\n"
+"    border: 1px solid black;\n"
+"}\n"
+"#log {\n"
+"    font: 25 9pt \"Malgun Gothic\";\n"
+"background-color: white;\n"
+"}\n"
+"#queston{\n"
+"    background-color: white;\n"
+"    border: 1px solid black;\n"
+"}")
         self.page_do.setObjectName("page_do")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.page_do)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
@@ -236,6 +292,8 @@ class Ui_MainWindow(object):
         self.input.setDragDropOverwriteMode(False)
         self.input.setDragDropMode(QtWidgets.QAbstractItemView.DragDrop)
         self.input.setDefaultDropAction(QtCore.Qt.MoveAction)
+        self.input.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.input.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.input.setObjectName("input")
         item = QtWidgets.QListWidgetItem(self.input)
         item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsEditable|QtCore.Qt.ItemIsDragEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
@@ -277,8 +335,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.setStretch(2, 3)
         self.pages.addWidget(self.page_do)
         self.page_resultant = QtWidgets.QWidget()
-        self.page_resultant.setStyleSheet("QPushButton{\n"
-"\n"
+        self.page_resultant.setStyleSheet("QLabel#label_resultant{\n"
+"    font: 100 bold 25pt \"Malgun Gothic\";\n"
 "}")
         self.page_resultant.setObjectName("page_resultant")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.page_resultant)
@@ -305,6 +363,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.resultant_view.sizePolicy().hasHeightForWidth())
         self.resultant_view.setSizePolicy(sizePolicy)
         self.resultant_view.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.resultant_view.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.resultant_view.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.resultant_view.setObjectName("resultant_view")
         self.verticalLayout_5.addWidget(self.resultant_view)
@@ -320,9 +379,9 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setFamily("Malgun Gothic")
         font.setPointSize(12)
-        font.setWeight(3)
+        font.setWeight(75)
         font.setItalic(False)
-        font.setBold(False)
+        font.setBold(True)
         self.resultant_btn_setting.setFont(font)
         self.resultant_btn_setting.setObjectName("resultant_btn_setting")
         self.resultant_btns.addWidget(self.resultant_btn_setting, 0, 1, 1, 1)
@@ -338,18 +397,27 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addLayout(self.resultant_btns)
         self.pages.addWidget(self.page_resultant)
         self.page_option = QtWidgets.QWidget()
+        self.page_option.setStyleSheet("QScrollArea{\n"
+"    background-color:rgb(255, 255, 255);\n"
+"\n"
+"}")
         self.page_option.setObjectName("page_option")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.page_option)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.option_scrollarea = QtWidgets.QScrollArea(self.page_option)
+        self.option_scrollarea.setStyleSheet("\n"
+"background-color:rgb(255, 255, 255);\n"
+"")
         self.option_scrollarea.setWidgetResizable(True)
         self.option_scrollarea.setObjectName("option_scrollarea")
         self.option_scrollarea_contents = QtWidgets.QWidget()
-        self.option_scrollarea_contents.setGeometry(QtCore.QRect(0, 0, 476, 580))
+        self.option_scrollarea_contents.setGeometry(QtCore.QRect(0, 0, 98, 30))
+        self.option_scrollarea_contents.setStyleSheet("")
         self.option_scrollarea_contents.setObjectName("option_scrollarea_contents")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.option_scrollarea_contents)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.templeft = QtWidgets.QLabel(self.option_scrollarea_contents)
+        self.templeft.setStyleSheet("")
         self.templeft.setObjectName("templeft")
         self.gridLayout_3.addWidget(self.templeft, 0, 0, 1, 1)
         self.tempright = QtWidgets.QLabel(self.option_scrollarea_contents)
@@ -361,7 +429,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.pages, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 648, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 600, 21))
         self.menubar.setObjectName("menubar")
         self.menu = QtWidgets.QMenu(self.menubar)
         self.menu.setObjectName("menu")
@@ -370,12 +438,23 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
         self.sideStatus = QtWidgets.QDockWidget(MainWindow)
+        self.sideStatus.setStyleSheet("#sideStatus::title{\n"
+"    \n"
+"    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(240, 240, 240, 255), stop:1 rgba(255, 255, 255, 255));\n"
+"    border: 1px solid black;\n"
+"    \n"
+"}\n"
+"\n"
+"#sideStatus{\n"
+"    font: 11pt \"맑은 고딕\";\n"
+"}")
         self.sideStatus.setFloating(False)
         self.sideStatus.setObjectName("sideStatus")
         self.lcptd = QtWidgets.QWidget()
         self.lcptd.setStyleSheet("#lcptd {\n"
-"    background-color: rgb(247, 247, 247);\n"
+"    background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(240, 240, 240, 255), stop:1 rgba(255, 255, 255, 255));\n"
 "    border: 1px solid black;\n"
+"    border-top: none;\n"
 "}\n"
 "\n"
 ".QLabel {\n"
@@ -614,31 +693,25 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.pages.setCurrentIndex(0)
+        self.pages.setCurrentIndex(2)
         self.extend_setting.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "antanswer-python-pyside2", None, -1))
-        self.title.setText(QtWidgets.QApplication.translate("MainWindow", "<html><head/><body><p><span style=\" font-size:36pt; font-weight:600;\">Antanswer Python</span><span style=\" font-size:14pt; font-weight:600; vertical-align:sub;\">(pyside2)</span></p></body></html>", None, -1))
-        self.titleBtn_run.setText(QtWidgets.QApplication.translate("MainWindow", "Run", None, -1))
-        self.titleBtn_option.setText(QtWidgets.QApplication.translate("MainWindow", "Option", None, -1))
-        self.titleBtn_exit.setText(QtWidgets.QApplication.translate("MainWindow", "Exit", None, -1))
+        self.title.setText(QtWidgets.QApplication.translate("MainWindow", "<html><head/><body><p><span style=\" font-size:36pt; font-weight:600;\">Antanswer</span><span style=\" font-weight:600; vertical-align:sub;\">(pyside2)</span></p></body></html>", None, -1))
+        self.titleBtn_exit.setText(QtWidgets.QApplication.translate("MainWindow", "나가기", None, -1))
+        self.titleBtn_option.setText(QtWidgets.QApplication.translate("MainWindow", "설정", None, -1))
+        self.titleBtn_run.setText(QtWidgets.QApplication.translate("MainWindow", "실행", None, -1))
         self.down_version.setText(QtWidgets.QApplication.translate("MainWindow", "version: loading", None, -1))
-        self.setting_btn_addfile.setText(QtWidgets.QApplication.translate("MainWindow", "add file", None, -1))
-        self.setting_btn_real_run.setText(QtWidgets.QApplication.translate("MainWindow", "run", None, -1))
-        self.setting_btn_real_gomenu.setText(QtWidgets.QApplication.translate("MainWindow", "return to mainmenu", None, -1))
-        self.setting_label_extend.setText(QtWidgets.QApplication.translate("MainWindow", "extend setting", None, -1))
-
-        self.queston.setHtml(QtWidgets.QApplication.translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'13 Malgun Gothic\'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Malgun Gothic\'; font-size:14pt; font-weight:600;\">Test Grap is the tools that I test this antanswer gui, Test Grab consists of HTML text, but it is UNSTABLE</span></p></body></html>", None, -1))
+        self.setting_btn_addfile.setText(QtWidgets.QApplication.translate("MainWindow", " 파일 추가 ", None, -1))
+        self.setting_btn_real_run.setText(QtWidgets.QApplication.translate("MainWindow", "시작", None, -1))
+        self.setting_btn_real_gomenu.setText(QtWidgets.QApplication.translate("MainWindow", "돌아가기", None, -1))
+        self.setting_label_extend.setText(QtWidgets.QApplication.translate("MainWindow", " 확장 설정 ", None, -1))
         __sortingEnabled = self.input.isSortingEnabled()
         self.input.setSortingEnabled(False)
         self.input.setSortingEnabled(__sortingEnabled)
-        self.enter.setText(QtWidgets.QApplication.translate("MainWindow", "PushButton", None, -1))
+        self.enter.setText(QtWidgets.QApplication.translate("MainWindow", "입력", None, -1))
         __sortingEnabled = self.log.isSortingEnabled()
         self.log.setSortingEnabled(False)
         self.log.item(0).setText(QtWidgets.QApplication.translate("MainWindow", "Test Log is the log.", None, -1))
@@ -647,13 +720,13 @@ class Ui_MainWindow(object):
         self.log.item(3).setText(QtWidgets.QApplication.translate("MainWindow", "Kanobe Empesus decide the warl.", None, -1))
         self.log.item(4).setText(QtWidgets.QApplication.translate("MainWindow", "Laufghart", None, -1))
         self.log.setSortingEnabled(__sortingEnabled)
-        self.label_resultant.setText(QtWidgets.QApplication.translate("MainWindow", "Result:", None, -1))
-        self.resultant_btn_menu.setText(QtWidgets.QApplication.translate("MainWindow", "return to menu", None, -1))
-        self.resultant_btn_again.setText(QtWidgets.QApplication.translate("MainWindow", "try again", None, -1))
-        self.resultant_btn_setting.setText(QtWidgets.QApplication.translate("MainWindow", "back to setting", None, -1))
-        self.resultant_btn_save.setText(QtWidgets.QApplication.translate("MainWindow", "save this result", None, -1))
-        self.resultant_btn_preference.setText(QtWidgets.QApplication.translate("MainWindow", "write preference", None, -1))
-        self.resultant_btn_openthis.setText(QtWidgets.QApplication.translate("MainWindow", "go to this file/files", None, -1))
+        self.label_resultant.setText(QtWidgets.QApplication.translate("MainWindow", "결과:", None, -1))
+        self.resultant_btn_menu.setText(QtWidgets.QApplication.translate("MainWindow", "메뉴로 돌아가기", None, -1))
+        self.resultant_btn_again.setText(QtWidgets.QApplication.translate("MainWindow", "다시 시도", None, -1))
+        self.resultant_btn_setting.setText(QtWidgets.QApplication.translate("MainWindow", "실행 설정으로", None, -1))
+        self.resultant_btn_save.setText(QtWidgets.QApplication.translate("MainWindow", "이 결과 저장", None, -1))
+        self.resultant_btn_preference.setText(QtWidgets.QApplication.translate("MainWindow", "선호 파일 열기", None, -1))
+        self.resultant_btn_openthis.setText(QtWidgets.QApplication.translate("MainWindow", "이 anw 파일 열기", None, -1))
         self.templeft.setText(QtWidgets.QApplication.translate("MainWindow", "Author", None, -1))
         self.tempright.setText(QtWidgets.QApplication.translate("MainWindow", "yenru0", None, -1))
         self.menu.setTitle(QtWidgets.QApplication.translate("MainWindow", "actions", None, -1))
