@@ -4,6 +4,7 @@ from random import choices
 import function.reader.reader as reader
 import numpy as np
 
+
 ### reader.struct
 
 class AntanswerDetail:
@@ -53,6 +54,12 @@ class AntanswerSub:
 
     def __setitem__(self, key, value):
         self.L[key] = value
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return repr(self.L)
 
 
 class AntanswerElement:
@@ -108,7 +115,7 @@ class AntanswerElement:
         else:
             return False
 
-    def getRealQuestion(self, reverse_aq = False) -> List[str]:
+    def getRealQuestion(self, reverse_aq=False) -> List[str]:
         """
         Since Question displayed in antanswer is Only First Of 'questions',
         Antanswer need first of first of 'self.question'
@@ -153,8 +160,7 @@ class AntanswerDataStruct:
         self.stages: Dict[str, AntanswerStage] = {}
         self.use: Dict[str, bool] = {}
 
-
-        self.result = AntanswerResult()
+        self.result = AntanswerResult() # need initializing
 
         self.isloaded: bool = False
         self.isfin: bool = False
@@ -203,9 +209,9 @@ class AntanswerDataStruct:
         """
         aqs = []
         rct = 0
-        for v in self.stages.values():
+        for v in self.stages:
             if self.use[v]:
-                for e in v:
+                for e in self.stages[v]:
                     aqs.append(e)
 
         if self.detail.recentValue:
@@ -216,13 +222,13 @@ class AntanswerDataStruct:
         history = []
         for i in range(self.detail.wil):
             r = np.random.choice(aqs)
+            print(type(r), r, aqs)
             while r in history[-self.detail.wil:]:
                 r = np.random.choice(aqs)
             history.append(r)
             self.result.append(r)
             yield r
         self.isfin = True
-
 
     def check(self, stage: str, state: bool) -> bool:
         if stage in self.stages:
@@ -234,6 +240,8 @@ class AntanswerDataStruct:
             return False
         return True
 
+    def clearResult(self):
+        self.result = AntanswerResult()
 
 
 ### U'routine
@@ -242,6 +250,8 @@ class AntanswerResult:
     def __init__(self, *args):
         self.result: List[List[List[str], AntanswerElement, List[float]]] = []
         self.score = 0
+        self.count = 0
+
     def append(self, a) -> bool:
         if isinstance(a, AntanswerElement):
             self.result.append([None, a, None])
@@ -254,28 +264,33 @@ class AntanswerResult:
                 if i.name == name and i.stage_name == stage_name and i.id == id]
 
     def check(self, cond: Dict[str, bool], index: int = -1) -> bool:
+        isCorrection = False
+        if self.result[index][2] is not None:
+            isCorrection = True
         if self.result[index][0] is None:
             return False
         else:
-            inp = self.latest[0][:]
-            ans: List[List[str]] = [j for i in self.latest[1].answers
-                                    for j in i
+            inp = self.result[index][0][:]
+            ans: List[List[str]] = [[j for j in i] for i in self.result[index][1].answers
+
                                     ]
+            print(ans)
             if cond["COMP_IGNORE_SPACE"]:
                 for i in range(len(ans)):
                     for j in range(len(ans[i])):
+
                         ans[i][j] = ans[i][j].replace(" ", "")
                 for i in range(len(inp)):
                     inp[i] = inp[i].replace(" ", "")
             if cond["COMP_IGNORE_CASE"]:
                 for i in range(len(ans)):
-                    for j in range(len(ans[i]))
+                    for j in range(len(ans[i])):
                         ans[i][j] = ans[i][j].lower()
                 for i in range(len(inp)):
                     inp[i] = inp[i].lower()
             if cond["COMP_IGNORE_LAST_PERIOD"]:
                 for i in range(len(ans)):
-                    for j in range(len(ans[i]))
+                    for j in range(len(ans[i])):
                         if ans[i][j]:
                             if ans[i][j][-1] == ".":
                                 ans[i][j] = ans[i][j][:-1]
@@ -286,7 +301,7 @@ class AntanswerResult:
             if not cond["COMP_NOT"]:
                 pass
                 # mrs
-            #else:
+            # else:
             if True:
                 if cond["ANSWER_WITHOUT_ORDER"]:
                     mrs = []
@@ -294,31 +309,92 @@ class AntanswerResult:
                         for k in range(len(ans)):
                             try:
                                 if i in ans[k]:
+                                    print(i, ans[k])
                                     del ans[k]
                                     mrs.append(1.0)
                                     break
                             except ValueError:
                                 pass
-                    else:
-                        mrs.append(0)
+                        else:
+                            mrs.append(0)
                 else:
                     mrs = [
-                        any(i==a for a in als) for i, als in zip(inp, ans)
+                        any(i == a for a in als) for i, als in zip(inp, ans)
                     ]
-            self.latest[2] = mrs
 
+            if not cond["COMP_NOT"]:
+                pass
+                #if min(mrs) > 0.92:
+                    #return mrs, True
+                #else:
+                    #return mrs, False
+                    #
+            if True:
+                if all(mrs):
+                    if isCorrection:
+                        if self.result[index][2]:
+                            pass
+                        else:
+                            self.score += 1
+                    else:
+                        self.score += 1
+                else:
+                    if isCorrection:
+                        if self.result[index][2]:
+                            self.score -= 1
+                        else:
+                            pass
+                    else:
+                        pass
+            self.count += 1
+            print(mrs)
+            self.result[index][2] = mrs
+
+    def correct(self, cond: Dict[str, bool], index: int, state: (bool, int, float)) -> bool:
+        old = self.result[index][2]
+
+        if isinstance(state, float):
+            if 0 <= state <= 1:
+                self.result[index][2] = [state] * len(old)
+            else:
+                self.result[index][2] = [1.0 if state else 0.0] * len(old)
+        else:
+            self.result[index][2] = [1.0 if state else 0.0] * len(old)
+
+        if old is None:
+            if self.result[index][2]:
+                self.score += 1
+            else:
+                pass
+        else:
+            # IG NOT COMP
+            if any(old):
+                if any(self.result[index][2]):
+                    pass
+                else:
+                    self.score -= 1
+            else:
+                if any(self.result[index][2]):
+                    self.score += 1
+                else:
+                    pass
+
+        return True
 
     def answer(self, ans: List[str], index: int = -1) -> bool:
         self.result[index][0] = ans
         return True
 
     @property
-    def latest(self) -> List[List[str], AntanswerElement, List[float]]:
+    def latest(self):
         if len(self.result) > 0:
             return self.result[-1]
 
     def __getitem__(self, item):
         return self.result[item]
+
+    def __setitem__(self, key, value):
+        self.result[key] = value
 
     def __len__(self):
         return len(self.result)

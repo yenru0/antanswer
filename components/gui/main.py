@@ -106,7 +106,6 @@ QScrollBar::handle:hover {
         self.setProperty("rsign", "false")
         self.setStyleSheet(self.styleSheet())
 
-
 class RVScrollBar(QScrollBar):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -396,7 +395,6 @@ class AnwLoadStageDataModel(QAbstractTableModel):
         """
         return False
 
-
 class AnwLoadStageDataDelegate(QItemDelegate):
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex):
         if index.column() == 2:
@@ -415,17 +413,22 @@ class AnwLoadStageDataDelegate(QItemDelegate):
             pass
         return super().editorEvent(event, model, option, index)
 
+
 class AnwResultantDataModel(QAbstractTableModel):
-    def __init__(self, data: AntanswerResult, cond: Dict[str, bool]):
+    def __init__(self, data: AntanswerResult, cond: Dict[str, bool], runner):
         super().__init__()
         self.data_result = data
         self.column = ["제출된 답", "답"]
-        if cond["RESULT_DISPLAY_QUEST"]:
+        self.cond = cond
+        self.runner = runner
+        if self.cond["RESULT_DISPLAY_QUEST"]:
             self.column.append("문제")
-        if cond["RESULT_MANUAL_POST_CORRECTION"]:
+        if self.cond["RESULT_MANUAL_POST_CORRECTION"]:
             self.column.append("수정")
+
     def flags(self, index: QModelIndex) -> Qt.ItemFlags:
         if index.column() == 3:
+
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
         elif index.column() == 2:
             if self.cond["RESULT_DISPLAY_QUEST"]:
@@ -434,6 +437,7 @@ class AnwResultantDataModel(QAbstractTableModel):
                 return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
         else:
             return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+
     def rowCount(self, parent:QModelIndex=...) -> int:
         return len(self.data_result)
 
@@ -458,7 +462,8 @@ class AnwResultantDataModel(QAbstractTableModel):
                     else:
                         return None
                 elif index.column() == 1:
-                    return self.data_result[index.row()][1].answers
+
+                    return ";".join(map(str, self.data_result[index.row()][1].answers))
 
                 elif index.column() == 0:
                     return self.data_result[index.row()][0]
@@ -466,7 +471,13 @@ class AnwResultantDataModel(QAbstractTableModel):
                 else:
                     return None
             elif role == Qt.CheckStateRole:
-                return self.data_result[index.row()][2]
+                if index.column() == 2:
+                    if self.cond["RESULT_DISPLAY_QUEST"]:
+                        return None
+                    else:
+                        return any(self.data_result[index.row()][2])
+                elif index.column() == 3:
+                    return any(self.data_result[index.row()][2])
         else:
             return None
 
@@ -474,7 +485,8 @@ class AnwResultantDataModel(QAbstractTableModel):
         if index.isValid():
             if role == Qt.CheckStateRole:
                 if self.cond["RESULT_MANUAL_POST_CORRECTION"]:
-                    self.data_result.check(index.row(), bool(value))
+                    self.data_result.correct(self.cond, index.row(), bool(value))
+                    self.runner.lcptd_set_property()
                 else:
                     return False
             else:
@@ -483,12 +495,39 @@ class AnwResultantDataModel(QAbstractTableModel):
         else:
             return False
 
-
-
 class AnwResultantDataDeligate(QItemDelegate):
-    pass
+    def __init__(self, parent, cond):
+        super().__init__(parent)
+        self.cond = cond
 
+    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex):
+        if index.column() == 3:
+            v = index.data(Qt.CheckStateRole)
+            self.drawCheck(painter, option, option.rect, Qt.Checked if v else Qt.Unchecked)
+        elif index.column() == 2:
+            if self.cond["RESULT_DISPLAY_QUEST"]:
+                super().paint(painter, option, index)
+            else:
+                v = index.data(Qt.CheckStateRole)
+                self.drawCheck(painter, option, option.rect, Qt.Checked if v else Qt.Unchecked)
+        else:
+            super().paint(painter, option, index)
 
+    def editorEvent(self, event: QEvent, model: QAbstractItemModel, option: QStyleOptionViewItem, index: QModelIndex) -> bool:
+        if index.column() == 3:
+            if event.type() is QEvent.MouseButtonPress:
+                v = bool(model.data(index, Qt.CheckStateRole))
+                model.setData(index, not v, Qt.CheckStateRole)
+                event.accept()
+        elif index.column() == 2:
+            if not self.cond["RESULT_DISPLAY_QUEST"]:
+                if event.type() is QEvent.MouseButtonPress:
+                    v = bool(model.data(index, Qt.CheckStateRole))
+                    model.setData(index, not v, Qt.CheckStateRole)
+                    event.accept()
+        else:
+            pass
+        return super().editorEvent(event, model, option, index)
 
 
 class Main(QMainWindow):
@@ -584,7 +623,10 @@ class Main(QMainWindow):
         self.lcptd_reset()
 
         ### resultant
-        self.model_resultant = QStandardItemModel()
+        self.model_resultant: AnwResultantDataModel
+        self.model_resultant_delegate: AnwResultantDataDeligate
+
+
         self.ui.resultant_view.setHorizontalScrollBar(RHScrollBar())
         self.ui.resultant_view.setVerticalScrollBar(RVScrollBar())
         # self.ui.resultant_btn_again.clicked.connect()
@@ -611,17 +653,18 @@ class Main(QMainWindow):
         self.ui.pages.setCurrentIndex(0)
 
     def go_run(self):
-        if not self.temp_selected_stage:
+        if not any([i.use for i in self.model_file.file_data]):
             tepp = QErrorMessage()
             tepp.showMessage("File wasn't selected")
             tepp.exec_()
             return
 
-        if not any(vv for v in self.temp_selected_stage.values() for vv in v.values()):
+        if not any(v for v in self.model_stage.data_real.use.values()):
             tepp = QErrorMessage()
             tepp.showMessage("Stage wasn't selected")
             tepp.exec_()
             return
+
 
         self.init_routine()
 
@@ -677,9 +720,12 @@ class Main(QMainWindow):
 
     def init_routine(self):
         for lfd in self.model_file.file_data:
-            self.samples = lfd.ads.sampling()
-            self.selected = lfd.ads
-            break
+            if lfd.use:
+                self.samples = lfd.ads.sampling()
+                self.selected = lfd.ads
+                self.selected.clearResult()
+                print(lfd.name)
+                break
 
         self.cond_used = {}
 
@@ -690,27 +736,27 @@ class Main(QMainWindow):
                 self.cond_used[ck] = v
 
         self.lcptd_reset()
-        self.lcptd_set_file(self.temp_selected_stage.keys())
+        self.lcptd_set_file(self.selected.name)
 
         self.next_routine(False, True)
 
     def next_routine(self, enable=False, isFirst=False):
-        # process before head
         if not isFirst:
             inputs = [self.ui.input.item(i).text() for i in range(self.ui.input.count())]
             self.selected.result.answer(inputs)
-            self.selected.result.check()
-
+            self.selected.result.check(self.cond_used)
 
         # init
         try:
             aq: AntanswerElement = next(self.samples)
+
         except StopIteration as e:
+            self.lcptd_set_property()
             self.go_resultant()
+
             return
 
         self.lcptd_set_property()
-
         t_s = ""
 
         for i, q in enumerate(aq.getRealQuestion(self.cond_used["REVERSE_AQ"])):
@@ -740,21 +786,27 @@ class Main(QMainWindow):
         pass
 
 
-    def lcptd_set_file(self, names):
-        self.ui.lcptd_file.setText(";".join(names))
+    def lcptd_set_file(self, name: str):
+        self.ui.lcptd_file.setText(name)
 
     def lcptd_set_property(self):
-        self.ui.lcptd_progress.setValue(self.count)
-        self.ui.lcptd_progress.setMaximum(self.detail[0])
-        if self.count == 0:
+        self.ui.lcptd_progress.setValue(self.selected.result.count)
+        self.ui.lcptd_progress.setMaximum(self.selected.detail.wil)
+        if self.selected.result.count == 0:
             self.ui.lcptd_rategress.setMaximum(1)
             self.ui.lcptd_cwgress.setMaximum(1)
         else:
-            self.ui.lcptd_rategress.setMaximum(self.count)
-            self.ui.lcptd_cwgress.setMaximum(self.count)
-        self.ui.lcptd_rategress.setValue(self.score)
-        self.ui.lcptd_cwgress.setValue(self.score)
-        self.ui.lcptd_cwgress.setFormat("%s:%s" % (self.score, self.count - self.score))
+            self.ui.lcptd_rategress.setMaximum(self.selected.result.count)
+            self.ui.lcptd_cwgress.setMaximum(self.selected .result.count)
+        self.ui.lcptd_rategress.setValue(self.selected.result.score)
+        self.ui.lcptd_cwgress.setValue(self.selected.result.score)
+        self.ui.lcptd_cwgress.setFormat("%s:%s" % (
+            self.selected.result.score,
+            self.selected.result.count - self.selected.result.score
+            )
+        )
+
+
 
     def lcptd_reset(self):
         self.ui.lcptd_file.setText("")
@@ -763,71 +815,18 @@ class Main(QMainWindow):
         self.ui.lcptd_cwgress.setMaximum(0)
 
     def resultant_set(self):
-        if self.cond_used["RESULT_DISPLAY_QUEST"]:
-            self.model_resultant.setColumnCount(4)
-        else:
-            self.model_resultant.setColumnCount(3)
-        self.model_resultant.setRowCount(self.detail[0])
+
+        self.model_resultant = AnwResultantDataModel(self.selected.result,
+                                                     self.cond_used,
+                                                     self
+                                                     )
+        self.model_resultant_delegate = AnwResultantDataDeligate(self.ui.resultant_view,
+                                                                 self.cond_used,
+                                                                 )
         self.ui.resultant_view.setModel(self.model_resultant)
-        for i, sts in self.correct.items():
-            temp_list1 = QListWidget()
-            temp_list2 = QListWidget()
-            temp_list3 = QListWidget()
-            temp_list1.setMinimumHeight(100)
-            temp_list1.setMinimumWidth(400)
-            temp_list2.setMinimumHeight(100)
-            temp_list2.setMinimumWidth(400)
-            temp_list3.setMinimumHeight(100)
-            temp_list3.setMinimumWidth(400)
-            temp_list1.setHorizontalScrollBar(RHScrollBar())
-            temp_list1.setVerticalScrollBar(RVScrollBar())
-            temp_list2.setHorizontalScrollBar(RHScrollBar())
-            temp_list2.setVerticalScrollBar(RVScrollBar())
-            temp_list3.setHorizontalScrollBar(RHScrollBar())
-            temp_list3.setVerticalScrollBar(RVScrollBar())
-            temp_list1.setEditTriggers(QAbstractItemView.NoEditTriggers)
-            temp_list2.setEditTriggers(QAbstractItemView.NoEditTriggers)
-            temp_list3.setEditTriggers(QAbstractItemView.NoEditTriggers)
-            # correct (isCorrect, mrs, scope_stage, scope_name, elem_ci, inputs, q_si)
-            if self.cond_used["REVERSE_AQ"]:
-                qcol, acol = 1, 2
-            else:
-                qcol, acol = 2, 1
-            # asts and rtst
-            for j, rsts in enumerate(sts[5]):
-                temp_list1.addItem(rsts)
-                temp_list2.addItem(str(self.temp_selected_files[sts[3]][2]["stages"][sts[2]][sts[4]][acol][j]))
+        self.ui.resultant_view.setItemDelegate(self.model_resultant_delegate)
 
-            for j, q_si in enumerate(sts[6]):
-                temp_list3.addItem(self.temp_selected_files[sts[3]][2]["stages"][sts[2]][sts[4]][qcol][j][q_si])
 
-            temp_manual_checkbox = QCheckBox()
-            temp_manual_checkbox.setChecked(self.correct[i][0])
-            temp_manual_checkbox.clicked[bool].connect(partial(self.resultant_manual_crr,
-                                                               stage_name=self.correct[i][2],
-                                                               file_name=self.correct[i][3],
-                                                               ci=self.correct[i][4]
-                                                               ))
-            if self.cond_used["RESULT_MANUAL_POST_CORRECTION"]:
-                temp_manual_checkbox.setCheckable(True)
-            else:
-                temp_manual_checkbox.setCheckable(False)
-
-            self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 0), temp_list1)
-            self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 1), temp_list2)
-            if self.cond_used["RESULT_DISPLAY_QUEST"]:
-                self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 2), temp_list3)
-                self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 3), temp_manual_checkbox)
-            else:
-                self.ui.resultant_view.setIndexWidget(self.model_resultant.index(i, 2), temp_manual_checkbox)
-            # self.ui.resultant_view.setSizeAdjustPolicy(QTableView.AdjustToContents)
-
-    def resultant_manual_crr(self, enable, stage_name, file_name, ci):
-        if enable:
-            self.score += 1
-        else:
-            self.score -= 1
-        self.lcptd_set_property()
 
     def keyPressEvent(self, e: QKeyEvent):
         if e.key() == Qt.Key_Return:
