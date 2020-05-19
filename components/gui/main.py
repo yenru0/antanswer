@@ -2,10 +2,10 @@ import sys
 from functools import partial
 from random import randrange, choice
 from dataclasses import dataclass  # python 3.7 >=
-from PySide2.QtCore import Qt, QObject, QEvent, QAbstractTableModel, QModelIndex, QRect, QAbstractItemModel
+from PySide2.QtCore import Qt, QObject, QEvent, QAbstractTableModel, QModelIndex, QRect, QAbstractItemModel, QUrl
 
-from PySide2.QtGui import (QStandardItem, QStandardItemModel, QKeyEvent, QPainter,
-                           QScrollEvent, QFont)
+from PySide2.QtGui import (QKeyEvent, QPainter,
+                           QScrollEvent, QFont, QDesktopServices)
 from PySide2.QtWidgets import (QApplication, QPushButton, QMessageBox, QWidget,
                                QMainWindow, QFileDialog, QCheckBox,
                                QAbstractItemView, QErrorMessage,
@@ -13,7 +13,7 @@ from PySide2.QtWidgets import (QApplication, QPushButton, QMessageBox, QWidget,
                                QAbstractScrollArea, QScrollBar, QScrollArea,
                                QStyle, QTableView, QItemDelegate, QStyledItemDelegate,
                                QStyleOptionViewItem)
-from typing import Dict, List, Any
+from typing import Dict, List, Tuple, Any
 import json
 
 from function.reader import __anw_std__, __anw_compatibles__, __anw_supports__
@@ -553,6 +553,7 @@ class Main(QMainWindow):
         self.cond_used = {}
 
         self.selected: AntanswerDataStruct
+        self.selected_path: str
 
         self.samples = None
 
@@ -606,7 +607,6 @@ class Main(QMainWindow):
         self.ui.setting_btn_real_run.clicked.connect(self.go_run)
         self.ui.setting_btn_real_gomenu.clicked.connect(self.go_enter)
 
-
         ### do
         self.input_reset()
         self.queston_reset()
@@ -632,6 +632,9 @@ class Main(QMainWindow):
         self.ui.resultant_btn_setting.clicked.connect(self.go_setting)
         self.ui.resultant_btn_menu.clicked.connect(self.go_enter)
         self.ui.resultant_btn_again.clicked.connect(self.go_run)
+        self.ui.resultant_btn_save.clicked.connect(self.resultant_save_result)
+        self.ui.resultant_btn_preference.clicked.connect(self.resultant_open_pref)
+        self.ui.resultant_btn_openthis.clicked.connect(self.resultant_open_this)
 
         ### option
         self.ui.option_btn_save.clicked.connect(self.saveOption)
@@ -661,12 +664,12 @@ class Main(QMainWindow):
         self.ui.pages.setCurrentIndex(1)
 
     def go_option(self):
-        self.ui.pages.setCurrentIndex(4)
         self.loadOption()
+        self.ui.pages.setCurrentIndex(4)
 
     def go_exit(self):
         cMessage = QMessageBox(self)
-        c = cMessage.question(self, 'really_exit?', 'do you really exit?', QMessageBox.Yes | QMessageBox.No)
+        c = cMessage.question(self, '나가는 중', '진짜로 나갈건가요?', QMessageBox.Yes | QMessageBox.No)
         if c == QMessageBox.No:
             pass
         else:
@@ -750,6 +753,7 @@ class Main(QMainWindow):
         for lfd in self.model_file.file_data:
             if lfd.use:
                 self.samples = lfd.ads.sampling(T)
+                self.selected_path = lfd.dir
                 self.selected = lfd.ads
                 self.selected.clearResult()
                 break
@@ -850,6 +854,17 @@ class Main(QMainWindow):
         self.ui.resultant_view.setModel(self.model_resultant)
         self.ui.resultant_view.setItemDelegate(self.model_resultant_delegate)
 
+    def resultant_save_result(self):
+        cMessage = QMessageBox(self)
+        c = cMessage.about(None, "존재하지 않는 기능", "이 기능은 아직 존재하지 않습니다.")
+
+    def resultant_open_this(self):
+        QDesktopServices.openUrl(QUrl(self.selected_path))
+
+    def resultant_open_pref(self):
+        cMessage = QMessageBox(self)
+        c = cMessage.about(None, "존재하지 않는 기능", "이 기능은 아직 존재하지 않습니다.")
+
     def keyPressEvent(self, e: QKeyEvent):
         if e.key() == Qt.Key_Return:
             print(e.key())
@@ -862,7 +877,7 @@ class Main(QMainWindow):
         :return:
         """
 
-        # TODO: 예외처리 빡세게 좀 필요할 듯
+        # TODO: 예외처리 세게 좀 필요할 듯
         with open("components/gui/option.json", "r", encoding="utf-8") as f:
             v = json.load(f)
 
@@ -891,7 +906,7 @@ class Main(QMainWindow):
             QProgressBar::chunk{
                 background-color: rgb(%s, %s, %s)
             }
-            """%(t["r"], t["g"], t["b"]))
+            """ % (t["r"], t["g"], t["b"]))
             self.ui.option_color_lcptd_progress.setColors(t["r"], t["g"], t["b"])
 
             t = v[self.ui.option_color_lcptd_progress.key]
@@ -926,19 +941,19 @@ class Main(QMainWindow):
     def saveOption(self):
         with open("components/gui/option.json", "w", encoding="utf-8") as f:
             T = {}
-            T[self.ui.option_font_queston.key] =\
+            T[self.ui.option_font_queston.key] = \
                 self.ui.option_font_queston.getOValue()
 
-            T[self.ui.option_font_input.key] =\
+            T[self.ui.option_font_input.key] = \
                 self.ui.option_font_input.getOValue()
 
-            T[self.ui.option_font_lcptd_file.key] =\
+            T[self.ui.option_font_lcptd_file.key] = \
                 self.ui.option_font_lcptd_file.getOValue()
 
-            T[self.ui.option_color_lcptd_progress.key] =\
+            T[self.ui.option_color_lcptd_progress.key] = \
                 self.ui.option_color_lcptd_progress.getOValue()
 
-            T[self.ui.option_color_lcptd_rategress.key] =\
+            T[self.ui.option_color_lcptd_rategress.key] = \
                 self.ui.option_color_lcptd_rategress.getOValue()
 
             T[self.ui.option_color_lcptd_cwgress_c.key] = \
