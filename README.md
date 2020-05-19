@@ -30,3 +30,44 @@ COND = { # string: bool
         "REVERSE_AQ": None  # reverse AQ in element
     }
 ```
+
+
+## default option
+```json
+{
+  "font:queston": {
+    "font-family": "Malgun Gothic",
+    "font-size": 12
+  },
+  "font:input": {
+    "font-family": "Malgun Gothic",
+    "font-size": 11
+  },
+  "font:lcptd_file": {
+    "font-family": "Malgun Gothic",
+    "font-size": 11
+  },
+  "color:lcptd_progress": {
+    "r": 0,
+    "g": 170,
+    "b": 255
+  },
+
+  "color:lcptd_rategress": {
+    "r": 120,
+    "g": 230,
+    "b": 20
+  },
+
+  "color:lcptd_cwgress_c":{
+    "r": 255,
+    "g": 200,
+    "b": 20
+  },
+  "color:lcptd_cwgress_w": {
+    "r": 255,
+    "g": 0,
+    "b": 0
+  }
+}
+```

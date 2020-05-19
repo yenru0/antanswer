@@ -1,6 +1,34 @@
 {
-  "font:queston"{
-    "font-size": 13,
-    "layout":
+  "font:queston": {
+    "font-family": "\ub098\ub214\uc2a4\ud018\uc5b4\ub77c\uc6b4\ub4dc Bold",
+    "font-size": 20
+  },
+  "font:input": {
+    "font-family": "\ub098\ub214\uc2a4\ud018\uc5b4 Bold",
+    "font-size": 12
+  },
+  "font:lcptd_file": {
+    "font-family": "\ub098\ub214\uc2a4\ud018\uc5b4 Bold",
+    "font-size": 12
+  },
+  "color:lcptd_progress": {
+    "r": 0,
+    "g": 170,
+    "b": 255
+  },
+  "color:lcptd_rategress": {
+    "r": 120,
+    "g": 230,
+    "b": 20
+  },
+  "color:lcptd_cwgress_c": {
+    "r": 255,
+    "g": 200,
+    "b": 20
+  },
+  "color:lcptd_cwgress_w": {
+    "r": 255,
+    "g": 0,
+    "b": 0
   }
 }
