@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>545</width>
+    <width>566</width>
     <height>641</height>
    </rect>
   </property>
@@ -16,10 +16,6 @@
   <property name="styleSheet">
    <string notr="true">#MainWindow{
 	background-color: rgb(255, 255, 255)
-}
-
-#centralwidget{
-	background-color: rgb(255,255, 255);
 }
 
 #sideStatus{
@@ -41,7 +37,7 @@
 	font: 100 bold 25pt &quot;Malgun Gothic&quot;;
 }</string>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QStackedWidget" name="pages">
       <property name="styleSheet">
@@ -64,7 +60,7 @@ QPushButton:default {
 }</string>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_enter">
        <property name="styleSheet">
@@ -360,9 +356,100 @@ QPushButton#setting_btn_addfile:pressed{
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
-            <widget class="QWidget" name="extend_normal"/>
+            <widget class="QWidget" name="extend_normal">
+             <property name="styleSheet">
+              <string notr="true">QRadioButton{
+	font: 25 10pt &quot;Malgun Gothic&quot;;
+
+}
+
+QAbstractSpinBox{
+	font: 25 10pt &quot;Malgun Gothic&quot;;
+}</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout">
+              <item row="1" column="1">
+               <widget class="QSpinBox" name="extend_normal_recent">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="maximum">
+                 <number>314159265</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QSpinBox" name="extend_normal_wil">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="maximum">
+                 <number>314159265</number>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QRadioButton" name="extend_normal_button_wil">
+                <property name="text">
+                 <string>wil</string>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+                <property name="autoExclusive">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QRadioButton" name="extend_normal_button_recent">
+                <property name="text">
+                 <string>recent</string>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+                <property name="autoExclusive">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QRadioButton" name="extend_normal_button_recentValue">
+                <property name="text">
+                 <string>recentValue</string>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+                <property name="autoExclusive">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QDoubleSpinBox" name="extend_normal_recentValue">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+                <property name="decimals">
+                 <number>4</number>
+                </property>
+                <property name="maximum">
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.010000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
             <widget class="QWidget" name="extend_c2"/>
            </widget>
           </item>
@@ -373,7 +460,6 @@ QPushButton#setting_btn_addfile:pressed{
       <widget class="QWidget" name="page_do">
        <property name="styleSheet">
         <string notr="true">#input{
-	font: 25 11pt &quot;Malgun Gothic&quot;;
 	background-color: white;
 	border: 1px solid black;
 }
@@ -685,7 +771,7 @@ background-color: white;
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>355</width>
+             <width>376</width>
              <height>562</height>
             </rect>
            </property>
@@ -756,6 +842,37 @@ background-color: white;
               </property>
              </spacer>
             </item>
+            <item>
+             <layout class="QHBoxLayout" name="option_HL" stretch="5,2,2">
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="option_btn_back">
+                <property name="text">
+                 <string>돌아가기</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="option_btn_save">
+                <property name="text">
+                 <string>저장하기</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
            </layout>
           </widget>
          </widget>
@@ -771,7 +888,7 @@ background-color: white;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>545</width>
+     <width>566</width>
      <height>21</height>
     </rect>
    </property>
@@ -781,6 +898,7 @@ background-color: white;
     </property>
     <addaction name="actionexit"/>
     <addaction name="actionreturn_to_manimenu"/>
+    <addaction name="actiongotooption"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -815,17 +933,7 @@ background-color: white;
 	border-top: none;
 }
 
-.QLabel {
-	font: 25 18pt &quot;Malgun Gothic&quot;;
-	font-weight: bold;
-}
-
-.QLabel#percent {
-	font: 25 28pt &quot;Malgun Gothic&quot;;
-	font-weight: bold;
-}
 .QLineEdit#lcptd_file {
-	font: 25 12pt &quot;Malgun Gothic&quot;;
 	background-color:rgba(255, 255, 255, 0);
 	border: none;
 }
@@ -1395,6 +1503,11 @@ background-color: white;
     <string>메인메뉴로 돌아가기</string>
    </property>
   </action>
+  <action name="actiongotooption">
+   <property name="text">
+    <string>옵션</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1411,5 +1524,54 @@ background-color: white;
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>extend_normal_button_wil</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>extend_normal_wil</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>153</x>
+     <y>62</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>150</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>extend_normal_button_recent</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>extend_normal_recent</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>236</x>
+     <y>82</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>extend_normal_button_recentValue</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>extend_normal_recentValue</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>323</x>
+     <y>68</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>330</x>
+     <y>83</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

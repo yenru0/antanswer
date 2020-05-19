@@ -2,13 +2,12 @@ from PySide2.QtWidgets import QApplication
 import sys
 # TODO: Exception 만들기
 
-__version__ = "0.9i3"
+__version__ = "0.9i4"
 
 
 
 
 if __name__ == "__main__":
-
     try:
         import components.gui.main as oabm
     except Exception as e:
@@ -16,13 +15,6 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv)
     runner = oabm.Main()
-    runner.ui.pages.setCurrentIndex(4)
+    #runner.ui.pages.setCurrentIndex(4)
     runner.show()
     app.exec_()
-
-
-
-
-
-
-

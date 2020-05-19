@@ -5,7 +5,7 @@ from dataclasses import dataclass  # python 3.7 >=
 from PySide2.QtCore import Qt, QObject, QEvent, QAbstractTableModel, QModelIndex, QRect, QAbstractItemModel
 
 from PySide2.QtGui import (QStandardItem, QStandardItemModel, QKeyEvent, QPainter,
-                           QScrollEvent)
+                           QScrollEvent, QFont)
 from PySide2.QtWidgets import (QApplication, QPushButton, QMessageBox, QWidget,
                                QMainWindow, QFileDialog, QCheckBox,
                                QAbstractItemView, QErrorMessage,
@@ -14,12 +14,13 @@ from PySide2.QtWidgets import (QApplication, QPushButton, QMessageBox, QWidget,
                                QStyle, QTableView, QItemDelegate, QStyledItemDelegate,
                                QStyleOptionViewItem)
 from typing import Dict, List, Any
-
+import json
 
 from function.reader import __anw_std__, __anw_compatibles__, __anw_supports__
 from function.structure import *
 from components.gui.main_ui import Ui_MainWindow
 from main import __version__
+
 
 @dataclass
 class LoadFileData():
@@ -27,6 +28,7 @@ class LoadFileData():
     dir: str
     use: int  # 부울 같은 부울 같지 않은 부울 같은 정수
     ads: AntanswerDataStruct = None
+
     def __getitem__(self, item):
         if isinstance(item, int):
             if item == 0:
@@ -105,6 +107,7 @@ QScrollBar::handle:hover {
     def leaveEvent(self, event: QEvent):
         self.setProperty("rsign", "false")
         self.setStyleSheet(self.styleSheet())
+
 
 class RVScrollBar(QScrollBar):
     def __init__(self, parent=None):
@@ -218,7 +221,7 @@ class AnwLoadFileDataModel(QAbstractTableModel):
                             t[index.column()] = False
                             break
                     self.file_data[index.row()][index.column()] = bool(value)
-                    self.loadStageDataModel.reinit (self.file_data[index.row()].ads)
+                    self.loadStageDataModel.reinit(self.file_data[index.row()].ads)
                 else:
 
                     self.file_data[index.row()][index.column()] = bool(value)
@@ -253,6 +256,7 @@ class AnwLoadFileDataModel(QAbstractTableModel):
         self.file_data.append(data)
         self.endInsertRows()
         return True
+
 
 class AnwLoadFileDataDelegate(QItemDelegate):
 
@@ -293,7 +297,7 @@ class AnwLoadFileDataDelegate(QItemDelegate):
 class AnwLoadStageDataModel(QAbstractTableModel):
     def __init__(self, data: AntanswerDataStruct):
         super().__init__()
-        if data is None: # initial create
+        if data is None:  # initial create
             self.data_stages = []
             self.column = []
             return
@@ -336,20 +340,19 @@ class AnwLoadStageDataModel(QAbstractTableModel):
         self.beginInsertRows(QModelIndex(), 0, len(self.data_stages))
         self.endInsertRows()
 
-
     def flags(self, index: QModelIndex) -> Qt.ItemFlags:
         if index.column() == 2:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
         else:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
-    def rowCount(self, parent: QModelIndex=...) -> int:
+    def rowCount(self, parent: QModelIndex = ...) -> int:
         return len(self.data_stages)
 
     def columnCount(self, parent: QModelIndex) -> int:
         return len(self.column)
 
-    def headerData(self, section:int, orientation:Qt.Orientation, role:int=...) -> Any:
+    def headerData(self, section: int, orientation: Qt.Orientation, role: int = ...) -> Any:
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return self.column[section]
         else:
@@ -373,7 +376,7 @@ class AnwLoadStageDataModel(QAbstractTableModel):
         else:
             pass
 
-    def setData(self, index:QModelIndex, value:Any, role:int=...) -> bool:
+    def setData(self, index: QModelIndex, value: Any, role: int = ...) -> bool:
         if index.isValid():
             if role == Qt.CheckStateRole:
                 self.data_real.check(self.data_stages[index.row()].stage_name, bool(value))
@@ -383,7 +386,7 @@ class AnwLoadStageDataModel(QAbstractTableModel):
         else:
             return False
 
-    def insertRows(self, row:int, count:int, parent:QModelIndex=...) -> bool:
+    def insertRows(self, row: int, count: int, parent: QModelIndex = ...) -> bool:
         """
         immutable
         """
@@ -394,6 +397,7 @@ class AnwLoadStageDataModel(QAbstractTableModel):
         immutable
         """
         return False
+
 
 class AnwLoadStageDataDelegate(QItemDelegate):
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex):
@@ -438,19 +442,19 @@ class AnwResultantDataModel(QAbstractTableModel):
         else:
             return Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
-    def rowCount(self, parent:QModelIndex=...) -> int:
+    def rowCount(self, parent: QModelIndex = ...) -> int:
         return len(self.data_result)
 
-    def columnCount(self, parent:QModelIndex=...) -> int:
+    def columnCount(self, parent: QModelIndex = ...) -> int:
         return len(self.column)
 
-    def headerData(self, section:int, orientation:Qt.Orientation, role:int=...) -> Any:
+    def headerData(self, section: int, orientation: Qt.Orientation, role: int = ...) -> Any:
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return self.column[section]
         else:
             return None
 
-    def data(self, index:QModelIndex, role:int=...) -> Any:
+    def data(self, index: QModelIndex, role: int = ...) -> Any:
         if index.isValid():
             if role == Qt.DisplayRole:
                 if index.column() == 3:
@@ -481,7 +485,7 @@ class AnwResultantDataModel(QAbstractTableModel):
         else:
             return None
 
-    def setData(self, index:QModelIndex, value:Any, role:int=...) -> bool:
+    def setData(self, index: QModelIndex, value: Any, role: int = ...) -> bool:
         if index.isValid():
             if role == Qt.CheckStateRole:
                 if self.cond["RESULT_MANUAL_POST_CORRECTION"]:
@@ -494,6 +498,7 @@ class AnwResultantDataModel(QAbstractTableModel):
             return True
         else:
             return False
+
 
 class AnwResultantDataDeligate(QItemDelegate):
     def __init__(self, parent, cond):
@@ -531,7 +536,6 @@ class AnwResultantDataDeligate(QItemDelegate):
 
 
 class Main(QMainWindow):
-
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
 
@@ -552,7 +556,6 @@ class Main(QMainWindow):
 
         self.samples = None
 
-
         self.q_si_beforhead = list()
 
         self.ui = Ui_MainWindow()
@@ -562,6 +565,7 @@ class Main(QMainWindow):
         ### menubar: action
         self.ui.actionexit.triggered.connect(self.go_exit)
         self.ui.actionreturn_to_manimenu.triggered.connect(self.go_enter)
+        self.ui.actiongotooption.triggered.connect(self.go_option)
 
         ### enter
         self.ui.titleBtn_run.clicked.connect(self.go_setting)
@@ -574,7 +578,7 @@ class Main(QMainWindow):
         # 그리고 model_stage의 선정의
         self.ui.setting_btn_addfile.clicked.connect(self.add_file)
 
-        self.model_stage = AnwLoadStageDataModel(None) # 미리 정의 해놔야됨
+        self.model_stage = AnwLoadStageDataModel(None)  # 미리 정의 해놔야됨
 
         self.model_file = AnwLoadFileDataModel([], self.model_stage)
         self.model_file_delegate = AnwLoadFileDataDelegate(self.ui.setting_list_file)
@@ -588,7 +592,7 @@ class Main(QMainWindow):
 
         ### setting:stage_table
 
-        #self.model_stage = AnwLoadStageDataModel(None) predef
+        # self.model_stage = AnwLoadStageDataModel(None) predef
         self.model_stage_delegate = AnwLoadStageDataDelegate(self.ui.setting_stage_table)
 
         self.ui.setting_stage_table.setModel(self.model_stage)
@@ -602,10 +606,8 @@ class Main(QMainWindow):
         self.ui.setting_btn_real_run.clicked.connect(self.go_run)
         self.ui.setting_btn_real_gomenu.clicked.connect(self.go_enter)
 
+
         ### do
-
-        self.queston_template = """<!DOCTYPE html><html><head><meta name="qrichtext" content="1" /><style type="text/css">p, li { white-space: pre-wrap; }</style></head><body style=" font-family:'13 Malgun Gothic'; font-size:12pt; font-weight:400; font-style:normal;"><p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Malgun Gothic'; font-size:14pt; font-weight:600;">%s</span></p></body></html>"""
-
         self.input_reset()
         self.queston_reset()
         self.log_reset()
@@ -624,7 +626,6 @@ class Main(QMainWindow):
         self.model_resultant: AnwResultantDataModel
         self.model_resultant_delegate: AnwResultantDataDeligate
 
-
         self.ui.resultant_view.setHorizontalScrollBar(RHScrollBar())
         self.ui.resultant_view.setVerticalScrollBar(RVScrollBar())
         # self.ui.resultant_btn_again.clicked.connect()
@@ -632,23 +633,36 @@ class Main(QMainWindow):
         self.ui.resultant_btn_menu.clicked.connect(self.go_enter)
         self.ui.resultant_btn_again.clicked.connect(self.go_run)
 
-
         ### option
+        self.ui.option_btn_save.clicked.connect(self.saveOption)
+        self.ui.option_btn_back.clicked.connect(self.go_enter)
+
         self.ui.option_scrollarea.setVerticalScrollBar(RVScrollBar(self.ui.option_scrollarea))
+
         self.ui.option_font_queston.setText("문제 출력 글꼴")
         self.ui.option_font_input.setText("정답 입력 글꼴")
         self.ui.option_font_lcptd_file.setText("상태창 파일 이름 글꼴")
+        self.ui.option_font_queston.setKey("queston")
+        self.ui.option_font_input.setKey("input")
+        self.ui.option_font_lcptd_file.setKey("lcptd_file")
+
         self.ui.option_color_lcptd_progress.setText("상태창 진행도 색 설정")
         self.ui.option_color_lcptd_rategress.setText("상태창 정답률 색 설정")
         self.ui.option_color_lcptd_cwgress_c.setText("상태창 맞은 개수 색 설정")
         self.ui.option_color_lcptd_cwgress_w.setText("상태창 틀린 개수 색 설정")
+        self.ui.option_color_lcptd_progress.setKey("lcptd_progress")
+        self.ui.option_color_lcptd_rategress.setKey("lcptd_rategress")
+        self.ui.option_color_lcptd_cwgress_c.setKey("lcptd_cwgress_c")
+        self.ui.option_color_lcptd_cwgress_w.setKey("lcptd_cwgress_w")
 
+        self.loadOption()
 
     def go_setting(self):
         self.ui.pages.setCurrentIndex(1)
 
     def go_option(self):
         self.ui.pages.setCurrentIndex(4)
+        self.loadOption()
 
     def go_exit(self):
         cMessage = QMessageBox(self)
@@ -674,7 +688,6 @@ class Main(QMainWindow):
             tepp.showMessage("Stage wasn't selected")
             tepp.exec_()
             return
-
 
         self.init_routine()
 
@@ -725,13 +738,18 @@ class Main(QMainWindow):
             else:
                 self.model_file.append(LoadFileData(ads.name, i, False, ads))
 
-
     ### routine: do
 
     def init_routine(self):
+        T = AntanswerDetail()
+        T.set(
+            self.ui.extend_normal_wil.value() if self.ui.extend_normal_wil.isEnabled() else 0,
+            self.ui.extend_normal_recent if self.ui.extend_normal_recent.isEnabled() else 0,
+            self.ui.extend_normal_recentValue if self.ui.extend_normal_recentValue.isEnabled() else 0.0
+        )
         for lfd in self.model_file.file_data:
             if lfd.use:
-                self.samples = lfd.ads.sampling()
+                self.samples = lfd.ads.sampling(T)
                 self.selected = lfd.ads
                 self.selected.clearResult()
                 break
@@ -747,10 +765,11 @@ class Main(QMainWindow):
         self.lcptd_reset()
         self.lcptd_set_file(self.selected.name)
 
-        self.next_routine(False, True)
+        self.next_routine(True)
 
-    def next_routine(self, enable=False, isFirst=False):
+    def next_routine(self, isFirst: bool = False):
         if not isFirst:
+            # get inputs from input
             inputs = [self.ui.input.item(i).text() for i in range(self.ui.input.count())]
             self.selected.result.answer(inputs)
             self.selected.result.check(self.cond_used)
@@ -774,11 +793,8 @@ class Main(QMainWindow):
         self.queston_update(t_s)
         self.input_reset(len(aq.answers))
 
-    def queston_update(self, q: str):
-        self.ui.queston.setText(self.queston_template % q)
-
     def queston_reset(self):
-        self.ui.queston.setText(self.queston_template % "")
+        self.ui.queston.setText("")
 
     def input_reset(self, l=0):
         self.ui.input.clear()
@@ -789,6 +805,9 @@ class Main(QMainWindow):
 
     def log_reset(self):
         self.ui.log.clear()
+
+    def queston_update(self, q: str):
+        self.ui.queston.setText(q)
 
     def log_update(self, log):
         pass
@@ -804,14 +823,14 @@ class Main(QMainWindow):
             self.ui.lcptd_cwgress.setMaximum(1)
         else:
             self.ui.lcptd_rategress.setMaximum(self.selected.result.count)
-            self.ui.lcptd_cwgress.setMaximum(self.selected .result.count)
+            self.ui.lcptd_cwgress.setMaximum(self.selected.result.count)
         self.ui.lcptd_rategress.setValue(self.selected.result.score)
         self.ui.lcptd_cwgress.setValue(self.selected.result.score)
         self.ui.lcptd_cwgress.setFormat("%s:%s" % (
             self.selected.result.score,
             self.selected.result.count - self.selected.result.score
-            )
         )
+                                        )
 
     def lcptd_reset(self):
         self.ui.lcptd_file.setText("")
@@ -831,10 +850,103 @@ class Main(QMainWindow):
         self.ui.resultant_view.setModel(self.model_resultant)
         self.ui.resultant_view.setItemDelegate(self.model_resultant_delegate)
 
-
-
     def keyPressEvent(self, e: QKeyEvent):
         if e.key() == Qt.Key_Return:
             print(e.key())
             if self.ui.pages.currentIndex() == 2:
                 self.ui.enter.click()
+
+    def loadOption(self):
+        """
+        load option from option.json
+        :return:
+        """
+
+        # TODO: 예외처리 빡세게 좀 필요할 듯
+        with open("components/gui/option.json", "r", encoding="utf-8") as f:
+            v = json.load(f)
+
+            font = v[self.ui.option_font_queston.key]["font-family"]
+            size = v[self.ui.option_font_queston.key]["font-size"]
+            self.ui.queston.setFontFamily(font)
+            self.ui.queston.setFontPointSize(int(size))
+            self.ui.option_font_queston.setComboFont(font)
+            self.ui.option_font_queston.setSize(int(size))
+
+            font = v[self.ui.option_font_input.key]["font-family"]
+            size = v[self.ui.option_font_input.key]["font-size"]
+            self.ui.input.setStyleSheet(f"""font: {size}pt {font}""")
+            self.ui.option_font_input.setComboFont(font)
+            self.ui.option_font_input.setSize(int(size))
+
+            font = v[self.ui.option_font_lcptd_file.key]["font-family"]
+            size = v[self.ui.option_font_lcptd_file.key]["font-size"]
+            ft = QFont(font, pointSize=int(size))
+            self.ui.lcptd_file.setFont(ft)
+            self.ui.option_font_lcptd_file.setComboFont(font)
+            self.ui.option_font_lcptd_file.setSize(int(size))
+
+            t = v[self.ui.option_color_lcptd_progress.key]
+            self.ui.lcptd_progress.setStyleSheet("""
+            QProgressBar::chunk{
+                background-color: rgb(%s, %s, %s)
+            }
+            """%(t["r"], t["g"], t["b"]))
+            self.ui.option_color_lcptd_progress.setColors(t["r"], t["g"], t["b"])
+
+            t = v[self.ui.option_color_lcptd_progress.key]
+            self.ui.lcptd_progress.setStyleSheet("""
+                        QProgressBar::chunk{
+                            background-color: rgb(%s, %s, %s);
+                        }
+                        """ % (t["r"], t["g"], t["b"]))
+            self.ui.option_color_lcptd_progress.setColors(t["r"], t["g"], t["b"])
+
+            t = v[self.ui.option_color_lcptd_rategress.key]
+            self.ui.lcptd_rategress.setStyleSheet("""
+                        QProgressBar::chunk{
+                            background-color: rgb(%s, %s, %s);
+                        }
+                        """ % (t["r"], t["g"], t["b"]))
+            self.ui.option_color_lcptd_rategress.setColors(t["r"], t["g"], t["b"])
+
+            t_c = v[self.ui.option_color_lcptd_cwgress_c.key]
+            t_w = v[self.ui.option_color_lcptd_cwgress_w.key]
+            self.ui.lcptd_cwgress.setStyleSheet("""
+                        QProgressBar{
+                            background-color: rgb(%s, %s, %s);
+                        }
+                        QProgressBar::chunk{
+                            background-color: rgb(%s, %s, %s);
+                        }
+                        """ % (t_w["r"], t_w["g"], t_w["b"], t_c["r"], t_c["g"], t_c["b"]))
+            self.ui.option_color_lcptd_cwgress_c.setColors(t_c["r"], t_c["g"], t_c["b"])
+            self.ui.option_color_lcptd_cwgress_w.setColors(t_w["r"], t_w["g"], t_w["b"])
+
+    def saveOption(self):
+        with open("components/gui/option.json", "w", encoding="utf-8") as f:
+            T = {}
+            T[self.ui.option_font_queston.key] =\
+                self.ui.option_font_queston.getOValue()
+
+            T[self.ui.option_font_input.key] =\
+                self.ui.option_font_input.getOValue()
+
+            T[self.ui.option_font_lcptd_file.key] =\
+                self.ui.option_font_lcptd_file.getOValue()
+
+            T[self.ui.option_color_lcptd_progress.key] =\
+                self.ui.option_color_lcptd_progress.getOValue()
+
+            T[self.ui.option_color_lcptd_rategress.key] =\
+                self.ui.option_color_lcptd_rategress.getOValue()
+
+            T[self.ui.option_color_lcptd_cwgress_c.key] = \
+                self.ui.option_color_lcptd_cwgress_c.getOValue()
+
+            T[self.ui.option_color_lcptd_cwgress_w.key] = \
+                self.ui.option_color_lcptd_cwgress_w.getOValue()
+
+            json.dump(T, f, indent=2)
+
+        self.loadOption()
