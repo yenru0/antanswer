@@ -1,11 +1,12 @@
 from PySide2.QtWidgets import QApplication
 import sys
+import os
 # TODO: Exception 만들기
 
-__version__ = "0.9a1"
+__version__ = "0.9a2"
 
-
-
+if not os.path.isdir("preference"):
+    os.makedirs("preference")
 
 if __name__ == "__main__":
     try:
