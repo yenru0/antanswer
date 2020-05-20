@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>566</width>
+    <width>603</width>
     <height>641</height>
    </rect>
   </property>
@@ -60,7 +60,7 @@ QPushButton:default {
 }</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="page_enter">
        <property name="styleSheet">
@@ -370,13 +370,16 @@ QAbstractSpinBox{
 }</string>
              </property>
              <layout class="QGridLayout" name="gridLayout">
-              <item row="1" column="1">
-               <widget class="QSpinBox" name="extend_normal_recent">
-                <property name="enabled">
+              <item row="0" column="2">
+               <widget class="QRadioButton" name="extend_normal_button_recentValue">
+                <property name="text">
+                 <string>recentValue</string>
+                </property>
+                <property name="checked">
                  <bool>false</bool>
                 </property>
-                <property name="maximum">
-                 <number>314159265</number>
+                <property name="autoExclusive">
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -387,19 +390,6 @@ QAbstractSpinBox{
                 </property>
                 <property name="maximum">
                  <number>314159265</number>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QRadioButton" name="extend_normal_button_wil">
-                <property name="text">
-                 <string>wil</string>
-                </property>
-                <property name="checked">
-                 <bool>false</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -416,10 +406,20 @@ QAbstractSpinBox{
                 </property>
                </widget>
               </item>
-              <item row="0" column="2">
-               <widget class="QRadioButton" name="extend_normal_button_recentValue">
+              <item row="1" column="1">
+               <widget class="QSpinBox" name="extend_normal_recent">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="maximum">
+                 <number>314159265</number>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QRadioButton" name="extend_normal_button_wil">
                 <property name="text">
-                 <string>recentValue</string>
+                 <string>wil</string>
                 </property>
                 <property name="checked">
                  <bool>false</bool>
@@ -446,6 +446,59 @@ QAbstractSpinBox{
                 <property name="singleStep">
                  <double>0.010000000000000</double>
                 </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QRadioButton" name="extend_normal_button_weightMult">
+                <property name="text">
+                 <string>가중치 가산 배수</string>
+                </property>
+                <property name="autoExclusive">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QSpinBox" name="extend_normal_weightMult">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="minimum">
+                 <number>0</number>
+                </property>
+                <property name="maximum">
+                 <number>99</number>
+                </property>
+                <property name="displayIntegerBase">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="2">
+               <widget class="QRadioButton" name="extend_normal_button_weightAlg">
+                <property name="text">
+                 <string>가중치 계산 방식</string>
+                </property>
+                <property name="autoExclusive">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="2">
+               <widget class="QComboBox" name="extend_normal_weightAlg">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>가산없음</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>일차적</string>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>
@@ -771,7 +824,7 @@ background-color: white;
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>376</width>
+             <width>414</width>
              <height>562</height>
             </rect>
            </property>
@@ -888,7 +941,7 @@ background-color: white;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>566</width>
+     <width>603</width>
      <height>21</height>
     </rect>
    </property>
@@ -1526,24 +1579,8 @@ background-color: white;
  <resources/>
  <connections>
   <connection>
-   <sender>extend_normal_button_wil</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>extend_normal_wil</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>153</x>
-     <y>62</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>150</x>
-     <y>89</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>extend_normal_button_recent</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>extend_normal_recent</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -1559,7 +1596,7 @@ background-color: white;
   </connection>
   <connection>
    <sender>extend_normal_button_recentValue</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>extend_normal_recentValue</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -1570,6 +1607,70 @@ background-color: white;
     <hint type="destinationlabel">
      <x>330</x>
      <y>83</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>extend_normal_button_wil</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>extend_normal_wil</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>166</x>
+     <y>86</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>extend_normal_button_weightMult</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>extend_normal_weightMult</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>171</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>177</x>
+     <y>135</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>extend_normal_button_weightAlg</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>extend_normal_weightAlg</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>359</x>
+     <y>118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>362</x>
+     <y>134</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resultant_btn_save</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>resultant_btn_save</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>48</x>
+     <y>527</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>109</x>
+     <y>524</y>
     </hint>
    </hints>
   </connection>
