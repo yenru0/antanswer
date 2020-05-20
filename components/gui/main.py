@@ -921,7 +921,7 @@ class Main(QMainWindow):
         """
 
         # TODO: 예외처리 세게 좀 필요할 듯
-        with open("components/gui/option.json", "r", encoding="utf-8") as f:
+        with open("option.json", "r", encoding="utf-8") as f:
             v = json.load(f)
 
             font = v[self.ui.option_font_queston.key]["font-family"]
@@ -982,7 +982,7 @@ class Main(QMainWindow):
             self.ui.option_color_lcptd_cwgress_w.setColors(t_w["r"], t_w["g"], t_w["b"])
 
     def saveOption(self):
-        with open("components/gui/option.json", "w", encoding="utf-8") as f:
+        with open("option.json", "w", encoding="utf-8") as f:
             T = {}
             T[self.ui.option_font_queston.key] = \
                 self.ui.option_font_queston.getOValue()

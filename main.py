@@ -3,7 +3,7 @@ import sys
 import os
 # TODO: Exception 만들기
 
-__version__ = "0.9a2"
+__version__ = "0.9a3"
 
 if not os.path.isdir("preference"):
     os.makedirs("preference")

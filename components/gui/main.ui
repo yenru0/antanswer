@@ -60,7 +60,7 @@ QPushButton:default {
 }</string>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_enter">
        <property name="styleSheet">
@@ -1655,22 +1655,6 @@ background-color: white;
     <hint type="destinationlabel">
      <x>362</x>
      <y>134</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>resultant_btn_save</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>resultant_btn_save</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>48</x>
-     <y>527</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>109</x>
-     <y>524</y>
     </hint>
    </hints>
   </connection>

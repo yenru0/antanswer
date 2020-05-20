@@ -857,7 +857,6 @@ class Ui_MainWindow(object):
         self.extend_normal_button_wil.toggled.connect(self.extend_normal_wil.setEnabled)
         self.extend_normal_button_weightMult.toggled.connect(self.extend_normal_weightMult.setEnabled)
         self.extend_normal_button_weightAlg.toggled.connect(self.extend_normal_weightAlg.setEnabled)
-        self.resultant_btn_save.toggled.connect(self.resultant_btn_save.setDisabled)
 
         self.pages.setCurrentIndex(0)
         self.extend_setting.setCurrentIndex(0)
