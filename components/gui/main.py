@@ -479,9 +479,9 @@ class AnwResultantDataModel(QAbstractTableModel):
                     if self.cond["RESULT_DISPLAY_QUEST"]:
                         return None
                     else:
-                        return any(self.data_result[index.row()][2])
+                        return all(self.data_result[index.row()][2])
                 elif index.column() == 3:
-                    return any(self.data_result[index.row()][2])
+                    return all(self.data_result[index.row()][2])
         else:
             return None
 
@@ -692,9 +692,8 @@ class Main(QMainWindow):
             tepp.exec_()
             return
 
-        self.init_routine()
-
-        self.ui.pages.setCurrentIndex(2)
+        if self.init_routine():
+            self.ui.pages.setCurrentIndex(2)
 
     def go_resultant(self):
         self.resultant_set()
@@ -752,12 +751,49 @@ class Main(QMainWindow):
         )
         for lfd in self.model_file.file_data:
             if lfd.use:
-                self.samples = lfd.ads.sampling(T)
+                try:
+                    f = open("preference/{}.prefer".format(lfd.name), "r", encoding="utf-8")
+                    pref = json.load(f)
+                    weights = pref["weights"]
+                    f.close()
+                except FileNotFoundError as e:
+                    with open("preference/{}.prefer".format(lfd.name), "w", encoding="utf-8") as f:
+                        weights = {}
+                        for stn, stg in lfd.ads.stages.items():
+                            weights[stn] = []
+                            for e in stg:
+                                weights[stn].append(0)
+                        json.dump({"weights": weights}, f, indent=2)
+                except json.JSONDecodeError as e:
+                    cMessage = QMessageBox(self)
+                    c = cMessage.question(self, '부서지다.', "'preference/{}.prefer'가 부서진것 같습니다.\n초기화하겠습니까?".format(lfd.name), QMessageBox.Yes | QMessageBox.No)
+                    if c == QMessageBox.No:
+                        weights = {}
+                        for stn, stg in lfd.ads.stages.items():
+                            weights[stn] = []
+                            for e in stg:
+                                weights[stn].append(0)
+                    else:
+                        with open("preference/{}.prefer".format(lfd.name), "w", encoding="utf-8") as f:
+                            weights = {}
+                            for stn, stg in lfd.ads.stages.items():
+                                weights[stn] = []
+                                for e in stg:
+                                    weights[stn].append(0)
+                            json.dump({"weights": weights}, f, indent=2)
+
+                self.samples = lfd.ads.sampling(T, weights, weightAddAlt=self.ui.extend_normal_weightAlg.currentIndex(),
+                                                weightMult=self.ui.extend_normal_weightMult.value())
+                next(self.samples)
                 self.selected_path = lfd.dir
                 self.selected = lfd.ads
                 self.selected.clearResult()
                 break
-
+        if self.selected.detail_used.wil == 0:
+            tepp = QErrorMessage()
+            tepp.showMessage("wil 변수가 0입니다 이는 용납할 수 없습니다.")
+            tepp.exec_()
+            return False
         self.cond_used = {}
 
         for ck, v in self.selected.cond.items():
@@ -770,6 +806,7 @@ class Main(QMainWindow):
         self.lcptd_set_file(self.selected.name)
 
         self.next_routine(True)
+        return True
 
     def next_routine(self, isFirst: bool = False):
         if not isFirst:
@@ -800,7 +837,7 @@ class Main(QMainWindow):
     def queston_reset(self):
         self.ui.queston.setText("")
 
-    def input_reset(self, l=0):
+    def input_reset(self, l:int=0):
         self.ui.input.clear()
         for i in range(l):
             temp_item = QListWidgetItem("")
@@ -843,11 +880,12 @@ class Main(QMainWindow):
         self.ui.lcptd_cwgress.setMaximum(0)
 
     def resultant_set(self):
-
+        self.ui.resultant_btn_save.setEnabled(True)
         self.model_resultant = AnwResultantDataModel(self.selected.result,
                                                      self.cond_used,
                                                      self
                                                      )
+
         self.model_resultant_delegate = AnwResultantDataDeligate(self.ui.resultant_view,
                                                                  self.cond_used,
                                                                  )
@@ -855,8 +893,13 @@ class Main(QMainWindow):
         self.ui.resultant_view.setItemDelegate(self.model_resultant_delegate)
 
     def resultant_save_result(self):
-        cMessage = QMessageBox(self)
-        c = cMessage.about(None, "존재하지 않는 기능", "이 기능은 아직 존재하지 않습니다.")
+        self.ui.resultant_btn_save.setEnabled(False)
+        for r in self.selected.result:
+            if not all(r[2]):
+                self.selected.weights[r[1].stage_name][r[1].id] += self.selected.weightMult
+            print(self.selected.weightMult)
+        with open("preference/{}.prefer".format(self.selected.name), "w", encoding='utf-8') as f:
+            json.dump({"weights": self.selected.weights}, f, indent=2)
 
     def resultant_open_this(self):
         QDesktopServices.openUrl(QUrl(self.selected_path))

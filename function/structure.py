@@ -14,10 +14,6 @@ class AntanswerDetail:
         self.recentValue: float = recentValue
 
     def set(self, wil: int = 0, recent: int = 0, recentValue=0.0):
-        if not isinstance(recent, int):
-            recent = 0
-        if not isinstance(recentValue, (int, float)):
-            recentValue = 0
         self.wil: int = wil
         self.recent: int = recent
         self.recentValue: float = recentValue
@@ -147,6 +143,9 @@ class AntanswerStage:
         else:
             return False
 
+    def __len__(self):
+        return len(self.elements)
+
     def __iter__(self):
         return iter(self.elements)
 
@@ -162,6 +161,8 @@ class AntanswerDataStruct:
 
         self.detail_used = AntanswerDetail()
         self.result = AntanswerResult() # need initializing
+        self.weights: Dict[str, List[int]] = {}
+        self.weightMult = 1
 
         self.isloaded: bool = False
         self.isfin: bool = False
@@ -181,9 +182,9 @@ class AntanswerDataStruct:
         print("D")
         self.name = wbr["name"]
         self.detail.set(
-            wbr["detail_infile"]["wil"],
-            wbr["detail_infile"]["recent"],
-            wbr["detail_infile"]["recentValue"]
+            wbr["detail_infile"]["wil"] if wbr["detail_infile"]["wil"] else 0,
+            wbr["detail_infile"]["recent"] if wbr["detail_infile"]["recent"] else 0,
+            wbr["detail_infile"]["recentValue"] if wbr["detail_infile"]["recentValue"] else 0.0
         )
         self.cond = wbr["cond"]
         self.desc = wbr["description"]
@@ -203,10 +204,11 @@ class AntanswerDataStruct:
         self.isfin = False
         self.isloaded = True
 
-    def sampling(self, detail: AntanswerDetail):
+    def sampling(self, detail: AntanswerDetail, weights: Dict[str, List[int]], weightAddAlt=0, weightMult=1):
         """
         :return:
         """
+        self.weightMult = weightMult
         self.detail_used.set(
             wil=detail.wil if detail.wil else self.detail.wil,
             recent=detail.recent if detail.recent else self.detail.recent,
@@ -214,11 +216,23 @@ class AntanswerDataStruct:
         )
 
         aqs = []
+        weightList = []
         rct = 0
         for v in self.stages:
+
+            if len(self.stages[v]) < len(weights[v]):
+                weights[v] = weights[v][:len(self.stages[v])]
+            elif len(self.stages[v]) > len(weights[v]):
+                weights[v].extend([0] * (len(self.stages[v]) - len(weights[v])))
+            else:
+                pass
+
             if self.use[v]:
+                weightList.extend(weights[v])
                 for e in self.stages[v]:
                     aqs.append(e)
+
+        self.weights = weights
 
         if self.detail_used.recentValue:
             rct = int(self.detail_used.recentValue * len(aqs))
@@ -226,12 +240,33 @@ class AntanswerDataStruct:
             rct = self.detail_used.recent
 
         history = []
+
+        weighted: bool = bool(weights)
+        if weightAddAlt == 0:
+            weighted = False
+        elif weightAddAlt >= 1:
+            s = sum(weightList) + len(weightList)
+            if s == 0:
+                weighted = False
+            else:
+                weightList = (np.array(weightList) + np.array([1] * len(weightList))) / s
+
+        rng = np.random.default_rng()
+        yield None
         for i in range(self.detail_used.wil):
-            r = np.random.choice(aqs)
-            print(type(r), r, aqs)
+            if weighted:
+                r = rng.choice(aqs, p=weightList)
+            else:
+                r = rng.choice(aqs)
+            if len(aqs) <= rct:
+                rct = len(aqs) -1
             while r in history[-rct:]:
-                r = np.random.choice(aqs)
-            history.append(r)
+                if weighted:
+                    r = rng.choice(aqs, p=weightList)
+                else:
+                    r = rng.choice(aqs)
+            if rct != 0:
+                history.append(r)
             self.result.append(r)
             yield r
         self.isfin = True
@@ -353,7 +388,6 @@ class AntanswerResult:
                     else:
                         pass
             self.count += 1
-            print(mrs)
             self.result[index][2] = mrs
 
     def correct(self, cond: Dict[str, bool], index: int, state: (bool, int, float)) -> bool:
@@ -406,26 +440,3 @@ class AntanswerResult:
         return len(self.result)
 
 
-if __name__ == '__main__':
-    T = AntanswerDataStruct()
-    T.load_fromstring("""##$ name = 그레고리우스
-##$ wil = 94; recentValue = 0.94; recent = 95; recentValue = 0.95
-##$ recentValue = 0.4
-##$ {
-COMP_IGNORE_CASE=true;
-COMP_IGNORE_LAST_PERIOD=true;
-COMP_NOT=true;
-RESULT_MANUAL_POST_CORRECTION=true;
-}
-
-### 다섯개
-
-3:4
-    """, "ggg")
-    for i in T.stages["main"]:
-        for j in i.questions:
-            for d in j:
-                print(d)
-        for j in i.answers:
-            for d in j:
-                print(d)
