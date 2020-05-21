@@ -1,6 +1,9 @@
 import sys
 from functools import partial
 from random import randrange, choice
+from threading import Thread, Timer
+from time import sleep
+from datetime import datetime, time
 from dataclasses import dataclass  # python 3.7 >=
 from PySide2.QtCore import Qt, QObject, QEvent, QAbstractTableModel, QModelIndex, QRect, QAbstractItemModel, QUrl
 
@@ -621,6 +624,13 @@ class Main(QMainWindow):
 
         ### dock
         self.lcptd_reset()
+        # time
+        self.ui.lcptd_timerate.clicked[bool].connect(self.lcptd_set_timerate)
+        self.isRuntime: bool = False
+        self.isCounting: bool = False
+        self.runtime: float = 0
+        self.lastStartingTime: datetime = datetime.now()
+        self.th_clock = None
 
         ### resultant
         self.model_resultant: AnwResultantDataModel
@@ -673,7 +683,9 @@ class Main(QMainWindow):
         if c == QMessageBox.No:
             pass
         else:
+            self.beforeEnd()
             self.close()
+
 
     def go_enter(self):
         # pause all
@@ -766,7 +778,8 @@ class Main(QMainWindow):
                         json.dump({"weights": weights}, f, indent=2)
                 except json.JSONDecodeError as e:
                     cMessage = QMessageBox(self)
-                    c = cMessage.question(self, '부서지다.', "'preference/{}.prefer'가 부서진것 같습니다.\n초기화하겠습니까?".format(lfd.name), QMessageBox.Yes | QMessageBox.No)
+                    c = cMessage.question(self, '부서지다.', "'preference/{}.prefer'가 부서진것 같습니다.\n초기화하겠습니까?".format(lfd.name),
+                                          QMessageBox.Yes | QMessageBox.No)
                     if c == QMessageBox.No:
                         weights = {}
                         for stn, stg in lfd.ads.stages.items():
@@ -794,6 +807,12 @@ class Main(QMainWindow):
             tepp.showMessage("wil 변수가 0입니다 이는 용납할 수 없습니다.")
             tepp.exec_()
             return False
+        self.runtime = 0.0
+        self.isRuntime = True
+        self.isCounting = False
+        self.lcptd_set_timerate()
+        self.th_clock = Thread(target=self.lcptd_timerate_live, daemon=True)
+        self.th_clock.start()
         self.cond_used = {}
 
         for ck, v in self.selected.cond.items():
@@ -837,7 +856,7 @@ class Main(QMainWindow):
     def queston_reset(self):
         self.ui.queston.setText("")
 
-    def input_reset(self, l:int=0):
+    def input_reset(self, l: int = 0):
         self.ui.input.clear()
         for i in range(l):
             temp_item = QListWidgetItem("")
@@ -878,8 +897,38 @@ class Main(QMainWindow):
         self.ui.lcptd_progress.setMaximum(0)
         self.ui.lcptd_rategress.setMaximum(0)
         self.ui.lcptd_cwgress.setMaximum(0)
+        self.ui.lcptd_timerate.setText("")
+
+    def lcptd_set_timerate(self):
+        if self.isRuntime:
+            if self.isCounting:
+                self.isCounting = False
+                self.runtime += (datetime.now() - self.lastStartingTime).total_seconds()
+            else:
+                self.isCounting = True
+                self.lastStartingTime = datetime.now()
+        else:
+            pass
+
+    def lcptd_fin_timerate(self):
+        pass
+
+    def lcptd_timerate_live(self):
+        if self.isRuntime:
+            if self.isCounting:
+                self.ui.lcptd_timerate.setText(str(int(
+                    (datetime.now()-self.lastStartingTime).total_seconds()
+                                                   + self.runtime)) + "초")
+            else:
+                pass
+            Timer(0.8, self.lcptd_timerate_live).start()
+        else:
+            pass
 
     def resultant_set(self):
+        self.isRuntime = False
+        self.isCounting = False
+
         self.ui.resultant_btn_save.setEnabled(True)
         self.model_resultant = AnwResultantDataModel(self.selected.result,
                                                      self.cond_used,
@@ -1008,3 +1057,6 @@ class Main(QMainWindow):
             json.dump(T, f, indent=2)
 
         self.loadOption()
+
+    def beforeEnd(self):
+        self.isRuntime = False

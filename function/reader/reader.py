@@ -3,7 +3,6 @@ import re
 from os.path import basename
 
 # TODO: 진짜 antanswer.function.reader.reader.py 는 전설이다.
-# 어떻게 얘들 어떻게 처리하냐
 
 
 
@@ -223,7 +222,6 @@ def sep_element(string, stage_name, file_name):
 
 def READ_ANW(string, file_name):
     """
-
     :param f: anw file
     :return: WBR that
     """
