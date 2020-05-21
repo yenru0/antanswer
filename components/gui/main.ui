@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>603</width>
+    <width>637</width>
     <height>641</height>
    </rect>
   </property>
@@ -824,7 +824,7 @@ background-color: white;
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>414</width>
+             <width>447</width>
              <height>562</height>
             </rect>
            </property>
@@ -941,7 +941,7 @@ background-color: white;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>603</width>
+     <width>637</width>
      <height>21</height>
     </rect>
    </property>
@@ -1021,7 +1021,27 @@ background-color: white;
 	text-align: center;
 	background-color: rgb(255, 0, 0)
 }
-#lcptd_cwgress::chunk{background-color: rgb(255, 200, 20);}</string>
+#lcptd_cwgress::chunk{background-color: rgb(255, 200, 20);}
+
+QPushButton{
+	font: 25 normal 14pt &quot;Malgun Gothic&quot;;
+	border: 1.2px solid black;
+	frameShape: panel;
+	border-radius: 4px;
+	
+}
+QPushButton:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #dadbde, stop: 1 #f6f7fa);
+}
+QPushButton:flat {
+    border: none; /* no border for a flat push button */
+}
+#lcptd_timerate:default {
+    border-color: navy; /* make the default button prominent */
+}
+
+</string>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
@@ -1527,6 +1547,26 @@ background-color: white;
        </property>
        <property name="format">
         <string>%v:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="lcptd_timerate">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>34</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>110000040초
+11000ms</string>
        </property>
       </widget>
      </item>

@@ -23,7 +23,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(603, 641)
+        MainWindow.resize(637, 641)
         MainWindow.setStyleSheet(u"#MainWindow{\n"
 "	background-color: rgb(255, 255, 255)\n"
 "}\n"
@@ -571,7 +571,7 @@ class Ui_MainWindow(object):
         self.option_scrollarea.setWidgetResizable(True)
         self.option_scrollarea_contents = QWidget()
         self.option_scrollarea_contents.setObjectName(u"option_scrollarea_contents")
-        self.option_scrollarea_contents.setGeometry(QRect(0, 0, 414, 562))
+        self.option_scrollarea_contents.setGeometry(QRect(0, 0, 447, 562))
         self.option_scrollarea_contents.setStyleSheet(u"")
         self.verticalLayout_7 = QVBoxLayout(self.option_scrollarea_contents)
         self.verticalLayout_7.setSpacing(10)
@@ -663,7 +663,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 603, 21))
+        self.menubar.setGeometry(QRect(0, 0, 637, 21))
         self.menu = QMenu(self.menubar)
         self.menu.setObjectName(u"menu")
         MainWindow.setMenuBar(self.menubar)
@@ -727,7 +727,27 @@ class Ui_MainWindow(object):
 "	background-color: rgb(255, 0, 0"
                         ")\n"
 "}\n"
-"#lcptd_cwgress::chunk{background-color: rgb(255, 200, 20);}")
+"#lcptd_cwgress::chunk{background-color: rgb(255, 200, 20);}\n"
+"\n"
+"QPushButton{\n"
+"	font: 25 normal 14pt \"Malgun Gothic\";\n"
+"	border: 1.2px solid black;\n"
+"	frameShape: panel;\n"
+"	border-radius: 4px;\n"
+"	\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                      stop: 0 #dadbde, stop: 1 #f6f7fa);\n"
+"}\n"
+"QPushButton:flat {\n"
+"    border: none; /* no border for a flat push button */\n"
+"}\n"
+"#lcptd_timerate:default {\n"
+"    border-color: navy; /* make the default button prominent */\n"
+"}\n"
+"\n"
+"")
         self.verticalLayout_2 = QVBoxLayout(self.lcptd)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.lcptd_file = QLineEdit(self.lcptd)
@@ -839,6 +859,17 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.lcptd_cwgress)
 
+        self.lcptd_timerate = QPushButton(self.lcptd)
+        self.lcptd_timerate.setObjectName(u"lcptd_timerate")
+        sizePolicy8 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy8.setHorizontalStretch(0)
+        sizePolicy8.setVerticalStretch(0)
+        sizePolicy8.setHeightForWidth(self.lcptd_timerate.sizePolicy().hasHeightForWidth())
+        self.lcptd_timerate.setSizePolicy(sizePolicy8)
+        self.lcptd_timerate.setMinimumSize(QSize(0, 34))
+
+        self.verticalLayout_2.addWidget(self.lcptd_timerate)
+
         self.lcptd_voidspacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_2.addItem(self.lcptd_voidspacer)
@@ -923,5 +954,7 @@ class Ui_MainWindow(object):
         self.lcptd_file.setText(QCoreApplication.translate("MainWindow", u"test.dnwouvndowdnbovwdbovwdbowdvnovwdn.zip", None))
         self.lcptd_progress.setFormat(QCoreApplication.translate("MainWindow", u"%p%:%v", None))
         self.lcptd_cwgress.setFormat(QCoreApplication.translate("MainWindow", u"%v:", None))
+        self.lcptd_timerate.setText(QCoreApplication.translate("MainWindow", u"110000040\ucd08\n"
+"11000ms", None))
     # retranslateUi
 
