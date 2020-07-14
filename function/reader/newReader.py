@@ -2,9 +2,7 @@ import re
 from enum import Enum, auto
 from typing import List, Tuple
 
-
 PATTERN_IS_LETTER = re.compile(r"[a-z]")
-
 
 """
 antanswer에 대한 EBNF
@@ -60,8 +58,7 @@ class TokenType(Enum):
     InlineCommentKeyword = auto()
     BlockCommentKeyword = auto()
 
-
-    Letter = auto() # to be exact, letter or void (e.g. ' ', '\t')
+    Letter = auto()  # to be exact, letter or void (e.g. ' ', '\t')
     ExpressionLetter = auto()
 
     L3Sep = auto()
@@ -79,6 +76,7 @@ class Token():
 
     def __str__(self):
         return self.__repr__()
+
     def __repr__(self):
         return "{}({})".format(self.tknType.name, self.value)
 
@@ -91,7 +89,6 @@ class Token():
 <StageSSKeyword> <ExpressionLetter>*5 <LineBreak>
 <Opener> <Opener> <EL> <Closer> <L1Sep> <Opener> <EL> <Closer> <Closer>
 """
-
 
 
 def nextToken(string: str) -> Tuple[str, Token]:
@@ -126,7 +123,7 @@ def nextToken(string: str) -> Tuple[str, Token]:
     elif s == '\n':
         return string[c + 1:], Token(TokenType.LineBreak, '\n')
 
-    elif PATTERN_IS_LETTER.match(s): # start of letters loop
+    elif PATTERN_IS_LETTER.match(s):  # start of letters loop
         text += s
         c += 1
         s = string[c]
@@ -137,15 +134,17 @@ def nextToken(string: str) -> Tuple[str, Token]:
         return string[c:], Token(TokenType.ExpressionLetter, text)
 
     elif s == ':':
-        return string[c+1:], Token(TokenType.L1Sep, ':')
+        return string[c + 1:], Token(TokenType.L1Sep, ':')
 
     elif s == '|':
-        return string[c+1:], Token(TokenType.L2Sep, "|")
+        return string[c + 1:], Token(TokenType.L2Sep, "|")
 
     elif s == ';':
-        return string[c+1:], Token(TokenType.L3Sep, ";")
+        return string[c + 1:], Token(TokenType.L3Sep, ";")
     else:
         raise Exception("unexpected character")
+
+
 def tokenize(source: str) -> List[Token]:
     source += "\n"
 
@@ -153,12 +152,12 @@ def tokenize(source: str) -> List[Token]:
 
     tokens = []
 
-
     while consumed or consumed.strip():
         consumed, tkn = nextToken(consumed)
         tokens.append(tkn)
 
     return tokens
+
 
 def parse_expressCell(tokens: List[Token]) -> Tuple[List[Token], int]:
     cell = ""
@@ -188,26 +187,28 @@ def parse_expressCell(tokens: List[Token]) -> Tuple[List[Token], int]:
         return False
     return cell, c
 
+
 def parse_subsub(tokens: List[Token]):
     cell = []
     c = 0
 
     t = parse_expressCell(tokens[c:])
-    if t:
-        c += t[1]
-        cell.append(t[0])
+    if t or tokens[c].tknType is TokenType.L3Sep:
+        if t:
+            c += t[1]
+            cell.append(t[0])
+        elif tokens[c].tknType is TokenType.L3Sep:
+            c += 1
+
         while True:
+            t = parse_expressCell(tokens[c:])
             if tokens[c].tknType is TokenType.L3Sep:
                 c += 1
-            else:
-                break
-            t = parse_expressCell(tokens[c:])
-            if t:
+            elif t:
                 c += t[1]
                 cell.append(t[0])
             else:
                 break
-
 
     elif tokens[c].tknType is TokenType.Opener:
         text = ""
@@ -262,26 +263,14 @@ def parse_subsub(tokens: List[Token]):
                 text += tkn.value
                 tkn = tokens[c]
 
-
-
     return cell, c
 
 
-
-
-
-
 if __name__ == '__main__':
-    src =\
-"""{;kbd;
-aaaa;{bb
-
-bb};cdc
-;
-bb;
-}"""
+    src = \
+        """;kbd;"""
 
     print(tokenize(src))
-    #print(parse_expressCell(tokenize(src)))
+    # print(parse_expressCell(tokenize(src)))
     print(parse_subsub(tokenize(src)))
-    #print(tokenize("{}}"))
+    # print(tokenize("{}}"))
