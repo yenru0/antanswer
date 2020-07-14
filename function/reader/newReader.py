@@ -295,7 +295,7 @@ def parse_sub(tokens: List[Token]):
         tkn = tokens[c]
         while tkn.tknType is TokenType.LineBreak:
             c += 1
-            #text += tkn.value
+            # text += tkn.value
             tkn = tokens[c]
         t = parse_subsub(tokens[c:])
         if t:
@@ -312,7 +312,7 @@ def parse_sub(tokens: List[Token]):
 
         while tkn.tknType is TokenType.LineBreak:
             c += 1
-            #text += tkn.value
+            # text += tkn.value
             tkn = tokens[c]
         while True:
             t = parse_subsub(tokens[c:])
@@ -343,6 +343,7 @@ def parse_sub(tokens: List[Token]):
         return False
 
     return cell, c
+
 
 def parse_element(tokens: List[Token]):
     """
@@ -393,7 +394,7 @@ def parse_element(tokens: List[Token]):
 
         while tkn.tknType is TokenType.LineBreak:
             c += 1
-            #text += tkn.value
+            # text += tkn.value
             tkn = tokens[c]
         while True:
             t = parse_sub(tokens[c:])
@@ -433,6 +434,7 @@ def parse_stage(tokens: List[Token]):
     :param tokens:
     :return:
     """
+    stageName = ""
     cell = []
     c = 0
     tkn = tokens[c]
@@ -443,6 +445,7 @@ def parse_stage(tokens: List[Token]):
         return False
 
     if tkn.tknType is TokenType.ExpressionLetter:
+        stageName = tkn.value
         c += 1
         tkn = tokens[c]
     else:
@@ -499,11 +502,12 @@ def parse_stage(tokens: List[Token]):
     else:
         return False
 
-    return cell, c
+    return {stageName: cell}, c
 
 
 if __name__ == '__main__':
     import pprint
+
     """
     ##@ stage
     {{333}:{333}}
@@ -515,9 +519,9 @@ if __name__ == '__main__':
     [[[[333],],], [[]]]
     """
     src = \
-"""a:q:demd"""
-    src1 =\
-"""##@stage{
+        """a:q:demd"""
+    src1 = \
+        """##@stage{
 a:b:element
 a;b:q:demostrork
 }
