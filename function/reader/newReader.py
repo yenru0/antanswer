@@ -82,16 +82,6 @@ class Token():
         return "{}({})".format(self.tknType.name, self.value)
 
 
-"""
-##@ stage
-{{333}:{333}}
-->
----
-<StageSSKeyword> <ExpressionLetter>*5 <LineBreak>
-<Opener> <Opener> <EL> <Closer> <L1Sep> <Opener> <EL> <Closer> <Closer>
-"""
-
-
 def nextToken(string: str) -> Tuple[str, Token]:
     text = ''
     c = 0
@@ -263,15 +253,119 @@ def parse_subsub(tokens: List[Token]):
                 c += 1
                 text += tkn.value
                 tkn = tokens[c]
+    else:
+        return False
+
+    return cell, c
+
+
+def parse_sub(tokens: List[Token]):
+    """
+    333|333
+    :param tokens:
+    :return:
+    """
+    cell = []
+    c = 0
+
+    t = parse_subsub(tokens[c:])
+    if t or tokens[c].tknType is TokenType.L2Sep:
+        if t:
+            c += t[1]
+            cell.append(t[0])
+        elif tokens[c].tknType is TokenType.L2Sep:
+            c += 1
+
+        while True:
+            t = parse_subsub(tokens[c:])
+            if tokens[c].tknType is TokenType.L2Sep:
+                c += 1
+            elif t:
+                c += t[1]
+                cell.append(t[0])
+            else:
+                break
+
+    elif tokens[c].tknType is TokenType.Opener:
+        text = []
+        c += 1
+        tkn = tokens[c]
+        while tkn.tknType is TokenType.LineBreak:
+            c += 1
+            #text += tkn.value
+            tkn = tokens[c]
+        t = parse_subsub(tokens[c:])
+        if t:
+            c += t[1]
+            text.extend(t[0])
+            tkn = tokens[c]
+
+        if tkn.tknType is TokenType.L2Sep:
+            c += 1
+            if text:
+                cell.append(text)
+                text = []
+            tkn = tokens[c]
+
+        while tkn.tknType is TokenType.LineBreak:
+            c += 1
+            #text += tkn.value
+            tkn = tokens[c]
+        while True:
+            t = parse_subsub(tokens[c:])
+            if tkn.tknType is TokenType.L2Sep:
+                c += 1
+                if text:
+                    cell.append(text)
+                    text = []
+                tkn = tokens[c]
+            elif t:
+                c += t[1]
+                text.extend(t[0])
+                tkn = tokens[c]
+                print(tkn)
+            elif tkn.tknType is TokenType.Closer:
+                print(text)
+                c += 1
+                if text:
+                    cell.append(text)
+                    text = []
+                tkn = tokens[c]
+                break
+            else:
+                return False
+
+            while tkn.tknType is TokenType.LineBreak:
+                c += 1
+                tkn = tokens[c]
+    else:
+        return False
 
     return cell, c
 
 
 if __name__ == '__main__':
+    """
+    ##@ stage
+    {{333}:{333}}
+    ->
+    ---tokenized
+    <StageSSKeyword> <ExpressionLetter>*5 <LineBreak>
+    <Opener> <Opener> <EL> <Closer> <L1Sep> <Opener> <EL> <Closer> <Closer>
+    ---parsed
+    [[[[333],],], [[]]]
+    """
     src = \
-        """;kbd;"""
+"""{;kbd;
+bb;
+
+cd;
+|{cd;
+cd;}|
+{
+bd}}"""
 
     print(tokenize(src))
     # print(parse_expressCell(tokenize(src)))
-    print(parse_subsub(tokenize(src)))
+    print(parse_sub(tokenize(src)))
     # print(tokenize("{}}"))
