@@ -3,7 +3,7 @@ import json
 from enum import Enum, auto
 from typing import List, Tuple
 
-PATTERN_IS_LETTER = re.compile(r"[a-z]")
+PATTERN_IS_LETTER = re.compile(r"[a-z=]")
 
 """
 antanswer에 대한 EBNF
@@ -46,6 +46,24 @@ antanswer에 대한 EBNF
 
 """
 
+"""
+Antanswer Reader converts anw file to ADS through the following process:
+
+`Tokenization` -> `CommentProcessing` -> `Parsing` -> `ValidChecking&Modifying` -> `DataProcessing`
+
+
+`Tokenization` : tokenize given data
+
+`CommentProcessing` : pre-process comment from given data
+
+`Parsing` : Checking & Parsing given data most of Exception is checked in Parsing routine.
+
+`ValidChecking&Modifying` : check if parsed data is valid. if parsed data is invalid, raise Exception or modifying data.
+
+`DataProcessing` : process data with processed value from given data.
+
+"""
+
 
 class TokenType(Enum):
     LineBreak = auto()
@@ -71,9 +89,15 @@ class TokenType(Enum):
 
 
 class Token():
-    def __init__(self, tknType, value):
-        self.tknType = tknType
-        self.value = value
+    def __init__(self, tknType: TokenType, value: str, pos: Tuple[int, int] = (0, 0)):
+        """
+        :param tknType: type of token
+        :param value: its text
+        :param pos: (line number, pos of its line)
+        """
+        self.tknType: TokenType = tknType
+        self.value: str = value
+        self.pos: Tuple[int, int] = pos  # line, pos
 
     def __str__(self):
         return self.__repr__()
@@ -84,6 +108,8 @@ class Token():
         else:
             return "{}".format(self.tknType.name)
 
+
+# tokenize function
 
 def nextToken(string: str) -> Tuple[str, Token]:
     text = ''
@@ -153,6 +179,19 @@ def tokenize(source: str) -> List[Token]:
     return tokens
 
 
+# pre-process comment functions
+# Mostly remove
+
+def process_inlineComment(tokens: List[Token]) -> List[Token]:
+    pass
+
+
+def process_multlineComment(tokens: List[Token]) -> List[Token]:
+    pass
+
+
+# parse functions
+
 def parse_expressCell(tokens: List[Token]) -> Tuple[List[Token], int]:
     cell = ""
     c = 0
@@ -176,16 +215,24 @@ def parse_expressCell(tokens: List[Token]) -> Tuple[List[Token], int]:
                 c += 1
                 break
             else:
-                return False
+                if tkn.tknType in [TokenType.L3Sep, TokenType.L2Sep, TokenType.L1Sep]:
+                    return False
+                else:
+                    raise Exception
     else:
         return False
     return cell, c
 
 
 def parse_subsub(tokens: List[Token]):
+    """
+
+    :param tokens:
+    :return:
+    """
     cell = []
     c = 0
-
+    backward = False  # for preventing continuous 'expressCell'
     t = parse_expressCell(tokens[c:])
     if t or tokens[c].tknType is TokenType.L3Sep:
         if t:
@@ -199,37 +246,19 @@ def parse_subsub(tokens: List[Token]):
             if tokens[c].tknType is TokenType.L3Sep:
                 c += 1
             elif t:
+                if backward:
+                    raise Exception
                 c += t[1]
                 cell.append(t[0])
             else:
                 break
+            backward = False
+
 
     elif tokens[c].tknType is TokenType.Opener:
         text = ""
         c += 1
         tkn = tokens[c]
-        while tkn.tknType is TokenType.LineBreak:
-            c += 1
-            text += tkn.value
-            tkn = tokens[c]
-        t = parse_expressCell(tokens[c:])
-        if t:
-            c += t[1]
-            text += t[0]
-            tkn = tokens[c]
-
-        if tkn.tknType is TokenType.L3Sep:
-            c += 1
-            if text.strip():
-                cell.append(text)
-                text = ""
-            tkn = tokens[c]
-
-        while tkn.tknType is TokenType.LineBreak:
-            c += 1
-            text += tkn.value
-            tkn = tokens[c]
-
         while True:
             t = parse_expressCell(tokens[c:])
             if tkn.tknType is TokenType.L3Sep:
@@ -239,9 +268,18 @@ def parse_subsub(tokens: List[Token]):
                     text = ""
                 tkn = tokens[c]
             elif t:
+                if backward:
+                    raise Exception
                 c += t[1]
                 text += t[0]
                 tkn = tokens[c]
+                backward = True
+                continue
+            elif tkn.tknType is TokenType.LineBreak:
+                while tkn.tknType is TokenType.LineBreak:
+                    c += 1
+                    text += tkn.value
+                    tkn = tokens[c]
             elif tkn.tknType is TokenType.Closer:
                 c += 1
                 if text.strip():
@@ -250,12 +288,11 @@ def parse_subsub(tokens: List[Token]):
                 tkn = tokens[c]
                 break
             else:
-                return False
-
-            while tkn.tknType is TokenType.LineBreak:
-                c += 1
-                text += tkn.value
-                tkn = tokens[c]
+                if tkn.tknType in [TokenType.L2Sep, TokenType.L1Sep]:
+                    return False
+                else:
+                    raise Exception
+            backward = False
     else:
         return False
 
@@ -270,6 +307,7 @@ def parse_sub(tokens: List[Token]):
     """
     cell = []
     c = 0
+    backward = False  # subsub의 중복 방지용
 
     t = parse_subsub(tokens[c:])
     if t or tokens[c].tknType is TokenType.L2Sep:
@@ -284,36 +322,20 @@ def parse_sub(tokens: List[Token]):
             if tokens[c].tknType is TokenType.L2Sep:
                 c += 1
             elif t:
+                if backward:
+                    raise Exception
                 c += t[1]
                 cell.append(t[0])
+                backward = True
+                continue
             else:
                 break
+            backward = False
 
     elif tokens[c].tknType is TokenType.Opener:
         text = []
         c += 1
         tkn = tokens[c]
-        while tkn.tknType is TokenType.LineBreak:
-            c += 1
-            # text += tkn.value
-            tkn = tokens[c]
-        t = parse_subsub(tokens[c:])
-        if t:
-            c += t[1]
-            text.extend(t[0])
-            tkn = tokens[c]
-
-        if tkn.tknType is TokenType.L2Sep:
-            c += 1
-            if text:
-                cell.append(text)
-                text = []
-            tkn = tokens[c]
-
-        while tkn.tknType is TokenType.LineBreak:
-            c += 1
-            # text += tkn.value
-            tkn = tokens[c]
         while True:
             t = parse_subsub(tokens[c:])
             if tkn.tknType is TokenType.L2Sep:
@@ -323,9 +345,18 @@ def parse_sub(tokens: List[Token]):
                     text = []
                 tkn = tokens[c]
             elif t:
+                if backward:
+                    raise Exception
                 c += t[1]
                 text.extend(t[0])
                 tkn = tokens[c]
+                backward = True
+                continue
+            elif tkn.tknType is TokenType.LineBreak:
+                while tkn.tknType is TokenType.LineBreak:
+                    c += 1
+                    # text += tkn.value
+                    tkn = tokens[c]
             elif tkn.tknType is TokenType.Closer:
                 c += 1
                 if text:
@@ -334,11 +365,11 @@ def parse_sub(tokens: List[Token]):
                 tkn = tokens[c]
                 break
             else:
-                return False
-
-            while tkn.tknType is TokenType.LineBreak:
-                c += 1
-                tkn = tokens[c]
+                if tkn.tknType in [TokenType.L1Sep]:
+                    return False
+                else:
+                    raise Exception
+            backward = False
     else:
         return False
 
@@ -354,12 +385,14 @@ def parse_element(tokens: List[Token]):
     cell = []
     c = 0
 
+    backward = False  # for preventing continuous 'sub'
     t = parse_sub(tokens[c:])
     if t or tokens[c].tknType is TokenType.L1Sep:
         if t:
             c += t[1]
             cell.append(t[0])
         elif tokens[c].tknType is TokenType.L1Sep:
+            cell.append([['']])  # Because L1Sep is so Big Impact on this anw
             c += 1
 
         while True:
@@ -367,35 +400,25 @@ def parse_element(tokens: List[Token]):
             if tokens[c].tknType is TokenType.L1Sep:
                 c += 1
             elif t:
+                if backward:
+                    raise Exception
                 c += t[1]
                 cell.append(t[0])
+                backward = True
+                continue
             else:
                 break
+            backward = False
+        if tokens[c].tknType is TokenType.LineBreak:
+            c += 1
+            pass
+        else:
+            raise Exception
 
     elif tokens[c].tknType is TokenType.Opener:
         text = []
         c += 1
         tkn = tokens[c]
-        while tkn.tknType is TokenType.LineBreak:
-            c += 1
-            tkn = tokens[c]
-        t = parse_sub(tokens[c:])
-        if t:
-            c += t[1]
-            text.extend(t[0])
-            tkn = tokens[c]
-
-        if tkn.tknType is TokenType.L1Sep:
-            c += 1
-            if text:
-                cell.append(text)
-                text = []
-            tkn = tokens[c]
-
-        while tkn.tknType is TokenType.LineBreak:
-            c += 1
-            # text += tkn.value
-            tkn = tokens[c]
         while True:
             t = parse_sub(tokens[c:])
             if tkn.tknType is TokenType.L1Sep:
@@ -403,24 +426,40 @@ def parse_element(tokens: List[Token]):
                 if text:
                     cell.append(text)
                     text = []
+                else:
+                    cell.append([['']])  # only in element
                 tkn = tokens[c]
             elif t:
+                if backward:
+                    raise Exception
                 c += t[1]
                 text.extend(t[0])
                 tkn = tokens[c]
+                backward = True
+                continue
+            elif tkn.tknType is TokenType.LineBreak:
+                while tkn.tknType is TokenType.LineBreak:
+                    c += 1
+                    # text += tkn.value
+                    tkn = tokens[c]
             elif tkn.tknType is TokenType.Closer:
                 c += 1
                 if text:
                     cell.append(text)
                     text = []
+                else:
+                    cell.append([['']])
                 tkn = tokens[c]
                 break
             else:
-                return False
+                raise Exception  # meeting strange token in bracket is incorrect
+            backward = False
 
-            while tkn.tknType is TokenType.LineBreak:
-                c += 1
-                tkn = tokens[c]
+        if tkn.tknType is TokenType.LineBreak:
+            c += 1
+            pass
+        else:
+            raise Exception
 
     else:
         return False
@@ -430,7 +469,7 @@ def parse_element(tokens: List[Token]):
 
 def parse_stage(tokens: List[Token]):
     """
-
+    parse stage
     :param tokens:
     :return:
     """
@@ -449,93 +488,122 @@ def parse_stage(tokens: List[Token]):
         c += 1
         tkn = tokens[c]
     else:
-        return False
+        raise Exception("NO HEADER OF STAGE")
 
-    while tkn.tknType is TokenType.LineBreak:
-        c += 1
-        tkn = tokens[c]
-
-    t = parse_element(tokens[c:])
-    if t:
-
-        while True:
-            t = parse_element(tokens[c:])
-            if t:
-                c += t[1]
-                cell.append(t[0])
-                tkn = tokens[c]
-            else:
-                break
+    while True:
+        t = parse_element(tokens[c:])
+        if tkn.tknType is TokenType.LineBreak:
             try:
                 while tkn.tknType is TokenType.LineBreak:
-                    c += 1
-                    tkn = tokens[c]
+                        c += 1
+                        tkn = tokens[c]
+            except IndexError:
+                break
+        elif t:
+            c += t[1]
+            cell.append(t[0])
+            try:
+                tkn = tokens[c]
             except IndexError:
                 break
 
-
-
-    elif tokens[c].tknType is TokenType.Opener:
-        c += 1
-        tkn = tokens[c]
-
-        while True:
-
-            t = parse_element(tokens[c:])
-            if t:
-                c += t[1]
-                cell.append(t[0])
-                tkn = tokens[c]
-            elif tkn.tknType is TokenType.Closer:
-                c += 1
-                tkn = tokens[c]
-                break
-            else:
-                return False
-            try:
-                while tkn.tknType is TokenType.LineBreak:
-                    c += 1
-                    tkn = tokens[c]
-            except IndexError:
-                break
-
-    else:
-        return False
+        else:
+            
+            # 이때 아마 그거 올듯 ㅇㅇ e.g.커맨드
+            break
 
     return {stageName: cell}, c
 
 
+def parse_command(tokens: List[Token]):
+    cargs = []
+    c = 0
+    tkn = tokens[c]
+    if tkn.tknType is TokenType.CommandSSKeyword:
+        c += 1
+        tkn = tokens[c]
+
+        if tkn.tknType is TokenType.ExpressionLetter:
+            cargs = [i.strip() for i in tkn.value.split()
+                     if i.strip()
+                     ]
+            c += 1
+            tkn = tokens[c]
+            if tkn.tknType is TokenType.LineBreak:
+                # not consumed
+                pass
+            else:
+                raise Exception
+        elif tkn.tknType is TokenType.LineBreak:
+            c += 1
+            tkn = tokens[c]
+            pass
+        else:
+            raise Exception
+    else:
+        return False
+    return cargs, c
+
+
+def parse_let(tokens: List[Token]):
+    cell = []
+    c = 0
+    tkn = tokens[c]
+    if tkn.tknType is TokenType.LetSSKeyword:
+        c += 1
+        tkn = tokens[c]
+        t = parse_subsub(tokens[c:])
+        if t:
+            cell = t[0]
+            c += t[1]
+            for i in cell:
+                kvpair = i.split("=")
+                if len(kvpair) != 2:
+                    raise Exception
+
+
+        elif tkn.tknType is TokenType.LineBreak:
+            pass
+        else:
+            raise Exception
+
+    else:
+        return False
+    return cell, c
+
+
+def parse_all(tokens: List[Token]):
+    pass
+
+
+# valid check & modify
+
+
 if __name__ == '__main__':
     import pprint
+    def test(ts):
+        try:
+            test_tokens = tokenize(ts)
+            print(test_tokens)
+            print(parse_stage(test_tokens))
+            print("Conje" + "=" * 25)
+        except Exception as e:
+            print(e)
+            print("False" + "=" * 25)
 
-    """
-    ##@ stage
-    {{333}:{333}}
-    ->
-    ---tokenized
-    <StageSSKeyword> <ExpressionLetter>*5 <LineBreak>
-    <Opener> <Opener> <EL> <Closer> <L1Sep> <Opener> <EL> <Closer> <Closer>
-    ---parsed
-    [[[[333],],], [[]]]
-    """
-    src = \
-        """a:q:demd"""
-    src1 = \
-        """##@stage{
-a:b:element
-a;b:q:demostrork
+
+    test_sources = [
+"""##@header
+{a:b:c
+
 }
+c:b:d;u
+{ibc:}""",
+"""##@stage
+{a;b|{ec;d}}:{configure}:{lefigure}
+{s:d}""",
 
+    ]
 
-
-
-
-
-
-"""
-
-    print(tokenize(src1))
-    # print(parse_expressCell(tokenize(src)))
-
-    pprint.pprint(parse_stage(tokenize(src1)), indent=2, width=5)
-    # print(tokenize("{}}"))
+    test(test_sources[0])
+    test(test_sources[1])
