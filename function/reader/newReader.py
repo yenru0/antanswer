@@ -3,7 +3,7 @@ import json
 from enum import Enum, auto
 from typing import List, Tuple
 
-PATTERN_IS_LETTER = re.compile(r"[a-z=]")
+PATTERN_IS_LETTER = re.compile(r"[a-z= ]")
 
 """
 antanswer에 대한 EBNF
@@ -191,8 +191,62 @@ def process_multlineComment(tokens: List[Token]) -> List[Token]:
 
 
 # parse functions
+def parse_command(tokens: List[Token]):
+    cargs = []
+    c = 0
+    tkn = tokens[c]
+    if tkn.tknType is TokenType.CommandSSKeyword:
+        c += 1
+        tkn = tokens[c]
 
-def parse_expressCell(tokens: List[Token]) -> Tuple[List[Token], int]:
+        if tkn.tknType is TokenType.ExpressionLetter:
+            cargs = [i.strip() for i in tkn.value.split()
+                     if i.strip()
+                     ]
+            c += 1
+            tkn = tokens[c]
+            if tkn.tknType is TokenType.LineBreak:
+                c += 1
+
+            else:
+                raise Exception
+        elif tkn.tknType is TokenType.LineBreak:
+            c += 1
+        else:
+            raise Exception
+    else:
+        return False
+    return cargs, c
+
+
+def parse_let(tokens: List[Token]):
+    cell = []
+    c = 0
+    tkn = tokens[c]
+    if tkn.tknType is TokenType.LetSSKeyword:
+        c += 1
+        tkn = tokens[c]
+        t = parse_subsub(tokens[c:])
+        if t:
+            c += t[1]
+            for i in t[0]:
+                kvpair = i.split("=")
+                if len(kvpair) != 2:
+                    raise Exception
+                else:
+                    cell.append(kvpair)
+            tkn = tokens[c]
+        if tkn.tknType is TokenType.LineBreak:
+            c += 1
+        else:
+            raise Exception
+
+    else:
+        return False
+    return cell, c
+
+
+def parse_expressCell(tokens: List[Token]) -> [Tuple[List[Token], int], bool]:
     cell = ""
     c = 0
     tkn = tokens[c]
@@ -495,8 +549,8 @@ def parse_stage(tokens: List[Token]):
         if tkn.tknType is TokenType.LineBreak:
             try:
                 while tkn.tknType is TokenType.LineBreak:
-                        c += 1
-                        tkn = tokens[c]
+                    c += 1
+                    tkn = tokens[c]
             except IndexError:
                 break
         elif t:
@@ -508,71 +562,27 @@ def parse_stage(tokens: List[Token]):
                 break
 
         else:
-            
-            # 이때 아마 그거 올듯 ㅇㅇ e.g.커맨드
-            break
+            t1 = parse_command(tokens[c:])
+            t2 = parse_let(tokens[c:])
+            if t1:
+                # dispatch
+                c += t1[1]
+                tkn = tokens[c]
+                pass
+            elif t2:
+                # dispatch
+                c += t2[1]
+                tkn = tokens[c]
+                pass
+            else:
+                break
+
+
 
     return {stageName: cell}, c
 
 
-def parse_command(tokens: List[Token]):
-    cargs = []
-    c = 0
-    tkn = tokens[c]
-    if tkn.tknType is TokenType.CommandSSKeyword:
-        c += 1
-        tkn = tokens[c]
-
-        if tkn.tknType is TokenType.ExpressionLetter:
-            cargs = [i.strip() for i in tkn.value.split()
-                     if i.strip()
-                     ]
-            c += 1
-            tkn = tokens[c]
-            if tkn.tknType is TokenType.LineBreak:
-                # not consumed
-                pass
-            else:
-                raise Exception
-        elif tkn.tknType is TokenType.LineBreak:
-            c += 1
-            tkn = tokens[c]
-            pass
-        else:
-            raise Exception
-    else:
-        return False
-    return cargs, c
-
-
-def parse_let(tokens: List[Token]):
-    cell = []
-    c = 0
-    tkn = tokens[c]
-    if tkn.tknType is TokenType.LetSSKeyword:
-        c += 1
-        tkn = tokens[c]
-        t = parse_subsub(tokens[c:])
-        if t:
-            cell = t[0]
-            c += t[1]
-            for i in cell:
-                kvpair = i.split("=")
-                if len(kvpair) != 2:
-                    raise Exception
-
-
-        elif tkn.tknType is TokenType.LineBreak:
-            pass
-        else:
-            raise Exception
-
-    else:
-        return False
-    return cell, c
-
-
-def parse_all(tokens: List[Token]):
+def parse_complete(tokens: List[Token]):
     pass
 
 
@@ -581,29 +591,20 @@ def parse_all(tokens: List[Token]):
 
 if __name__ == '__main__':
     import pprint
+
+
     def test(ts):
         try:
             test_tokens = tokenize(ts)
             print(test_tokens)
-            print(parse_stage(test_tokens))
+            print(parse_let(test_tokens))
             print("Conje" + "=" * 25)
         except Exception as e:
             print(e)
             print("False" + "=" * 25)
 
 
-    test_sources = [
-"""##@header
-{a:b:c
-
-}
-c:b:d;u
-{ibc:}""",
-"""##@stage
-{a;b|{ec;d}}:{configure}:{lefigure}
-{s:d}""",
-
-    ]
+    test_sources = ["##$str=aaa;{u=d}"]
 
     test(test_sources[0])
-    test(test_sources[1])
+    # test(test_sources[1])
