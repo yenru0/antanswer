@@ -4,301 +4,206 @@ from enum import Enum, auto
 from typing import List, Tuple, Dict
 
 
-class TokenType(Enum):
-    LineBreak = auto()
-
-    # Define StartSetter
-    StageSSKeyword = auto()
-    LetSSKeyword = auto()
-    CommandSSKeyword = auto()
-
-    # Define Comment
-    InlineCommentKeyword = auto()
-    BlockCommentKeyword = auto()
-
-    Letter = auto()  # to be exact, letter or void (e.g. ' ', '\t')
-    ExpressionLetter = auto()
-
-    L3Sep = auto()
-    L2Sep = auto()
-    L1Sep = auto()
-
-    Opener = auto()
-    Closer = auto()
-
-
-class Token():
-    def __init__(self, tknType: TokenType, value: str, pos: Tuple[int, int] = (0, 0)):
-        """
-        :param tknType: type of token
-        :param value: its text
-        :param pos: (line number, pos of its line)
-        """
-        self.tknType: TokenType = tknType
-        self.value: str = value
-        self.pos: Tuple[int, int] = pos  # line, pos
-
-    def __str__(self):
-        return self.__repr__()
-
-    def __repr__(self):
-        if self.tknType in [TokenType.ExpressionLetter, TokenType.Letter]:
-            return "{}({})".format(self.tknType.name, self.value)
-        else:
-            return "{}".format(self.tknType.name)
-
-
 class Reader:
-    PATTERN_IS_LETTER = re.compile(r"[a-z= ]")
+    def __init__(self, src: str, name: [str, None]=None):
+        self.src: str = src
+        self.src_size: int = len(src)
+        self.src_iter: List[str] = []
 
-    def __init__(self, src: str):
-        self.src = src + "\n"
-        self.src_size = len(src)
-        self.var = {}  # used custom var
-        self.tokens: List[Token] = []
+        self.scope_default = "main"
+
+        self._name: [str, None] = name
+        self._description: str = ""
+        self._predefined_value: dict = {"wil": None, "recentValue": None, "recent": None, }
+        self._conditional_value: Dict[str, bool] = {
+            "COMP_IGNORE_SPACE": True,  ### ignoring space, blank like '\t' won't be replaced
+            "COMP_IGNORE_CASE": True,  ### ignoring case, replace upper to lower
+            "ANSWER_WITHOUT_ORDER": True,  ### when answering quest, order don't interrupt you
+            "COMP_NOT": True,  ### ignoring sequence matcher(compare) method
+            "RESULT_DISPLAY_QUEST": True,  ### not displaying Quest
+            "COMP_IGNORE_LAST_PERIOD": True,  ### ignoring the last period
+            "RESULT_MANUAL_POST_CORRECTION": True,  ### post correction at result time GUI main cond
+            "REVERSE_AQ": False
+        }
+        self._variables = {}
+
+        self._stages: Dict[str, list] = {'main': []}
 
     def read(self):
-        pass
+        self.preprocess()
+        self.parse()
 
-    def nextToken(self, cnt) -> Tuple[int, Token]:
-        text = ''
-        s = self.src[cnt]
-        if s == '#':
-            cnt += 1
-            s = self.src[cnt]
-            text += s
-            if s == '#':
-                cnt += 1
-                s = self.src[cnt]
-                text += s
-                if s == '@':
-                    return cnt + 1, Token(TokenType.StageSSKeyword, '##@')
-                elif s == '!':
-                    return cnt + 1, Token(TokenType.CommandSSKeyword, '##!')
-                elif s == '$':
-                    return cnt + 1, Token(TokenType.LetSSKeyword, '##$')
-                elif s == '#':
-                    return cnt + 1, Token(TokenType.InlineCommentKeyword, '###')
+    def preprocess(self) -> None:
+        """
+        pre-processing (e.g. delete comment, make src_iter)
+        :return: Void
+        """
+        self.preprocess_comment()
+        self.src_iter = self.src.split("\n")
 
+    def preprocess_comment(self) -> None:
+        """
+        process \# escape & delete comment
+        :return: Void
+        """
+        pattern_sharp = re.compile(r"\\#")
+        pattern_comment = re.compile(r"###.*")
 
+        self.src = pattern_sharp.sub("%§%SHP%§%", self.src)
+        self.src = pattern_comment.sub("", self.src)
 
-        elif s == '{':
-            return cnt + 1, Token(TokenType.Opener, '{')
-
-        elif s == '}':
-            return cnt + 1, Token(TokenType.Closer, '}')
-
-        elif s == '\n':
-            return cnt + 1, Token(TokenType.LineBreak, '\n')
-
-        elif Reader.PATTERN_IS_LETTER.match(s):  # start of letters loop
-            text += s
-            cnt += 1
-            s = self.src[cnt]
-            while Reader.PATTERN_IS_LETTER.match(s):
-                text += s
-                cnt += 1
-                s = self.src[cnt]
-            return cnt, Token(TokenType.ExpressionLetter, text)
-
-        elif s == ':':
-            return cnt + 1, Token(TokenType.L1Sep, ':')
-
-        elif s == '|':
-            return cnt + 1, Token(TokenType.L2Sep, "|")
-
-        elif s == ';':
-            return cnt + 1, Token(TokenType.L3Sep, ";")
-        else:
-            raise Exception("unexpected character")
-
-    def tokenize(self) -> bool:
-        cnt = 0
-
-        while cnt < self.src_size:
-            cnt, tkn = self.nextToken(cnt)
-            self.tokens.append(tkn)
-        return True
-
-    def preprocess(self):
-        pass
-
-    def preprocess_inlineComment(self):
-        pass
-
-    def preprocess_blockComment(self):
-        pass
+        self.src = self.src.replace("%§%SHP%§%", "#")
 
     def parse(self):
-        pass
+        """
+        parse based on src_iter
+        :return: Void
+        """
+        scope = self.scope_default
+        for i, s in enumerate(self.src_iter):
+            if not s.strip():
+                continue
 
-    def parse_command(self, cnt) -> (Tuple[List, int], bool):
-        cargs = []
+            t = self.parse_stage(s, i)
+            if t is not False:
+                scope = t
+                if scope not in self._stages:
+                    self._stages[scope] = []
+                continue
 
-        tkn = self.tokens[cnt]
-
-        if tkn.tknType is TokenType.CommandSSKeyword:
-            cnt += 1
-            tkn = self.tokens[cnt]
-
-            if tkn.tknType is TokenType.ExpressionLetter:
-                cargs = [i.strip() for i in tkn.value.split() if i.strip()]
-                cnt += 1
-                tkn = self.tokens[cnt]
-
-            if tkn.tknType is TokenType.LineBreak:
-                cnt += 1
-            else:
-                raise Exception
-        else:
-            return False
-        return cargs, cnt
-
-    def parse_let(self, cnt) -> (Tuple[List, int], bool):
-        cell = []
-
-        tkn = self.tokens[cnt]
-        if tkn.tknType is TokenType.LetSSKeyword:
-            cnt += 1
-            tkn = self.tokens[cnt]
-            t = self.parse_subsub(cnt)
-            if t:
-                cnt = t[1]
-                for i in t[0]:
-                    pair = i.split("=")
-                    if len(pair) != 2:
-                        raise Exception("wrong pair")
+            t = self.parse_let(s, i)
+            if t is not False:
+                for k, v in t.items():
+                    if k == 'name':
+                        self._name = v
+                    elif k == 'desc' or 'description':
+                        self._description = v
+                    elif k in self._predefined_value:
+                        if k == 'wil':
+                            self._predefined_value[k] = int(float(v))
+                        elif k == 'recent_value':
+                            self._predefined_value[k] = float(v)
+                        elif k == 'recent':
+                            self._predefined_value[k] = int(float(v))
+                    elif k in self._conditional_value:
+                        if v.lower() == 'true':
+                            self._conditional_value[k] = True
+                        elif v.lower() == 'false':
+                            self._conditional_value[k] = False
+                        else:
+                            raise Exception
                     else:
-                        cell.append(pair)
-                tkn = self.tokens[cnt]
-            if tkn.tknType is TokenType.LineBreak:
-                cnt += 1
-            else:
-                raise Exception
-        else:
+                        self._variables[k] = v
+
+                continue
+
+            t = self.parse_command(s, i)
+            if t is not False:
+                continue
+
+            t = self.parse_element(s, i)
+            if t is not False:
+                self._stages[scope].append(t)
+                continue
+
+            raise Exception(f"unexpected expression: LineNumber: {i + 1}")
+
+    def parse_stage(self, s: str, ln: int) -> [str, bool]:
+        """
+        parse stage starting with '##@'
+        :param s: line string
+        :param ln: line number
+        :return: stage name or False
+        """
+        pattern_stage = re.compile(r"##@(.*)")
+        t = pattern_stage.match(s)
+        if not t:
             return False
-        return cell, cnt
 
-    def parse_expressCell(self, cnt) -> [Tuple[str, int], bool]:
-        cell = ""
-        tkn = self.tokens[cnt]
-        if tkn.tknType is TokenType.ExpressionLetter:
-            cell += tkn.value
-            cnt += 1
-        elif tkn.tknType is TokenType.Opener:
-            cnt += 1
-            tkn = self.tokens[cnt]
-            while True:
-                if tkn.tknType is TokenType.ExpressionLetter:
-                    cell += tkn.value
-                    cnt += 1
-                    tkn = self.tokens[cnt]
-                elif tkn.tknType is TokenType.LineBreak:
-                    cell += tkn.value
-                    cnt += 1
-                    tkn = self.tokens[cnt]
-                elif tkn.tknType is TokenType.Closer:
-                    cnt += 1
-                    break
-                else:
-                    if tkn.tknType in [TokenType.L3Sep, TokenType.L2Sep, TokenType.L1Sep]:
-                        return False
-                    else:
-                        raise Exception
+        if not t.group(1).strip():
+            return self.scope_default
         else:
+            return t.group(1).strip()
+
+    def parse_let(self, s: str, ln: int) -> [Dict, bool]:
+        """
+        parse let starting with '##$'
+        :param s: line string
+        :param ln: line number
+        :return: variables dictionary or False
+        """
+        pattern_let = re.compile(r"##\$(.*)")
+        t = pattern_let.match(s)
+        if not t:
             return False
-        return cell, cnt
 
-    def parse_subsub(self, cnt) -> [Tuple[List, int], bool]:
-        cell = []
-        backward = False
-
-        tkn = self.tokens[cnt]
-        t = self.parse_expressCell(cnt)
-        if t or tkn.tknType is TokenType.L3Sep:
-            if t:
-                cnt = t[1]
-                cell.append(t[0])
-                tkn = self.tokens[cnt]
-            elif tkn.tknType is TokenType.L3Sep:
-                cnt += 1
-                tkn = self.tokens[cnt]
-
-            while True:
-                t = self.parse_expressCell(cnt)
-                if tkn.tknType is TokenType.L3Sep:
-                    cnt += 1
-                elif t:
-                    if backward:
-                        raise Exception
-                    cnt = t[1]
-                    cell.append(t[0])
-                    backward = True
+        if not t.group(1).strip():
+            return {}
+        else:
+            seps = t.group(1).split(";")
+            ret = {}
+            for sep in seps:
+                if not sep.strip():
                     continue
+                kv = sep.split("=")
+                if len(kv) != 2:
+                    raise Exception(str(ln))
                 else:
-                    break
-                backward = False
-        elif tkn.tknType is TokenType.Opener:
-            text = ""
-            cnt += 1
-            tkn = self.tokens[cnt]
-            while True:
-                t = self.parse_expressCell(cnt)
-                if tkn.tknType is TokenType.L3Sep:
-                    cnt += 1
-                    if text.strip():
-                        cell.append(text)
-                        text = ""
-                    tkn = self.tokens[cnt]
-                elif t:
-                    if backward:
-                        raise Exception
-                    cnt = t[1]
-                    text += t[0]
-                    tkn = self.tokens[cnt]
-                    backward = True
-                    continue
-                elif tkn.tknType is TokenType.LineBreak:
-                    while tkn.tknType is TokenType.LineBreak:
-                        cnt += 1
-                        text += tkn.value
-                        tkn = self.tokens[cnt]
-                elif tkn.tknType is TokenType.Closer:
-                    cnt += 1
-                    if text.strip():
-                        cell.append(text)
-                        text = ""
-                    tkn = self.tokens[cnt]
-                else:
-                    if tkn.tknType in [TokenType.L2Sep, TokenType.L1Sep]:
-                        return False
-                    else:
-                        raise Exception
-                backward = False
+                    ret[kv[0].strip()] = kv[1].strip()
+            return ret
+
+    def parse_command(self, s: str, ln: int):
+        """
+        parse command starting with '##!'
+        :param s: line string
+        :param ln: line number
+        :return: True or False
+        """
+        pattern_command = re.compile(r"##!(.*)")
+        t = pattern_command.match(s)
+        if not t:
+            return False
         else:
+            return True
+
+    def parse_element(self, s: str, ln: int):
+        """
+        parse element
+        :param s: line string
+        :param ln: line number
+        :return: recursive List that contains element itself or False
+        """
+        L1 = s.split(":")
+        if len(L1) < 2:
             return False
 
-        return cell, cnt
+        return [[[l.strip() for l in l3.split(";")] for l3 in l2.split("|")] for l2 in L1[:2]]
 
-    def parse_sub(self, cnt):
-        cell = []
-        backward = False
+    @property
+    def structure(self) -> dict:
+        """
+        convert information of this reader to dictionary to be processed easily in ADS
+        :return: dict
+        """
+        return {
+            "name": self._name,
+            "description": self._description,
+            "detail_infile": self._predefined_value,
+            "cond": self._conditional_value,
+            "stages": self._stages
+        }
 
-        tkn = self.tokens[cnt]
-        t = self.parse_subsub(cnt)
-        if t or tkn.tknType is TokenType.L2Sep:
-            if t:
-                cnt = t[1]
-                cell.append(t[0])
-                tkn = self.tokens[cnt]
-            elif tkn.tknType is TokenType.L2Sep:
-                cnt += 1
-                tkn = self.tokens[cnt]
+if __name__ == '__main__':
+    r = Reader("""
 
+##$ wil = 3; recent_value = 0.9; recent = 30; COMP_IGNORE_SPACE = True
+##@ 결단력S
+nn;a|b:nn\#:1
+##@ 마단력K
+iG:
+##@ 스페시컬<T>
 
+""")
 
-    def parse_element(self, cnt):
-        pass
-
-    def parse_stage(self, cnt):
-        pass
+    r.read()
+    print(r.src_iter)

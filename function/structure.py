@@ -178,8 +178,7 @@ class AntanswerDataStruct:
             self.load_fromstring(file_anw.read(), fn)
 
     def load_fromstring(self, string: str, name: str):
-        wbr = reader.READ_ANW(string, name)
-        print("D")
+        wbr = reader.Reader(string, name).structure
         self.name = wbr["name"]
         self.detail.set(
             wbr["detail_infile"]["wil"] if wbr["detail_infile"]["wil"] else 0,
